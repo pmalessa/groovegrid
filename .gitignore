@@ -1,0 +1,8 @@
+Software/16door/.ino.cpp
+Software/16door/.settings/
+*.d
+*.o
+*.eep
+*.elf
+*.hex
+Software/16door/Release/
