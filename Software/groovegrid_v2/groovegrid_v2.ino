@@ -7,7 +7,7 @@
 #include "GameState.h"
 
 uint8_t gamestate = 0;
-GameState game;
+GameState game = GameState();
 
 void setup()
 {
@@ -30,15 +30,11 @@ void loop()
 		case 0:	//ANIMATION
 			if(BUTTON_bIsPressed(BUTTON_UP))
 			{
-				ANIMATION_vBoot();
 				gamestate = 1;
+				ANIMATION_vBoot();
 			}
 			break;
 		case 1:
-			LED_vClear();
-			LED_vDrawLine(0, 0, 3, 3, LED_u16Color(255, 255, 255));
-			LED_vShow();
-			gameLoop();
 			break;
 		default:
 			break;
@@ -48,11 +44,18 @@ void loop()
 void timer()	//called every 1ms
 {
 	static uint16_t button_cnt = 0;
+	static uint16_t game_cnt = 0;
 	switch (gamestate) {
 		case 0: //ANIMATION
 			ANIMATION_vRunner();
 			break;
 		case 1:
+			game_cnt++;
+			if(game_cnt > 1000)
+			{
+				game_cnt = 0;
+				gameLoop();
+			}
 			break;
 		default:
 			break;
@@ -66,7 +69,10 @@ void timer()	//called every 1ms
 }
 
 void gameLoop() {
+	LED_vDrawBoard(game.board);
+	LED_vShow();
 	while(!game.moveLeft()) {
 		LED_vDrawBoard(game.board);
+		LED_vShow();
 	}
 }
