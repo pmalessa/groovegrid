@@ -11,12 +11,13 @@
 
 const uint8_t BOARD_HEIGHT = YMAX;
 const uint8_t BOARD_WIDTH = XMAX;
+const uint8_t BOARD_SIZE = BOARD_HEIGHT * BOARD_WIDTH;
 
 
 
 class GameState {
 
-	int board[BOARD_HEIGHT][BOARD_WIDTH];
+	uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
 
 	GameState() {
 		initializeBoard();
@@ -30,9 +31,25 @@ class GameState {
 		}
 	}
 
-	private:
+	void fillRandomField() {
+
+	}
+
+
 	void initializeBoard() {
 		fillBoard(0);
+		uint8_t firstTileX = rand() % BOARD_WIDTH;
+		uint8_t firstTileY = rand() % BOARD_HEIGHT;
+
+		uint8_t secondTileX = rand() % BOARD_WIDTH;
+		uint8_t secondTileY = rand() % BOARD_HEIGHT;
+
+		if (secondTileX == firstTileX && secondTileY == firstTileY)
+			++secondTileX;
+
+		board[firstTileY][firstTileX] = 2;
+		board[secondTileY][secondTileX] = 2;
+
 
 	}
 };
