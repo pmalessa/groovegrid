@@ -9,6 +9,49 @@
 uint8_t gamestate = 0;
 GameState game = GameState();
 
+bool movingUp = false;
+bool movingDown = false;
+bool movingLeft = false;
+bool movingRight = false;
+bool moving = false;
+
+void stopMoving() {
+	movingUp = false;
+	movingDown = false;
+	movingLeft = false;
+	movingRight = false;
+	moving = false;
+
+}
+
+void moveUp() {
+	if (!moving) {
+		movingUp = true;
+		moving = true;
+	}
+}
+
+void moveDown() {
+	if (!moving) {
+		movingDown = true;
+		moving = true;
+	}
+}
+
+void moveLeft() {
+	if (!moving) {
+		movingLeft = true;
+		moving = true;
+	}
+}
+
+void moveRight() {
+	if (!moving) {
+		movingRight = true;
+		moving = true;
+	}
+}
+
 void setup()
 {
 	Timer1.initialize();
@@ -35,6 +78,14 @@ void loop()
 			}
 			break;
 		case 1:
+			if(BUTTON_bIsPressed(BUTTON_UP))
+				moveUp();
+			if(BUTTON_bIsPressed(BUTTON_DOWN))
+				moveDown();
+			if(BUTTON_bIsPressed(BUTTON_LEFT))
+				moveLeft();
+			if(BUTTON_bIsPressed(BUTTON_RIGHT))
+				moveRight();
 			break;
 		default:
 			break;
@@ -68,12 +119,44 @@ void timer()	//called every 1ms
 	}
 }
 
+
+
 void gameLoop() {
-	LED_vDrawBoard(game.board);
-	LED_vShow();
-	while(!game.moveDown()) {
+
+	bool stopMovingAtEnd = false;
+	if (moving) {
+		if(movingUp)
+		{
+			if(game.moveUp()) {
+				stopMovingAtEnd = true;
+			}
+		}
+		else if(movingDown)
+		{
+			if(game.moveDown()) {
+				stopMovingAtEnd = true;
+			}
+		}
+		else if(movingLeft)
+		{
+			if(game.moveLeft()) {
+				stopMovingAtEnd = true;
+			}
+		}
+		else if(movingRight)
+		{
+			if(game.moveRight()) {
+				stopMovingAtEnd = true;
+			}
+		}
+
 		LED_vDrawBoard(game.board);
 		LED_vShow();
-		delay(200);
 	}
+
+	if (stopMovingAtEnd)
+		stopMoving();
+
+	if (moving)
+		delay(200);
 }
