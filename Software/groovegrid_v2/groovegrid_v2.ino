@@ -4,8 +4,10 @@
 #include "ANIMATION.h"
 #include "LED.h"
 #include "BUTTON.h"
+#include "GameState.h"
 
 uint8_t gamestate = 0;
+GameState game;
 
 void setup()
 {
@@ -36,8 +38,7 @@ void loop()
 			LED_vClear();
 			LED_vDrawLine(0, 0, 3, 3, LED_u16Color(255, 255, 255));
 			LED_vShow();
-			delay(1000);
-			gamestate = 0;
+			gameLoop();
 			break;
 		default:
 			break;
@@ -62,4 +63,8 @@ void timer()	//called every 1ms
 		button_cnt = 0;
 		BUTTON_vRead();		//read Buttons
 	}
+}
+
+void gameLoop() {
+
 }
