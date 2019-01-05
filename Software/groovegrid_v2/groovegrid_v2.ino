@@ -6,7 +6,7 @@
 #include "BUTTON.h"
 #include "GameState.h"
 
-uint8_t gamestate = 1;
+uint8_t gamestate = 0;
 GameState game = GameState();
 
 bool movingUp = false;
@@ -21,32 +21,35 @@ void stopMoving() {
 	movingLeft = false;
 	movingRight = false;
 	moving = false;
+	game.fillRandomField();
+	LED_vDrawBoard(game.board);
+	LED_vShow();
 
 }
 
 void moveUp() {
-	if (!moving) {
+	if (!moving && (game.canStepUp() || game.canMergeUp())) {
 		movingUp = true;
 		moving = true;
 	}
 }
 
 void moveDown() {
-	if (!moving) {
+	if (!moving && (game.canStepDown() || game.canMergeDown())) {
 		movingDown = true;
 		moving = true;
 	}
 }
 
 void moveLeft() {
-	if (!moving) {
+	if (!moving && (game.canStepLeft() || game.canMergeLeft())) {
 		movingLeft = true;
 		moving = true;
 	}
 }
 
 void moveRight() {
-	if (!moving) {
+	if (!moving && (game.canStepRight() || game.canMergeRight())) {
 		movingRight = true;
 		moving = true;
 	}
@@ -75,6 +78,8 @@ void loop()
 			{
 				gamestate = 1;
 				ANIMATION_vBoot();
+				LED_vDrawBoard(game.board);
+				LED_vShow();
 			}
 			break;
 		case 1:
@@ -102,7 +107,7 @@ void timer()	//called every 1ms
 			break;
 		case 1:
 			game_cnt++;
-			if(game_cnt > 1000)
+			if(game_cnt > 300)
 			{
 				game_cnt = 0;
 				gameLoop();
@@ -156,7 +161,4 @@ void gameLoop() {
 
 	if (stopMovingAtEnd)
 		stopMoving();
-
-	if (moving)
-		delay(200);
 }

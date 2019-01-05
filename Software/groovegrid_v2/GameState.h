@@ -39,12 +39,20 @@ public:
 		bool moveRight();
 		bool moveUp();
 		bool moveDown();
+		bool canStepLeft();
+		bool canStepRight();
+		bool canStepUp();
+		bool canStepDown();
+		bool canMergeLeft();
+		bool canMergeRight();
+		bool canMergeUp();
+		bool canMergeDown();
 		uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
 
 	private:
 		void stepLeft();
 
-		bool canStepLeft();
+
 
 		void mergeLeft();
 
@@ -52,7 +60,6 @@ public:
 
 		void stepRight();
 
-		bool canStepRight();
 
 		void mergeRight();
 
@@ -60,7 +67,7 @@ public:
 
 		void stepUp();
 
-		bool canStepUp();
+
 
 		void mergeUp();
 
@@ -68,7 +75,7 @@ public:
 
 		void stepDown();
 
-		bool canStepDown();
+
 
 		void mergeDown();
 

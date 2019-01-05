@@ -138,6 +138,17 @@ bool GameState::canStepLeft() {
 	return false;
 }
 
+bool GameState::canMergeLeft(){
+	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+		for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
+			if (board[y][x] == board[y][x-1]) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 void GameState::mergeLeft() {
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
 		for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
@@ -216,6 +227,17 @@ void GameState::mergeRight() {
 	removeInBetweenZerosRight();
 }
 
+bool GameState::canMergeRight(){
+	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+		for (uint8_t x = BOARD_WIDTH-1; x > 0; --x) {
+			if (board[y][x-1] == board[y][x]) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 
 void GameState::removeInBetweenZerosRight() {
 	while(canStepRight()) {
@@ -279,6 +301,17 @@ void GameState::mergeUp() {
 		}
 	}
 	removeInBetweenZerosUp();
+}
+
+bool GameState::canMergeUp(){
+	for (uint8_t x = 0; x < BOARD_HEIGHT; ++x) {
+		for (uint8_t y = 1; y < BOARD_WIDTH; ++y) {
+			if (board[y][x] == board[y-1][x]) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void GameState::removeInBetweenZerosUp() {
@@ -346,6 +379,16 @@ void GameState::mergeDown() {
 	removeInBetweenZerosDown();
 }
 
+bool GameState::canMergeDown(){
+	for (uint8_t x = 0; x < BOARD_HEIGHT; ++x) {
+		for (uint8_t y = BOARD_WIDTH-1; y > 0; --y) {
+			if (board[y-1][x] == board[y][x]) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 void GameState::removeInBetweenZerosDown() {
 	while(canStepDown()) {
