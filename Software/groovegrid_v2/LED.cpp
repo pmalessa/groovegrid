@@ -11,8 +11,6 @@
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
 
-#include "ANIMATION.h"
-
 //4x4 display, starting at top left and going down zigzag
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(XMAX, YMAX, DATA_PIN,
 		  NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
@@ -24,41 +22,32 @@ void LED_vInit()
 	matrix.begin();
 }
 
-void LED_vBootAnimation()
+void LED_vDrawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
-	for (uint8_t i=0; i < YMAX; i++) {
-		matrix.drawLine(0, i, XMAX-1, i, matrix.Color(255, 0, 0));
-		matrix.show();
-		delay(100);
-	}
-	for (uint8_t i=0; i < YMAX; i++) {
-		matrix.drawLine(0, i, XMAX-1, i, matrix.Color(0, 0, 0));
-		matrix.show();
-		delay(100);
-	}
+	matrix.drawPixel(x, y, color);
 }
 
-void LED_vTimer()
+void LED_vDrawRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color)
 {
-	static uint32_t wait = 30000;
-	static uint8_t state = 0;
-	if(wait == 0)
-	{
-		state++;	//switch Animation every 10 seconds
-		matrix.clear();
-		wait = 30000;
-	}
-	wait--;
-	switch (state) {
-		case 0:
-			ANIMATION_randomPixels(&matrix);
-			break;
-		case 1:
-			ANIMATION_randomLines(&matrix);
-			break;
-		default:
-			state = 0;
-			break;
-	}
+	matrix.drawRect(x, y, w, h, color);
+}
+
+void LED_vDrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
+{
+	matrix.drawLine(x0, y0, x1, y1, color);
+}
+
+void LED_vClear()
+{
+	matrix.clear();
+}
+
+void LED_vShow()
+{
 	matrix.show();
+}
+
+uint16_t LED_u16Color(uint8_t r, uint8_t g, uint8_t b)
+{
+	return matrix.Color(r, g, b);
 }

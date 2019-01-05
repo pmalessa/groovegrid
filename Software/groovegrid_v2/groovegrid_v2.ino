@@ -1,20 +1,17 @@
 #include "Arduino.h"
 
 #include <TimerOne.h>
-
+#include "ANIMATION.h"
 #include "LED.h"
-
-//The setup function is called once at startup of the sketch
-
-
-
 
 void setup()
 {
 	Timer1.initialize();
+	LED_vInit();
 	Serial.begin(9600);
 	Serial.println("Hey!");
 
+	ANIMATION_vBoot();
 	Timer1.attachInterrupt(timer, 1000);
 }
 
@@ -25,5 +22,5 @@ void loop()
 
 void timer()	//called every 1ms
 {
-	LED_vTimer();
+	ANIMATION_vRunner();
 }

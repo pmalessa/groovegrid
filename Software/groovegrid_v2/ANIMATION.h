@@ -14,7 +14,8 @@
 
 void ANIMATION_randomPixels(Adafruit_NeoMatrix *matrix);
 void ANIMATION_randomLines(Adafruit_NeoMatrix *matrix);
-
+void ANIMATION_vRunner();
+void ANIMATION_vBoot();
 
 
 #endif /* ANIMATION_H_ */
