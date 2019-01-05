@@ -35,8 +35,31 @@ void GameState::fillBoard(uint16_t value) {
 	}
 }
 
-void GameState::fillRandomField() {
+uint16_t GameState::getFreeSpaces(){
+	uint16_t cnt = 0;
+	for(int i=0;i<BOARD_HEIGHT-1;i++)
+	{
+		for(int j=0;j<BOARD_WIDTH-1;j++)
+		{
+			if(board[i][j] == 0)
+			{
+				cnt++;
+			}
+		}
+	}
+	return cnt;
+}
 
+void GameState::fillRandomField() {
+	uint8_t x,y;
+	if(getFreeSpaces()!= 0)
+	{
+		do{
+			x = rand() % BOARD_WIDTH;
+			y = rand() % BOARD_HEIGHT;
+		}while(board[y][x]!=0);
+		board[y][x] = 2;
+	}
 }
 
 

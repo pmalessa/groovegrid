@@ -19,6 +19,8 @@ public:
 
 	void fillBoard(uint16_t value);
 
+	uint16_t getFreeSpaces();
+
 	void fillRandomField();
 
 
