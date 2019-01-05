@@ -12,6 +12,7 @@
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX
 
+
 class GameState {
 public:
 	GameState();
@@ -35,6 +36,7 @@ public:
 		 */
 	public:
 		bool moveLeft();
+		bool moveRight();
 		uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
 
 	private:
@@ -46,7 +48,18 @@ public:
 
 		void removeInBetweenZerosLeft();
 
+		void stepRight();
+
+		bool canStepRight();
+
+		void mergeRight();
+
+		void removeInBetweenZerosRight();
+
 		void initializeTestBoard();
+
+		// Current Orientation describes the orientation of the
+		uint8_t currentOrientation = 0;
 };
 
 #endif
