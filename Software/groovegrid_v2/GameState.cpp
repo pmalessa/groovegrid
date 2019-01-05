@@ -287,6 +287,73 @@ void GameState::removeInBetweenZerosUp() {
 	}
 }
 
+// ---------- DOWN -------------
+
+
+/*
+ * Moves tiles one step to the right on each call.
+ *
+ * Returns true if move is finished after the current step. Returns false otherwise.
+ * If the tiles can still be moved or merged right, the move is unfinished.
+ * It is only finished after all tiles are as far right as possible and merged.
+ */
+bool GameState::moveDown() {
+	if(canStepDown()) {
+		stepDown();
+		return false;
+	} else {
+		mergeDown();
+		return true;
+	}
+}
+
+
+void GameState::stepDown() {
+	for (uint8_t x = 0; x < BOARD_HEIGHT; ++ x) {
+		// For every line, start with the second tile from the left (the leftmost can't be pushed further)
+		for (uint8_t y = BOARD_WIDTH - 1; y > 0; --y) {
+			// If tile to the left is zero, push tile left
+			if (board[y][x] == 0) {
+				board[y][x] = board[y-1][x];
+				board[y-1][x] = 0;
+			}
+		}
+	}
+}
+
+bool GameState::canStepDown() {
+	for (uint8_t x = BOARD_HEIGHT; x > 0; --x) {
+		bool zeroFound = false;
+		for (uint8_t y = BOARD_WIDTH; y > 0; --y) {
+			if (zeroFound && board[y-1][x-1] != 0)
+				return true;
+			if (board[y-1][x-1] == 0)
+				zeroFound = true;
+		}
+	}
+	return false;
+}
+
+void GameState::mergeDown() {
+	for (uint8_t x = 0; x < BOARD_HEIGHT; ++x) {
+		for (uint8_t y = BOARD_WIDTH-1; y > 0; --y) {
+			if (board[y-1][x] == board[y][x]) {
+				board[y][x] = board[y][x] * 2;
+				board[y-1][x] = 0;
+			}
+		}
+	}
+	removeInBetweenZerosDown();
+}
+
+
+void GameState::removeInBetweenZerosDown() {
+	while(canStepDown()) {
+		stepDown();
+	}
+}
+
+
 
 // Helper Functions
 
