@@ -23,8 +23,8 @@ const uint8_t N = BOARD_HEIGHT;
 
 GameState::GameState()
 {
-	//initializeBoard();
-	initializeTestBoard();
+	initializeBoard();
+	//initializeTestBoard();
 }
 
 void GameState::fillBoard(uint16_t value) {

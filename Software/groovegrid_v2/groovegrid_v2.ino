@@ -6,7 +6,7 @@
 #include "BUTTON.h"
 #include "GameState.h"
 
-uint8_t gamestate = 0;
+uint8_t gamestate = 1;
 GameState game = GameState();
 
 void setup()
