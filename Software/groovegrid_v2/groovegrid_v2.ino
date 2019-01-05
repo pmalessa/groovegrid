@@ -71,7 +71,7 @@ void timer()	//called every 1ms
 void gameLoop() {
 	LED_vDrawBoard(game.board);
 	LED_vShow();
-	while(!game.moveRight()) {
+	while(!game.moveUp()) {
 		LED_vDrawBoard(game.board);
 		LED_vShow();
 		delay(200);
