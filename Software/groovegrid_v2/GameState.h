@@ -33,6 +33,7 @@ public:
 		 */
 	public:
 		bool moveLeft();
+		uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
 
 	private:
 		void stepLeft();
@@ -44,8 +45,6 @@ public:
 		void removeInBetweenZerosLeft();
 
 		void initializeTestBoard();
-
-		uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
 };
 
 #endif
