@@ -8,6 +8,8 @@ void setup()
 {
 	Timer1.initialize();
 	LED_vInit();
+	srand(eeprom_read_word((uint16_t *)0x23));
+	eeprom_update_word((uint16_t *)0x23, (uint16_t)rand());
 	Serial.begin(9600);
 	Serial.println("Hey!");
 
