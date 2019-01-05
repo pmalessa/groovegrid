@@ -74,5 +74,6 @@ void gameLoop() {
 	while(!game.moveRight()) {
 		LED_vDrawBoard(game.board);
 		LED_vShow();
+		delay(200);
 	}
 }

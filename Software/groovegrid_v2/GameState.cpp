@@ -181,23 +181,23 @@ bool GameState::moveRight() {
 void GameState::stepRight() {
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++ y) {
 		// For every line, start with the second tile from the left (the leftmost can't be pushed further)
-		for (uint8_t x = BOARD_WIDTH - 2; x >= 0; --x) {
+		for (uint8_t x = BOARD_WIDTH - 1; x > 0; --x) {
 			// If tile to the left is zero, push tile left
-			if (board[y][x+1] == 0) {
-				board[y][x+1] = board[y][x];
-				board[y][x] = 0;
+			if (board[y][x] == 0) {
+				board[y][x] = board[y][x-1];
+				board[y][x-1] = 0;
 			}
 		}
 	}
 }
 
 bool GameState::canStepRight() {
-	for (uint8_t y = BOARD_HEIGHT-1; y >= 0; --y) {
+	for (uint8_t y = BOARD_HEIGHT; y > 0; --y) {
 		bool zeroFound = false;
-		for (uint8_t x = BOARD_WIDTH-1; x >= 0; --x) {
-			if (zeroFound && board[y][x] != 0)
+		for (uint8_t x = BOARD_WIDTH; x > 0; --x) {
+			if (zeroFound && board[y-1][x-1] != 0)
 				return true;
-			if (board[y][x] == 0)
+			if (board[y-1][x-1] == 0)
 				zeroFound = true;
 		}
 	}
@@ -206,10 +206,10 @@ bool GameState::canStepRight() {
 
 void GameState::mergeRight() {
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
-		for (uint8_t x = BOARD_WIDTH-2; x >= 0; --x) {
-			if (board[y][x] == board[y][x+1]) {
-				board[y][x+1] = board[y][x+1] * 2;
-				board[y][x] = 0;
+		for (uint8_t x = BOARD_WIDTH-1; x > 0; --x) {
+			if (board[y][x-1] == board[y][x]) {
+				board[y][x] = board[y][x] * 2;
+				board[y][x-1] = 0;
 			}
 		}
 	}
