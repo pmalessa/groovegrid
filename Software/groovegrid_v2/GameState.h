@@ -35,6 +35,7 @@ public:
 	public:
 		bool moveLeft();
 		bool moveRight();
+		bool moveUp();
 		uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
 
 	private:
@@ -53,6 +54,14 @@ public:
 		void mergeRight();
 
 		void removeInBetweenZerosRight();
+
+		void stepUp();
+
+		bool canStepUp();
+
+		void mergeUp();
+
+		void removeInBetweenZerosUp();
 
 		void initializeTestBoard();
 
