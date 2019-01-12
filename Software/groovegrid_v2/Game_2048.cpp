@@ -6,60 +6,24 @@
  */
 #include "Arduino.h"
 #include "Game_2048.h"
-#include "GameState.h"
 #include "BUTTON.h"
 #include "HardwareSerial.h"
 
-GameState game = GameState();
+#include "GameState_2048.h"
 
-bool movingUp = false;
-bool movingDown = false;
-bool movingLeft = false;
-bool movingRight = false;
-bool moving = false;
+GameState_2048 game = GameState_2048();
+direction_t movdir = NONE;
 
-void stopMoving() {
-	movingUp = false;
-	movingDown = false;
-	movingLeft = false;
-	movingRight = false;
-	moving = false;
-	game.fillRandomField();
-	LED_vDrawBoard(game.board);
-	LED_vShow();
-
-}
-
-void moveUp() {
-	if (!moving && (game.canStep(UP) || game.canMerge(UP))) {
-		movingUp = true;
-		moving = true;
-	}
-}
-
-void moveDown() {
-	if (!moving && (game.canStep(DOWN) || game.canMerge(DOWN))) {
-		movingDown = true;
-		moving = true;
-	}
-}
-
-void moveLeft() {
-	if (!moving && (game.canStep(LEFT) || game.canMerge(LEFT))) {
-		movingLeft = true;
-		moving = true;
-	}
-}
-
-void moveRight() {
-	if (!moving && (game.canStep(RIGHT) || game.canMerge(RIGHT))) {
-		movingRight = true;
-		moving = true;
+void move(direction_t dir) {
+	if(movdir == NONE)
+	{
+		movdir = dir;
 	}
 }
 
 void Game_2048_vSetup()
 {
+	game.initializeBoard();
 	LED_vDrawBoard(game.board);
 	LED_vShow();
 }
@@ -71,16 +35,16 @@ uint8_t Game_2048_u8Loop()
 		case -1:
 			break;
 		case 'u':
-			moveUp();
+			move(UP);
 			break;
 		case 'd':
-			moveDown();
+			move(DOWN);
 			break;
 		case 'r':
-			moveRight();
+			move(RIGHT);
 			break;
 		case 'l':
-			moveLeft();
+			move(LEFT);
 			break;
 		case 'q':
 			return false;
@@ -90,13 +54,13 @@ uint8_t Game_2048_u8Loop()
 	}
 
 	if(BUTTON_bIsPressed(BUTTON_UP))
-		moveUp();
+		move(UP);
 	if(BUTTON_bIsPressed(BUTTON_DOWN))
-		moveDown();
+		move(DOWN);
 	if(BUTTON_bIsPressed(BUTTON_LEFT))
-		moveLeft();
+		move(LEFT);
 	if(BUTTON_bIsPressed(BUTTON_RIGHT))
-		moveRight();
+		move(RIGHT);
 
 	return true;	//keep running
 }
@@ -104,46 +68,33 @@ uint8_t Game_2048_u8Loop()
 void Game_2048_vSyncTask()	//every 1 ms
 {
 	static uint16_t game_cnt = 0;
+	static uint8_t move_possible = 0;
 	game_cnt++;
 	if(game_cnt > 300)
 	{
 		game_cnt = 0;
 
+		if (movdir != NONE)	//moving
+		{
+			if(game.canStep(movdir) || game.canMerge(movdir))	//if move possible
+			{
+				move_possible = 1;
+			}
+			if(game.move(movdir))	//if move finished
+			{
+				movdir = NONE;
 
-
-		bool stopMovingAtEnd = false;
-		if (moving) {
-			if(movingUp)
-			{
-				if(game.move(UP)) {
-					stopMovingAtEnd = true;
+				if(move_possible > 0)	//if it was moving, spawn new field
+				{
+					game.fillRandomField();
+					LED_vDrawBoard(game.board);
+					LED_vShow();
 				}
+				move_possible = 0;
 			}
-			else if(movingDown)
-			{
-				if(game.move(DOWN)) {
-					stopMovingAtEnd = true;
-				}
-			}
-			else if(movingLeft)
-			{
-				if(game.move(LEFT)) {
-					stopMovingAtEnd = true;
-				}
-			}
-			else if(movingRight)
-			{
-				if(game.move(RIGHT)) {
-					stopMovingAtEnd = true;
-				}
-			}
-
 			LED_vDrawBoard(game.board);
 			LED_vShow();
 		}
-
-		if (stopMovingAtEnd)
-			stopMoving();
 	}
 }
 

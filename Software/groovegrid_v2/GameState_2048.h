@@ -13,15 +13,16 @@
 #define BOARD_WIDTH XMAX
 
 enum direction_t{
+	NONE,
 	LEFT,
 	DOWN,
 	RIGHT,
 	UP
 };
 
-class GameState {
+class GameState_2048 {
 public:
-	GameState();
+	GameState_2048();
 
 	void fillBoard(uint16_t value);
 	uint16_t getFreeSpaces();

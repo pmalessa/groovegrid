@@ -4,17 +4,17 @@
  *  Created on: 05.01.2019
  *      Author: Chris
  */
+#include "GameState_2048.h"
+
 #include "Arduino.h"
 
-#include "GameState.h"
 #include "LED.h"
 
-GameState::GameState()
+GameState_2048::GameState_2048()
 {
-	initializeBoard();
 }
 
-void GameState::fillBoard(uint16_t value) {
+void GameState_2048::fillBoard(uint16_t value) {
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
 		for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
 			board[y][x] = value;
@@ -22,7 +22,7 @@ void GameState::fillBoard(uint16_t value) {
 	}
 }
 
-uint16_t GameState::getFreeSpaces(){
+uint16_t GameState_2048::getFreeSpaces(){
 	uint16_t cnt = 0;
 	for(int i=0;i<BOARD_HEIGHT;i++)
 	{
@@ -37,7 +37,7 @@ uint16_t GameState::getFreeSpaces(){
 	return cnt;
 }
 
-void GameState::fillRandomField() {
+void GameState_2048::fillRandomField() {
 	uint8_t x,y;
 	if(getFreeSpaces()!= 0)
 	{
@@ -49,14 +49,14 @@ void GameState::fillRandomField() {
 	}
 }
 
-void GameState::initializeBoard() {
+void GameState_2048::initializeBoard() {
 	fillBoard(0);
 
 	fillRandomField();
 	fillRandomField();
 }
 
-uint16_t GameState::getField(uint8_t y, uint8_t x, direction_t direction)
+uint16_t GameState_2048::getField(uint8_t y, uint8_t x, direction_t direction)
 {
 	switch (direction) {
 		case LEFT:
@@ -77,7 +77,7 @@ uint16_t GameState::getField(uint8_t y, uint8_t x, direction_t direction)
 	}
 }
 
-void GameState::setField(uint8_t y, uint8_t x, direction_t direction, uint8_t value)
+void GameState_2048::setField(uint8_t y, uint8_t x, direction_t direction, uint8_t value)
 {
 	switch (direction) {
 		case LEFT:
@@ -98,14 +98,14 @@ void GameState::setField(uint8_t y, uint8_t x, direction_t direction, uint8_t va
 }
 
 /*
- * Moves tiles one step to the left on each call.
+ * Moves tiles one step to the direction on each call.
  *
  * Returns true if move is finished after the current step. Returns false otherwise.
  * If the tiles can still be moved or merged left, the move is unfinished.
  * It is only finished after all tiles are as far left as possible and merged.
  */
 
-bool GameState::move(direction_t direction)
+bool GameState_2048::move(direction_t direction)
 {
 	if(canStep(direction)) {
 		step(direction);
@@ -117,7 +117,7 @@ bool GameState::move(direction_t direction)
 }
 
 
-void GameState::step(direction_t direction) {
+void GameState_2048::step(direction_t direction) {
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++ y) {
 		// For every line, start with the second tile from the left (the leftmost can't be pushed further)
 		for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
@@ -130,7 +130,7 @@ void GameState::step(direction_t direction) {
 	}
 }
 
-bool GameState::canStep(direction_t direction) {
+bool GameState_2048::canStep(direction_t direction) {
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
 		bool zeroFound = false;
 		for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
@@ -143,10 +143,10 @@ bool GameState::canStep(direction_t direction) {
 	return false;
 }
 
-bool GameState::canMerge(direction_t direction){
+bool GameState_2048::canMerge(direction_t direction){
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
 		for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
-			if (getField(y, x, direction) == getField(y, x-1, direction)) {
+			if (getField(y, x, direction) == getField(y, x-1, direction) && getField(y, x, direction) != 0) {
 				return true;
 			}
 		}
@@ -154,7 +154,7 @@ bool GameState::canMerge(direction_t direction){
 	return false;
 }
 
-void GameState::merge(direction_t direction) {
+void GameState_2048::merge(direction_t direction) {
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
 		for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
 			if (getField(y, x, direction) == getField(y, x-1, direction)) {
@@ -166,7 +166,7 @@ void GameState::merge(direction_t direction) {
 	removeInBetweenZeros(direction);
 }
 
-void GameState::removeInBetweenZeros(direction_t direction) {
+void GameState_2048::removeInBetweenZeros(direction_t direction) {
 	while(canStep(direction)) {
 		step(direction);
 	}
