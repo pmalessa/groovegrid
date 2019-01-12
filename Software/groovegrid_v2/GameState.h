@@ -12,79 +12,32 @@
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX
 
+enum direction_t{
+	LEFT,
+	DOWN,
+	RIGHT,
+	UP
+};
 
 class GameState {
 public:
 	GameState();
 
-
 	void fillBoard(uint16_t value);
-
 	uint16_t getFreeSpaces();
-
 	void fillRandomField();
-
-
 	void initializeBoard();
-
-		/*
-		 * Moves tiles one step to the left on each call.
-		 *
-		 * Returns true if move is finished after the current step. Returns false otherwise.
-		 * If the tiles can still be moved or merged left, the move is unfinished.
-		 * It is only finished after all tiles are as far left as possible and merged.
-		 */
-	public:
-		bool moveLeft();
-		bool moveRight();
-		bool moveUp();
-		bool moveDown();
-		bool canStepLeft();
-		bool canStepRight();
-		bool canStepUp();
-		bool canStepDown();
-		bool canMergeLeft();
-		bool canMergeRight();
-		bool canMergeUp();
-		bool canMergeDown();
-		uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
+	uint16_t getField(uint8_t y, uint8_t x, direction_t direction);
+	void setField(uint8_t y, uint8_t x, direction_t direction, uint8_t value);
+	bool move(direction_t direction);
+	bool canStep(direction_t direction);
+	bool canMerge(direction_t direction);
+	uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
 
 	private:
-		void stepLeft();
-
-
-
-		void mergeLeft();
-
-		void removeInBetweenZerosLeft();
-
-		void stepRight();
-
-
-		void mergeRight();
-
-		void removeInBetweenZerosRight();
-
-		void stepUp();
-
-
-
-		void mergeUp();
-
-		void removeInBetweenZerosUp();
-
-		void stepDown();
-
-
-
-		void mergeDown();
-
-		void removeInBetweenZerosDown();
-
-		void initializeTestBoard();
-
-		// Current Orientation describes the orientation of the
-		uint8_t currentOrientation = 0;
+		void merge(direction_t direction);
+		void step(direction_t direction);
+		void removeInBetweenZeros(direction_t direction);
 };
 
 #endif

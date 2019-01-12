@@ -1,65 +1,20 @@
 #include "Arduino.h"
 
 #include <TimerOne.h>
-#include "ANIMATION.h"
 #include "LED.h"
 #include "BUTTON.h"
-#include "GameState.h"
+#include "HardwareSerial.h"
 
-uint8_t gamestate = 0;
-GameState game = GameState();
+#include "ANIMATION.h"
+#include "Game_2048.h"
 
-bool movingUp = false;
-bool movingDown = false;
-bool movingLeft = false;
-bool movingRight = false;
-bool moving = false;
-
-void stopMoving() {
-	movingUp = false;
-	movingDown = false;
-	movingLeft = false;
-	movingRight = false;
-	moving = false;
-	game.fillRandomField();
-	LED_vDrawBoard(game.board);
-	LED_vShow();
-
-}
-
-void moveUp() {
-	if (!moving && (game.canStepUp() || game.canMergeUp())) {
-		movingUp = true;
-		moving = true;
-	}
-}
-
-void moveDown() {
-	if (!moving && (game.canStepDown() || game.canMergeDown())) {
-		movingDown = true;
-		moving = true;
-	}
-}
-
-void moveLeft() {
-	if (!moving && (game.canStepLeft() || game.canMergeLeft())) {
-		movingLeft = true;
-		moving = true;
-	}
-}
-
-void moveRight() {
-	if (!moving && (game.canStepRight() || game.canMergeRight())) {
-		movingRight = true;
-		moving = true;
-	}
-}
-
+uint8_t programstate = 0;
 void setup()
 {
 	Timer1.initialize();
 	LED_vInit();
 	BUTTON_vInit();
+	Serial.begin(9600);
 	srand(eeprom_read_word((uint16_t *)0x23));
 	eeprom_update_word((uint16_t *)0x23, (uint16_t)rand());
 	Serial.begin(9600);
@@ -72,25 +27,20 @@ void setup()
 // The loop function is called in an endless loop
 void loop()
 {
-	switch (gamestate) {
+	switch (programstate) {
 		case 0:	//ANIMATION
-			if(BUTTON_bIsPressed(BUTTON_UP))
+			if(BUTTON_bIsPressed(BUTTON_UP) || Serial.read() == '1')
 			{
-				gamestate = 1;
+				programstate = 1;
 				ANIMATION_vBoot();
-				LED_vDrawBoard(game.board);
-				LED_vShow();
+				Game_2048_vSetup();
 			}
 			break;
 		case 1:
-			if(BUTTON_bIsPressed(BUTTON_UP))
-				moveUp();
-			if(BUTTON_bIsPressed(BUTTON_DOWN))
-				moveDown();
-			if(BUTTON_bIsPressed(BUTTON_LEFT))
-				moveLeft();
-			if(BUTTON_bIsPressed(BUTTON_RIGHT))
-				moveRight();
+			if(!Game_2048_u8Loop())
+			{
+				programstate = 0;//quit
+			}
 			break;
 		default:
 			break;
@@ -100,18 +50,12 @@ void loop()
 void timer()	//called every 1ms
 {
 	static uint16_t button_cnt = 0;
-	static uint16_t game_cnt = 0;
-	switch (gamestate) {
+	switch (programstate) {
 		case 0: //ANIMATION
 			ANIMATION_vRunner();
 			break;
 		case 1:
-			game_cnt++;
-			if(game_cnt > 300)
-			{
-				game_cnt = 0;
-				gameLoop();
-			}
+			Game_2048_vSyncTask();
 			break;
 		default:
 			break;
@@ -122,43 +66,4 @@ void timer()	//called every 1ms
 		button_cnt = 0;
 		BUTTON_vRead();		//read Buttons
 	}
-}
-
-
-
-void gameLoop() {
-
-	bool stopMovingAtEnd = false;
-	if (moving) {
-		if(movingUp)
-		{
-			if(game.moveUp()) {
-				stopMovingAtEnd = true;
-			}
-		}
-		else if(movingDown)
-		{
-			if(game.moveDown()) {
-				stopMovingAtEnd = true;
-			}
-		}
-		else if(movingLeft)
-		{
-			if(game.moveLeft()) {
-				stopMovingAtEnd = true;
-			}
-		}
-		else if(movingRight)
-		{
-			if(game.moveRight()) {
-				stopMovingAtEnd = true;
-			}
-		}
-
-		LED_vDrawBoard(game.board);
-		LED_vShow();
-	}
-
-	if (stopMovingAtEnd)
-		stopMoving();
 }

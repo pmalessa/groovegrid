@@ -11,7 +11,7 @@
 #include "Arduino.h"
 
 #define BUTTON_UP 2
-#define BUTTON_DOWN 4
+#define BUTTON_DOWN 9
 #define BUTTON_LEFT 3
 #define BUTTON_RIGHT 5
 
