@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  print("App starting...");
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -45,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String _labelText = "";
 
   void _incrementCounter() {
     setState(() {
@@ -53,7 +57,22 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
+      print("Incrementing Counter");
+      _labelText = "";
       _counter++;
+    });
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      print("Decrementing Counter");
+      _labelText = "";
+      _counter--;
+    });
+  }
+  void _setLabel(String text) {
+    setState(() {
+      _labelText = text;
     });
   }
 
@@ -71,36 +90,68 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => print("Tap Gesture recognized!"),
+        onHorizontalDragStart: (DragStartDetails details) async {
+          print("Horizontal Drag Started!");
+          print(details);
+        },
+        onHorizontalDragEnd:(DragEndDetails details) async {
+          var velocity = details.primaryVelocity;
+          print("Horitiontal Gesture recognized with speed $velocity");
+          if (velocity < -2) {
+            _setLabel("Left swipe detected!");
+          } else if (velocity > 2){
+            _setLabel("Right swipe detected!");
+          } else {
+            _setLabel("Horizontal swipe detected!");
+          }
+        },
+        onHorizontalDragCancel: () => (print("Vertical Drag cancelled!")),
+        onVerticalDragEnd: (DragEndDetails details) async {
+          var velocity = details.primaryVelocity;
+          print("Vertical Gesture recognized with speed $velocity");
+          if (velocity < -2) {
+            _setLabel("Up swipe detected!");
+          } else if (velocity > 2){
+            _setLabel("Down swipe detected!");
+          } else {
+            _setLabel("Vertical swipe detected!");
+          }
+        },
+        child: Center(
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: Column(
+            // Column is also layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                _labelText == ""? 'You have pushed the button this many times:': _labelText,
+              ),
+              Text(
+                _labelText == ""? '$_counter': "",
+                style: Theme.of(context).textTheme.display1,
+              ),
+            ],
+          ),
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
