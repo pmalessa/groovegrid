@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'bluetooth.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 void main() {
   print("App starting...");
@@ -10,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'GrooveGrid',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -86,6 +88,14 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
+        leading: FlatButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BluetoothSettings()),
+              );
+            },
+            child: Text("Settings")),
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -102,8 +112,10 @@ class _MyHomePageState extends State<MyHomePage> {
           print("Horitiontal Gesture recognized with speed $velocity");
           if (velocity < -2) {
             _setLabel("Left swipe detected!");
+            FlutterBluetoothSerial.instance.write('l');
           } else if (velocity > 2){
             _setLabel("Right swipe detected!");
+            FlutterBluetoothSerial.instance.write('r');
           } else {
             _setLabel("Horizontal swipe detected!");
           }
@@ -114,8 +126,10 @@ class _MyHomePageState extends State<MyHomePage> {
           print("Vertical Gesture recognized with speed $velocity");
           if (velocity < -2) {
             _setLabel("Up swipe detected!");
+            FlutterBluetoothSerial.instance.write('u');
           } else if (velocity > 2){
             _setLabel("Down swipe detected!");
+            FlutterBluetoothSerial.instance.write('d');
           } else {
             _setLabel("Vertical swipe detected!");
           }
@@ -160,3 +174,15 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+//class BluetoothSettings extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    return Scaffold(
+//      appBar: AppBar(
+//        title: Text("Bluetooth Settings"),
+//      ),
+//      body: null,
+//    );
+//  }
+//}
