@@ -52,7 +52,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _tab1LabelText = "First Tab";
   String _tab2LabelText = "Second Tab";
-  
 
   void _setTab1Label(String text) {
     setState(() {
@@ -84,29 +83,148 @@ class _HomePageState extends State<HomePage> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
-          bottom: TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.bubble_chart)),
-                Tab(icon: Icon(Icons.videogame_asset)),
-              ]),
+          bottom: TabBar(tabs: [
+            Tab(icon: Icon(Icons.bubble_chart)),
+            Tab(icon: Icon(Icons.videogame_asset)),
+          ]),
         ),
         body: TabBarView(
           children: [
-            Center(child: Text(_tab1LabelText)),
-            Center(child: Text(_tab2LabelText)),
+            AnimationsListView(),
+            //Center(child: Text(_tab1LabelText, style: Theme.of(context).textTheme.subhead,)),
+            GamesListView(),
           ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SwipeControlsView(title: 'Animations/2048',)),
+              MaterialPageRoute(
+                  builder: (context) => SwipeControlsView(
+                        title: 'Animations/2048',
+                      )),
             );
           },
           tooltip: 'Play',
           child: Icon(Icons.play_arrow),
         ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
+    );
+  }
+}
+
+class AnimationsListView extends StatefulWidget {
+  @override
+  _AnimationsListViewState createState() => _AnimationsListViewState();
+}
+
+class _AnimationsListViewState extends State<AnimationsListView> {
+  @override
+  Widget build(BuildContext context) {
+    ListTile makeListTile(String title) => ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+          leading: Container(
+            padding: EdgeInsets.only(right: 12.0),
+            decoration: new BoxDecoration(
+                border: new Border(
+                    right: new BorderSide(
+                        width: 1.0, color: Theme.of(context).hintColor))),
+            child: Icon(Icons.bubble_chart, color: Theme.of(context).hintColor),
+          ),
+          title: Text(
+            title,
+            style: Theme.of(context).textTheme.subhead,//TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+          ),
+          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+          trailing:
+              Icon(Icons.more_vert, color: Theme.of(context).hintColor, size: 25.0),
+          onTap: null,
+        );
+
+    Card makeCard(String title) => Card(
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: Container(
+            decoration: BoxDecoration(color: Theme.of(context).cardColor),
+            child: makeListTile(title),
+          ),
+        );
+
+    return ListView(
+      children: <Widget>[
+        makeCard("Standard Animation"),
+        makeCard("New Animation"),
+        makeCard("Another New Animation"),
+      ],
+    );
+  }
+}
+
+
+class GamesListView extends StatefulWidget {
+  @override
+  _GamesListViewState createState() => _GamesListViewState();
+}
+
+class _GamesListViewState extends State<GamesListView> {
+  @override
+  Widget build(BuildContext context) {
+    ListTile makeListTile({@required String title, String subtitle, Icon icon}) => ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+      leading: Container(
+        padding: EdgeInsets.only(right: 12.0),
+        decoration: new BoxDecoration(
+            border: new Border(
+                right: new BorderSide(
+                    width: 1.0, color: Theme.of(context).hintColor))),
+        child: Icon(Icons.videogame_asset, color: Theme.of(context).hintColor),
+      ),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.subhead,//TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+      ),
+      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+      subtitle: Row(
+        children: <Widget>[
+          Expanded(
+              flex: 1,
+              child: Container(
+                // tag: 'hero',
+                child: LinearProgressIndicator(
+                    backgroundColor: Color.fromRGBO(209, 224, 224, 0.4),
+                    value: 0.5,
+                    valueColor: AlwaysStoppedAnimation(Colors.green)),
+              )),
+          Expanded(
+            flex: 4,
+            child: Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: Text(subtitle != null? subtitle:"Undefined",
+                    style: Theme.of(context).textTheme.body1)),
+          )
+        ],
+      ),
+      trailing:
+      Icon(Icons.keyboard_arrow_right, color: Theme.of(context).hintColor, size: 30.0),
+      onTap: null,
+    );
+
+    Card makeCard({@required String title, String subtitle, Icon icon}) => Card(
+      elevation: 8.0,
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      child: Container(
+        decoration: BoxDecoration(color: Theme.of(context).cardColor),
+        child: makeListTile(title: title, subtitle: subtitle, icon: icon),
+      ),
+    );
+
+    return ListView(
+      children: <Widget>[
+        makeCard(title: "2048", subtitle: "Can math really be fun?"),
+        makeCard(title: "Invisible", subtitle: "Sneak yourself to victory"),
+        makeCard(title: "Whack-A-Mole", subtitle: "Can you whack 'em all?"),
+      ],
     );
   }
 }

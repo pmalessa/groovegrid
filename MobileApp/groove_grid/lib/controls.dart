@@ -12,7 +12,7 @@ class SwipeControlsView extends StatefulWidget {
 }
 
 class _SwipeControlsViewState extends State<SwipeControlsView> {
-  String _labelText = "";
+  String _labelText = "Swipe to move 2048 tiles in the corresponding direction";
 
   void _setLabel(String text) {
     setState(() {
