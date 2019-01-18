@@ -169,7 +169,7 @@ class GamesListView extends StatefulWidget {
 class _GamesListViewState extends State<GamesListView> {
   @override
   Widget build(BuildContext context) {
-    ListTile makeListTile({@required String title, String subtitle, Icon icon}) => ListTile(
+    ListTile makeListTile({@required String title, String subtitle, Icon icon, double progress}) => ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
       leading: Container(
         padding: EdgeInsets.only(right: 12.0),
@@ -193,7 +193,7 @@ class _GamesListViewState extends State<GamesListView> {
                 // tag: 'hero',
                 child: LinearProgressIndicator(
                     backgroundColor: Color.fromRGBO(209, 224, 224, 0.4),
-                    value: 0.5,
+                    value: progress != null? progress: 0.0,
                     valueColor: AlwaysStoppedAnimation(Colors.green)),
               )),
           Expanded(
@@ -210,20 +210,20 @@ class _GamesListViewState extends State<GamesListView> {
       onTap: null,
     );
 
-    Card makeCard({@required String title, String subtitle, Icon icon}) => Card(
+    Card makeCard({@required String title, String subtitle, Icon icon, double progress}) => Card(
       elevation: 8.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Container(
         decoration: BoxDecoration(color: Theme.of(context).cardColor),
-        child: makeListTile(title: title, subtitle: subtitle, icon: icon),
+        child: makeListTile(title: title, subtitle: subtitle, icon: icon, progress: progress),
       ),
     );
 
     return ListView(
       children: <Widget>[
-        makeCard(title: "2048", subtitle: "Can math really be fun?"),
-        makeCard(title: "Invisible", subtitle: "Sneak yourself to victory"),
-        makeCard(title: "Whack-A-Mole", subtitle: "Can you whack 'em all?"),
+        makeCard(title: "2048", subtitle: "Can math really be fun?", progress: 0.3),
+        makeCard(title: "Invisible", subtitle: "Sneak yourself to victory", progress: 0.8),
+        makeCard(title: "Whack-A-Mole", subtitle: "Can you whack 'em all?", progress: 0.5),
       ],
     );
   }
