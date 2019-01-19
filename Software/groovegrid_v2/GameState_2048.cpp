@@ -45,7 +45,14 @@ void GameState_2048::fillRandomField() {
 			x = rand() % BOARD_WIDTH;
 			y = rand() % BOARD_HEIGHT;
 		}while(board[y][x]!=0);
-		board[y][x] = 2;
+		if((rand() % 10) > 0)	//90% of cases
+		{
+			board[y][x] = 2;
+		}
+		else
+		{
+			board[y][x] = 4;	//10% of cases
+		}
 	}
 }
 
@@ -77,7 +84,7 @@ uint16_t GameState_2048::getField(uint8_t y, uint8_t x, direction_t direction)
 	}
 }
 
-void GameState_2048::setField(uint8_t y, uint8_t x, direction_t direction, uint8_t value)
+void GameState_2048::setField(uint8_t y, uint8_t x, direction_t direction, uint16_t value)
 {
 	switch (direction) {
 		case LEFT:
