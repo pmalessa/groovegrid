@@ -2,7 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
+BluetoothDevice lastConnectedDevice;
+
 class BluetoothSettings extends StatefulWidget {
+
+  static final BluetoothSettings _singleton = new BluetoothSettings._internal();
+
+  factory BluetoothSettings() {
+    return _singleton;
+  }
+
+  BluetoothSettings._internal() {
+    // Initialization
+  }
+
   @override
   _BluetoothSettingsState createState() => new _BluetoothSettingsState();
 }
@@ -17,9 +30,18 @@ class _BluetoothSettingsState extends State<BluetoothSettings> {
   FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
 
   List<BluetoothDevice> _devices = [];
-  BluetoothDevice _device;
+  BluetoothDevice _deviceInternal;
+
+  get _device {
+    return _deviceInternal;
+  }
+  set _device(BluetoothDevice newDevice) {
+    _deviceInternal = newDevice;
+    lastConnectedDevice = newDevice;
+  }
   bool _connected = false;
   bool _pressed = false;
+
 
   ///
   ///
@@ -27,6 +49,12 @@ class _BluetoothSettingsState extends State<BluetoothSettings> {
   @override
   void initState() {
     super.initState();
+    _device = lastConnectedDevice;
+    bluetooth.isConnected.then((connected) {
+      setState(() {
+        _connected = connected;
+      });
+    });
     initPlatformState();
   }
 
@@ -70,9 +98,14 @@ class _BluetoothSettingsState extends State<BluetoothSettings> {
       });
     });
 
-    if (!mounted) return;
+    //if (!mounted) return;
     setState(() {
       _devices = devices;
+      if (_device != null) {
+        _device = _devices.where((BluetoothDevice device) => device.name == _device.name).elementAt(0);
+        print("Last used Device name: ");
+        print(_device.name);
+      }
     });
   }
 
@@ -81,6 +114,8 @@ class _BluetoothSettingsState extends State<BluetoothSettings> {
   ///
   @override
   Widget build(BuildContext context) {
+    print("Device during Widget Build:");
+    print(_device);
       return Scaffold(
         appBar: AppBar(
           title: Text('Flutter Bluetooth Serial'),
@@ -172,6 +207,23 @@ class _BluetoothSettingsState extends State<BluetoothSettings> {
     return items;
   }
 
+  BluetoothDevice testeroo() {
+    var _deviceMenuItem = DropdownMenuItem<BluetoothDevice>(
+      child: Text(_device.name),
+      value: _device,
+    );
+    print(_device.toString());
+    var menuItems = _getDeviceItems();
+    var numberOfMatchingItems = menuItems.where((DropdownMenuItem<BluetoothDevice> item) => item.value == _deviceMenuItem.value).length;
+    print("Number of matching items: $numberOfMatchingItems");
+    menuItems.forEach((DropdownMenuItem<BluetoothDevice> item) => print(item.value.toString()));
+    if (numberOfMatchingItems == 1) {
+      return _device;
+    } else {
+      return null;
+    }
+  }
+
   ///
   ///
   ///
@@ -182,6 +234,7 @@ class _BluetoothSettingsState extends State<BluetoothSettings> {
       bluetooth.isConnected.then((isConnected) {
         if (!isConnected) {
           bluetooth.connect(_device).catchError((error) {
+            lastConnectedDevice = _device;
             setState(() => _pressed = false);
           });
           setState(() => _pressed = true);
@@ -189,6 +242,9 @@ class _BluetoothSettingsState extends State<BluetoothSettings> {
       });
     }
   }
+
+
+
 
   ///
   ///
