@@ -29,7 +29,7 @@ public:
 	void fillRandomField();
 	void initializeBoard();
 	uint16_t getField(uint8_t y, uint8_t x, direction_t direction);
-	void setField(uint8_t y, uint8_t x, direction_t direction, uint8_t value);
+	void setField(uint8_t y, uint8_t x, direction_t direction, uint16_t value);
 	bool move(direction_t direction);
 	bool canStep(direction_t direction);
 	bool canMerge(direction_t direction);

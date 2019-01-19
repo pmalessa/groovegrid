@@ -84,7 +84,7 @@ uint16_t GameState_2048::getField(uint8_t y, uint8_t x, direction_t direction)
 	}
 }
 
-void GameState_2048::setField(uint8_t y, uint8_t x, direction_t direction, uint8_t value)
+void GameState_2048::setField(uint8_t y, uint8_t x, direction_t direction, uint16_t value)
 {
 	switch (direction) {
 		case LEFT:
