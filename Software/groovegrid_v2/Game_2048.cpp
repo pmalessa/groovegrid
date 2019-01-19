@@ -138,8 +138,6 @@ void Game_2048_vSyncTask()	//every 1 ms
 				if(move_possible > 0)	//if it was moving, spawn new field
 				{
 					game.fillRandomField();
-					Game_2048_DrawBoard(game.board);
-					LED_vShow();
 				}
 				move_possible = 0;
 			}
