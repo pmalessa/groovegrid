@@ -8,6 +8,7 @@
 #include "Game_2048.h"
 #include "BUTTON.h"
 #include "HardwareSerial.h"
+#include "LED.h"
 
 #include "GameState_2048.h"
 
@@ -24,7 +25,7 @@ void move(direction_t dir) {
 void Game_2048_vSetup()
 {
 	game.initializeBoard();
-	LED_vDrawBoard(game.board);
+	Game_2048_DrawBoard(game.board);
 	LED_vShow();
 }
 
@@ -65,6 +66,56 @@ uint8_t Game_2048_u8Loop()
 	return true;	//keep running
 }
 
+void Game_2048_DrawBoard(uint16_t arr[YMAX][XMAX])
+{
+    for (uint8_t i = 0; i < YMAX; i++)
+      for (uint8_t j = 0; j < XMAX; j++)
+    	  Game_2048_DrawTile(j, i, arr[i][j]);
+}
+
+void Game_2048_DrawTile(uint16_t x, uint16_t y, uint16_t number)
+{
+	uint16_t col = 0;
+	switch (number) {
+		case 2:
+			 col = LED_u16rgbColor(COLOR_RED);
+			break;
+		case 4:
+			col = LED_u16rgbColor(COLOR_GREEN);
+			break;
+		case 8:
+			col = LED_u16rgbColor(COLOR_BLUE);
+			break;
+		case 16:
+			col = LED_u16rgbColor(COLOR_WHITE);
+			break;
+		case 32:
+			col = LED_u16rgbColor(COLOR_YELLOW);
+			break;
+		case 64:
+			col = LED_u16rgbColor(COLOR_VIOLET);
+			break;
+		case 128:
+			col = LED_u16rgbColor(COLOR_CYAN);
+			break;
+		case 256:
+			col = LED_u16rgbColor(COLOR_PINK);
+			break;
+		case 512:
+			col = LED_u16rgbColor(COLOR_ORANGE);
+			break;
+		case 1024:
+			col = LED_u16rgbColor(COLOR_LIGHTGREEN);
+			break;
+		case 2048:
+			col = LED_u16rgbColor(COLOR_PINKRED);
+			break;
+		default:
+			break;
+	}
+	LED_vDrawPixel(x, y, col);
+}
+
 void Game_2048_vSyncTask()	//every 1 ms
 {
 	static uint16_t game_cnt = 0;
@@ -87,12 +138,12 @@ void Game_2048_vSyncTask()	//every 1 ms
 				if(move_possible > 0)	//if it was moving, spawn new field
 				{
 					game.fillRandomField();
-					LED_vDrawBoard(game.board);
+					Game_2048_DrawBoard(game.board);
 					LED_vShow();
 				}
 				move_possible = 0;
 			}
-			LED_vDrawBoard(game.board);
+			Game_2048_DrawBoard(game.board);
 			LED_vShow();
 		}
 	}
