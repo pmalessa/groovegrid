@@ -2,6 +2,61 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'controls.dart';
 
+abstract class GrooveGridApp {
+  static GrooveGridApp runningApplication;
+  GrooveGridApp({
+    @required this.title,
+    this.iconData,
+    this.startCommand,
+    this.stopCommand,
+  }) {
+    if (startCommand == null)
+      startCommand = () => print("Default Start Command on $title");
+    if (stopCommand == null)
+      stopCommand = () => print("Default Stop Command on $title");
+  }
+
+  String title;
+  IconData iconData;
+  VoidCallback startCommand;
+  VoidCallback stopCommand;
+
+  Future start() async {
+    if (this != runningApplication) {
+      if (runningApplication == null) {
+        return Future(() {
+          startCommand();
+          runningApplication = this;
+        });
+      } else {
+        return runningApplication.stop().then((_) {
+          startCommand();
+          runningApplication = this;
+        });
+      }
+    }
+  }
+
+  Future stop() async {
+    if (this == runningApplication) {
+      return Future(() {
+        stopCommand();
+        runningApplication = null;
+      });
+    }
+  }
+
+  @override
+  bool operator ==(other) {
+    // TODO: implement ==
+    return other is GrooveGridApp && title == other.title;
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => title.hashCode;
+}
+
 class AnimationsListView extends StatefulWidget {
   @override
   _AnimationsListViewState createState() => _AnimationsListViewState();
@@ -57,9 +112,8 @@ class _AnimationsListViewState extends State<AnimationsListView> {
   ];
 }
 
-class GrooveGridAnimation {
-  GrooveGridAnimation({@required this.title});
-  String title;
+class GrooveGridAnimation extends GrooveGridApp {
+  GrooveGridAnimation({@required String title}): super(title: title);
 }
 
 class GamesListView extends StatefulWidget {
