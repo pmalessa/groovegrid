@@ -174,7 +174,7 @@ class _GamesListViewState extends State<GamesListView> {
     ListTile makeListTile(
             {@required String title,
             String subtitle,
-            Icon icon,
+            IconData icon,
             double progress}) =>
         ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
@@ -222,22 +222,15 @@ class _GamesListViewState extends State<GamesListView> {
 
     Card makeCard(
             {@required String title,
+            @required VoidCallback onPressed,
             String subtitle,
-            Icon icon,
+            IconData icon,
             double progress}) =>
         Card(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: FlatButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => SwipeControlsView(
-                          title: 'Animations/2048',
-                        )),
-              );
-            },
+            onPressed: onPressed,
             child: makeListTile(
                 title: title,
                 subtitle: subtitle,
@@ -246,19 +239,77 @@ class _GamesListViewState extends State<GamesListView> {
           ),
         );
 
-    return ListView(
-      children: <Widget>[
-        makeCard(
-            title: "2048", subtitle: "Can math really be fun?", progress: 0.3),
-        makeCard(
-            title: "Invisible",
-            subtitle: "Sneak yourself to victory",
-            progress: 0.8),
-        makeCard(
-            title: "Whack-A-Mole",
-            subtitle: "Can you whack 'em all?",
-            progress: 0.5),
-      ],
+//    return ListView(
+//      children: <Widget>[
+//        makeCard(
+//            title: "2048", subtitle: "Can math really be fun?", progress: 0.3),
+//        makeCard(
+//            title: "Invisible",
+//            subtitle: "Sneak yourself to victory",
+//            progress: 0.8),
+//        makeCard(
+//            title: "Whack-A-Mole",
+//            subtitle: "Can you whack 'em all?",
+//            progress: 0.5),
+//      ],
+//    );
+    return ListView.builder(
+      itemCount: _games.length,
+      itemBuilder: (context, index) {
+        var game = _games[index];
+        return makeCard(
+          title: game.title,
+          onPressed: () {
+            game.startCommand();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => game.controlsView),
+            );
+          },
+          subtitle: game.subtitle,
+          icon: game.iconData,
+          progress: game.progress,
+        );
+      },
     );
   }
+
+  List<GrooveGridGame> _games = [
+    GrooveGridGame(
+        title: "2048", subtitle: "Can math really be fun?", progress: 0.3),
+    GrooveGridGame(
+      title: "Invisible",
+      subtitle: "Sneak yourself to victory",
+      progress: 0.8,
+      startCommand: () {
+        print("Start command called on Invisible Game");
+      },
+    ),
+    GrooveGridGame(
+        title: "Whack-A-Mole",
+        subtitle: "Can you whack 'em all?",
+        progress: 0.5),
+  ];
+}
+
+class GrooveGridGame {
+  GrooveGridGame(
+      {@required this.title,
+      this.subtitle,
+      this.progress,
+      this.iconData,
+      this.startCommand}) {
+    if (controlsView == null) controlsView = SwipeControlsView(title: title);
+    if (startCommand == null) {
+      startCommand = () => print("Default Start Command");
+    }
+  }
+
+  String title;
+  String subtitle = "";
+  double progress = 0.0;
+  IconData iconData = Icons.videogame_asset;
+  Widget controlsView;
+  VoidCallback startCommand;
+  bool isRunning = false;
 }

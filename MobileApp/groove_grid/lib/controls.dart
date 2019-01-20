@@ -3,7 +3,7 @@ import 'bluetooth.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class SwipeControlsView extends StatefulWidget {
-  SwipeControlsView({Key key, this.title}) : super(key: key);
+  SwipeControlsView({Key key, @required this.title}) : super(key: key);
 
   final String title;
 
