@@ -76,7 +76,8 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BluetoothSettingsView()),
+                MaterialPageRoute(
+                    builder: (context) => BluetoothSettingsView()),
               );
             },
           ),
@@ -133,11 +134,13 @@ class _AnimationsListViewState extends State<AnimationsListView> {
           ),
           title: Text(
             title,
-            style: Theme.of(context).textTheme.subhead,//TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
           ),
           // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-          trailing:
-              Icon(Icons.more_vert, color: Theme.of(context).hintColor, size: 25.0),
+          trailing: Icon(Icons.more_vert,
+              color: Theme.of(context).hintColor, size: 25.0),
           onTap: null,
         );
 
@@ -160,7 +163,6 @@ class _AnimationsListViewState extends State<AnimationsListView> {
   }
 }
 
-
 class GamesListView extends StatefulWidget {
   @override
   _GamesListViewState createState() => _GamesListViewState();
@@ -169,61 +171,93 @@ class GamesListView extends StatefulWidget {
 class _GamesListViewState extends State<GamesListView> {
   @override
   Widget build(BuildContext context) {
-    ListTile makeListTile({@required String title, String subtitle, Icon icon, double progress}) => ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-      leading: Container(
-        padding: EdgeInsets.only(right: 12.0),
-        decoration: new BoxDecoration(
-            border: new Border(
-                right: new BorderSide(
-                    width: 1.0, color: Theme.of(context).hintColor))),
-        child: Icon(Icons.videogame_asset, color: Theme.of(context).hintColor),
-      ),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.subhead,//TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
-      ),
-      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+    ListTile makeListTile(
+            {@required String title,
+            String subtitle,
+            Icon icon,
+            double progress}) =>
+        ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+          leading: Container(
+            padding: EdgeInsets.only(right: 12.0),
+            decoration: new BoxDecoration(
+                border: new Border(
+                    right: new BorderSide(
+                        width: 1.0, color: Theme.of(context).hintColor))),
+            child:
+                Icon(Icons.videogame_asset, color: Theme.of(context).hintColor),
+          ),
+          title: Text(
+            title,
+            style: Theme.of(context)
+                .textTheme
+                .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+          ),
+          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-      subtitle: Row(
-        children: <Widget>[
-          Expanded(
-              flex: 1,
-              child: Container(
-                // tag: 'hero',
-                child: LinearProgressIndicator(
-                    backgroundColor: Color.fromRGBO(209, 224, 224, 0.4),
-                    value: progress != null? progress: 0.0,
-                    valueColor: AlwaysStoppedAnimation(Colors.green)),
-              )),
-          Expanded(
-            flex: 4,
-            child: Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: Text(subtitle != null? subtitle:"Undefined",
-                    style: Theme.of(context).textTheme.body1)),
-          )
-        ],
-      ),
-      trailing:
-      Icon(Icons.keyboard_arrow_right, color: Theme.of(context).hintColor, size: 30.0),
-      onTap: null,
-    );
+          subtitle: Row(
+            children: <Widget>[
+              Expanded(
+                  flex: 1,
+                  child: Container(
+                    // tag: 'hero',
+                    child: LinearProgressIndicator(
+                        backgroundColor: Color.fromRGBO(209, 224, 224, 0.4),
+                        value: progress != null ? progress : 0.0,
+                        valueColor: AlwaysStoppedAnimation(Colors.green)),
+                  )),
+              Expanded(
+                flex: 4,
+                child: Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text(subtitle != null ? subtitle : "Undefined",
+                        style: Theme.of(context).textTheme.body1)),
+              )
+            ],
+          ),
+          trailing: Icon(Icons.keyboard_arrow_right,
+              color: Theme.of(context).hintColor, size: 30.0),
+          onTap: null,
+        );
 
-    Card makeCard({@required String title, String subtitle, Icon icon, double progress}) => Card(
-      elevation: 8.0,
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(color: Theme.of(context).cardColor),
-        child: makeListTile(title: title, subtitle: subtitle, icon: icon, progress: progress),
-      ),
-    );
+    Card makeCard(
+            {@required String title,
+            String subtitle,
+            Icon icon,
+            double progress}) =>
+        Card(
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: FlatButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SwipeControlsView(
+                          title: 'Animations/2048',
+                        )),
+              );
+            },
+            child: makeListTile(
+                title: title,
+                subtitle: subtitle,
+                icon: icon,
+                progress: progress),
+          ),
+        );
 
     return ListView(
       children: <Widget>[
-        makeCard(title: "2048", subtitle: "Can math really be fun?", progress: 0.3),
-        makeCard(title: "Invisible", subtitle: "Sneak yourself to victory", progress: 0.8),
-        makeCard(title: "Whack-A-Mole", subtitle: "Can you whack 'em all?", progress: 0.5),
+        makeCard(
+            title: "2048", subtitle: "Can math really be fun?", progress: 0.3),
+        makeCard(
+            title: "Invisible",
+            subtitle: "Sneak yourself to victory",
+            progress: 0.8),
+        makeCard(
+            title: "Whack-A-Mole",
+            subtitle: "Can you whack 'em all?",
+            progress: 0.5),
       ],
     );
   }
