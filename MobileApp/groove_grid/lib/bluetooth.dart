@@ -4,16 +4,16 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 BluetoothDevice lastConnectedDevice;
 
-class BluetoothSettings extends StatefulWidget {
+class BluetoothSettingsView extends StatefulWidget {
 
   @override
-  _BluetoothSettingsState createState() => new _BluetoothSettingsState();
+  _BluetoothSettingsViewState createState() => new _BluetoothSettingsViewState();
 }
 
 ///
 ///
 ///
-class _BluetoothSettingsState extends State<BluetoothSettings> {
+class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   static final TextEditingController _message = new TextEditingController();
   static final TextEditingController _text = new TextEditingController();
 

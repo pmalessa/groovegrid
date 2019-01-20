@@ -5,10 +5,10 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 void main() {
   print("App starting...");
-  runApp(MyApp());
+  runApp(GrooveGridApp());
 }
 
-class MyApp extends StatelessWidget {
+class GrooveGridApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BluetoothSettings()),
+                MaterialPageRoute(builder: (context) => BluetoothSettingsView()),
               );
             },
           ),
