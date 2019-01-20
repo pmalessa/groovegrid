@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'bluetooth.dart';
 import 'controls.dart';
@@ -153,13 +155,6 @@ class _AnimationsListViewState extends State<AnimationsListView> {
           ),
         );
 
-//    return ListView(
-//      children: <Widget>[
-//        makeCard("Standard Animation"),
-//        makeCard("New Animation"),
-//        makeCard("Another New Animation"),
-//      ],
-//    );
     return ListView.builder(
       itemCount: _animations.length,
       itemBuilder: (context, index) {
@@ -168,7 +163,7 @@ class _AnimationsListViewState extends State<AnimationsListView> {
       },
     );
   }
-  
+
   List<GrooveGridAnimation> _animations = [
     GrooveGridAnimation(title: "Standard Animation"),
     GrooveGridAnimation(title: "New Animation"),
@@ -193,23 +188,39 @@ class _GamesListViewState extends State<GamesListView> {
             {@required String title,
             String subtitle,
             IconData icon,
-            double progress}) =>
+            double progress,
+            @required bool highlight}) =>
         ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
           leading: Container(
             padding: EdgeInsets.only(right: 12.0),
             decoration: new BoxDecoration(
-                border: new Border(
-                    right: new BorderSide(
-                        width: 1.0, color: Theme.of(context).hintColor))),
-            child:
-                Icon(Icons.videogame_asset, color: Theme.of(context).hintColor),
+              border: new Border(
+                right: new BorderSide(
+                  width: 1.0,
+                  color: highlight
+                      ? Theme.of(context).accentColor
+                      : Theme.of(context).hintColor,
+                ),
+              ),
+            ),
+            child: Icon(
+              Icons.videogame_asset,
+              color: highlight
+                  ? Theme.of(context).accentColor
+                  : Theme.of(context).hintColor,
+            ),
           ),
           title: Text(
             title,
-            style: Theme.of(context)
-                .textTheme
-                .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+            style: highlight
+                ? Theme.of(context)
+                    .textTheme
+                    .subhead
+                    .apply(color: Theme.of(context).accentColor)
+                : Theme.of(context)
+                    .textTheme
+                    .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
           ),
           // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
@@ -243,17 +254,20 @@ class _GamesListViewState extends State<GamesListView> {
             @required VoidCallback onPressed,
             String subtitle,
             IconData icon,
-            double progress}) =>
+            double progress,
+            bool highlight}) =>
         Card(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: FlatButton(
             onPressed: onPressed,
             child: makeListTile(
-                title: title,
-                subtitle: subtitle,
-                icon: icon,
-                progress: progress),
+              title: title,
+              subtitle: subtitle,
+              icon: icon,
+              progress: progress,
+              highlight: highlight,
+            ),
           ),
         );
 
@@ -264,7 +278,7 @@ class _GamesListViewState extends State<GamesListView> {
         return makeCard(
           title: game.title,
           onPressed: () {
-            game.startCommand();
+            game.start();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => game.controlsView),
@@ -273,6 +287,7 @@ class _GamesListViewState extends State<GamesListView> {
           subtitle: game.subtitle,
           icon: game.iconData,
           progress: game.progress,
+          highlight: game == GrooveGridGame.currentGame ? true : false,
         );
       },
     );
@@ -297,16 +312,21 @@ class _GamesListViewState extends State<GamesListView> {
 }
 
 class GrooveGridGame {
-  GrooveGridGame(
-      {@required this.title,
-      this.subtitle,
-      this.progress,
-      this.iconData,
-      this.startCommand}) {
+  static GrooveGridGame currentGame;
+
+  GrooveGridGame({
+    @required this.title,
+    this.subtitle,
+    this.progress,
+    this.iconData,
+    this.startCommand,
+    this.stopCommand,
+  }) {
     if (controlsView == null) controlsView = SwipeControlsView(title: title);
-    if (startCommand == null) {
-      startCommand = () => print("Default Start Command");
-    }
+    if (startCommand == null)
+      startCommand = () => print("Default Start Command on $title");
+    if (stopCommand == null)
+      stopCommand = () => print("Default Stop Command on $title");
   }
 
   String title;
@@ -315,5 +335,41 @@ class GrooveGridGame {
   IconData iconData = Icons.videogame_asset;
   Widget controlsView;
   VoidCallback startCommand;
+  VoidCallback stopCommand;
   bool isRunning = false;
+
+  Future start() async {
+    if (this != currentGame) {
+      if (currentGame == null) {
+        return Future(() {
+          startCommand();
+          currentGame = this;
+        });
+      } else {
+        return currentGame.stop().then((_) {
+          startCommand();
+          currentGame = this;
+        });
+      }
+    }
+  }
+
+  Future stop() async {
+    if (this == currentGame) {
+      return Future(() {
+        stopCommand();
+        currentGame = null;
+      });
+    }
+  }
+
+  @override
+  bool operator ==(other) {
+    // TODO: implement ==
+    return other is GrooveGridGame && title == other.title;
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => title.hashCode;
 }
