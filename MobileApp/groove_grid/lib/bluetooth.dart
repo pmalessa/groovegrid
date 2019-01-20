@@ -6,16 +6,6 @@ BluetoothDevice lastConnectedDevice;
 
 class BluetoothSettings extends StatefulWidget {
 
-  static final BluetoothSettings _singleton = new BluetoothSettings._internal();
-
-  factory BluetoothSettings() {
-    return _singleton;
-  }
-
-  BluetoothSettings._internal() {
-    // Initialization
-  }
-
   @override
   _BluetoothSettingsState createState() => new _BluetoothSettingsState();
 }
