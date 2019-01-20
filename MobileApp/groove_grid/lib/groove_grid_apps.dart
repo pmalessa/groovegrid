@@ -66,35 +66,35 @@ class _AnimationsListViewState extends State<AnimationsListView> {
   @override
   Widget build(BuildContext context) {
     ListTile makeListTile(String title) => ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-      leading: Container(
-        padding: EdgeInsets.only(right: 12.0),
-        decoration: new BoxDecoration(
-            border: new Border(
-                right: new BorderSide(
-                    width: 1.0, color: Theme.of(context).hintColor))),
-        child: Icon(Icons.bubble_chart, color: Theme.of(context).hintColor),
-      ),
-      title: Text(
-        title,
-        style: Theme.of(context)
-            .textTheme
-            .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
-      ),
-      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-      trailing: Icon(Icons.more_vert,
-          color: Theme.of(context).hintColor, size: 25.0),
-      onTap: null,
-    );
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+          leading: Container(
+            padding: EdgeInsets.only(right: 12.0),
+            decoration: new BoxDecoration(
+                border: new Border(
+                    right: new BorderSide(
+                        width: 1.0, color: Theme.of(context).hintColor))),
+            child: Icon(Icons.bubble_chart, color: Theme.of(context).hintColor),
+          ),
+          title: Text(
+            title,
+            style: Theme.of(context)
+                .textTheme
+                .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+          ),
+          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+          trailing: Icon(Icons.more_vert,
+              color: Theme.of(context).hintColor, size: 25.0),
+          onTap: null,
+        );
 
     Card makeCard(String title) => Card(
-      elevation: 8.0,
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(color: Theme.of(context).cardColor),
-        child: makeListTile(title),
-      ),
-    );
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: Container(
+            decoration: BoxDecoration(color: Theme.of(context).cardColor),
+            child: makeListTile(title),
+          ),
+        );
 
     return ListView.builder(
       itemCount: _animations.length,
@@ -113,7 +113,17 @@ class _AnimationsListViewState extends State<AnimationsListView> {
 }
 
 class GrooveGridAnimation extends GrooveGridApp {
-  GrooveGridAnimation({@required String title}): super(title: title);
+  GrooveGridAnimation({
+    @required String title,
+    IconData iconData,
+    VoidCallback startCommand,
+    VoidCallback stopCommand,
+  }) : super(
+          title: title,
+          iconData: iconData,
+          startCommand: startCommand,
+          stopCommand: stopCommand,
+        );
 }
 
 class GamesListView extends StatefulWidget {
@@ -125,11 +135,11 @@ class _GamesListViewState extends State<GamesListView> {
   @override
   Widget build(BuildContext context) {
     ListTile makeListTile(
-        {@required String title,
-          String subtitle,
-          IconData icon,
-          double progress,
-          @required bool highlight}) =>
+            {@required String title,
+            String subtitle,
+            IconData icon,
+            double progress,
+            @required bool highlight}) =>
         ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
           leading: Container(
@@ -155,12 +165,12 @@ class _GamesListViewState extends State<GamesListView> {
             title,
             style: highlight
                 ? Theme.of(context)
-                .textTheme
-                .subhead
-                .apply(color: Theme.of(context).accentColor)
+                    .textTheme
+                    .subhead
+                    .apply(color: Theme.of(context).accentColor)
                 : Theme.of(context)
-                .textTheme
-                .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+                    .textTheme
+                    .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
           ),
           // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
@@ -190,12 +200,12 @@ class _GamesListViewState extends State<GamesListView> {
         );
 
     Card makeCard(
-        {@required String title,
-          @required VoidCallback onPressed,
-          String subtitle,
-          IconData icon,
-          double progress,
-          bool highlight}) =>
+            {@required String title,
+            @required VoidCallback onPressed,
+            String subtitle,
+            IconData icon,
+            double progress,
+            bool highlight}) =>
         Card(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
@@ -227,7 +237,7 @@ class _GamesListViewState extends State<GamesListView> {
           subtitle: game.subtitle,
           icon: game.iconData,
           progress: game.progress,
-          highlight: game == GrooveGridGame.currentGame ? true : false,
+          highlight: game == GrooveGridApp.runningApplication ? true : false,
         );
       },
     );
@@ -251,57 +261,29 @@ class _GamesListViewState extends State<GamesListView> {
   ];
 }
 
-class GrooveGridGame {
-  static GrooveGridGame currentGame;
+class GrooveGridGame extends GrooveGridApp {
 
   GrooveGridGame({
-    @required this.title,
+    @required String title,
     this.subtitle,
     this.progress,
-    this.iconData,
-    this.startCommand,
-    this.stopCommand,
-  }) {
+    IconData iconData,
+    VoidCallback startCommand,
+    VoidCallback stopCommand,
+  }) : super(
+            title: title,
+            iconData: iconData,
+            startCommand: startCommand,
+            stopCommand: stopCommand) {
     if (controlsView == null) controlsView = SwipeControlsView(title: title);
-    if (startCommand == null)
-      startCommand = () => print("Default Start Command on $title");
-    if (stopCommand == null)
-      stopCommand = () => print("Default Stop Command on $title");
+    if (iconData == null) iconData = Icons.videogame_asset;
   }
 
-  String title;
   String subtitle = "";
   double progress = 0.0;
-  IconData iconData = Icons.videogame_asset;
   Widget controlsView;
-  VoidCallback startCommand;
-  VoidCallback stopCommand;
   bool isRunning = false;
 
-  Future start() async {
-    if (this != currentGame) {
-      if (currentGame == null) {
-        return Future(() {
-          startCommand();
-          currentGame = this;
-        });
-      } else {
-        return currentGame.stop().then((_) {
-          startCommand();
-          currentGame = this;
-        });
-      }
-    }
-  }
-
-  Future stop() async {
-    if (this == currentGame) {
-      return Future(() {
-        stopCommand();
-        currentGame = null;
-      });
-    }
-  }
 
   @override
   bool operator ==(other) {
