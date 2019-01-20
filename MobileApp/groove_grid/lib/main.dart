@@ -153,14 +153,32 @@ class _AnimationsListViewState extends State<AnimationsListView> {
           ),
         );
 
-    return ListView(
-      children: <Widget>[
-        makeCard("Standard Animation"),
-        makeCard("New Animation"),
-        makeCard("Another New Animation"),
-      ],
+//    return ListView(
+//      children: <Widget>[
+//        makeCard("Standard Animation"),
+//        makeCard("New Animation"),
+//        makeCard("Another New Animation"),
+//      ],
+//    );
+    return ListView.builder(
+      itemCount: _animations.length,
+      itemBuilder: (context, index) {
+        GrooveGridAnimation animation = _animations[index];
+        return makeCard(animation.title);
+      },
     );
   }
+  
+  List<GrooveGridAnimation> _animations = [
+    GrooveGridAnimation(title: "Standard Animation"),
+    GrooveGridAnimation(title: "New Animation"),
+    GrooveGridAnimation(title: "Another New Animation"),
+  ];
+}
+
+class GrooveGridAnimation {
+  GrooveGridAnimation({@required this.title});
+  String title;
 }
 
 class GamesListView extends StatefulWidget {
@@ -239,20 +257,6 @@ class _GamesListViewState extends State<GamesListView> {
           ),
         );
 
-//    return ListView(
-//      children: <Widget>[
-//        makeCard(
-//            title: "2048", subtitle: "Can math really be fun?", progress: 0.3),
-//        makeCard(
-//            title: "Invisible",
-//            subtitle: "Sneak yourself to victory",
-//            progress: 0.8),
-//        makeCard(
-//            title: "Whack-A-Mole",
-//            subtitle: "Can you whack 'em all?",
-//            progress: 0.5),
-//      ],
-//    );
     return ListView.builder(
       itemCount: _games.length,
       itemBuilder: (context, index) {
