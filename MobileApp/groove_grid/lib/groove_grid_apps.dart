@@ -2,20 +2,40 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'controls.dart';
 
+var listener = GrooveGridApp.onRunningApplicationChanged().listen(
+    (GrooveGridApp runningApp) => print("Running App changed to $runningApp"));
+
 abstract class GrooveGridApp {
-  static GrooveGridApp runningApplication;
+  static GrooveGridApp _runningApplication;
+
+  static GrooveGridApp get runningApplication => _runningApplication;
+  static set runningApplication(newValue) {
+    _runningApplication = newValue;
+    streamController.add(newValue);
+  }
+
+  static StreamController<GrooveGridApp> streamController =
+      StreamController<GrooveGridApp>.broadcast();
+
+  static Stream<GrooveGridApp> onRunningApplicationChanged() {
+    return streamController.stream;
+  }
+
   GrooveGridApp({
     @required this.title,
     this.iconData,
     this.startCommand,
     this.stopCommand,
+    this.hasControls,
   }) {
     if (startCommand == null)
       startCommand = () => print("Default Start Command on $title");
     if (stopCommand == null)
       stopCommand = () => print("Default Stop Command on $title");
+    if (hasControls == null) hasControls = false;
   }
 
+  bool hasControls = false;
   String title;
   IconData iconData;
   VoidCallback startCommand;
@@ -29,7 +49,7 @@ abstract class GrooveGridApp {
           runningApplication = this;
         });
       } else {
-        return runningApplication.stop().then((_) {
+        return runningApplication._stopWithoutResettingRunningApp().then((_) {
           startCommand();
           runningApplication = this;
         });
@@ -37,13 +57,24 @@ abstract class GrooveGridApp {
     }
   }
 
-  Future stop() async {
+  Future _stopWithoutResettingRunningApp() async {
     if (this == runningApplication) {
       return Future(() {
         stopCommand();
-        runningApplication = null;
       });
     }
+  }
+
+  Future stop() async {
+//    if (this == runningApplication) {
+//      return Future(() {
+//        stopCommand();
+//        runningApplication = null;
+//      });
+//    }
+    return _stopWithoutResettingRunningApp().then((_) {
+      runningApplication = null;
+    });
   }
 
   @override
@@ -65,7 +96,7 @@ class AnimationsListView extends StatefulWidget {
 class _AnimationsListViewState extends State<AnimationsListView> {
   @override
   Widget build(BuildContext context) {
-    ListTile makeListTile(String title) => ListTile(
+    ListTile makeListTile({@required String title, bool highlight}) => ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
           leading: Container(
             padding: EdgeInsets.only(right: 12.0),
@@ -77,9 +108,14 @@ class _AnimationsListViewState extends State<AnimationsListView> {
           ),
           title: Text(
             title,
-            style: Theme.of(context)
-                .textTheme
-                .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+            style: highlight
+                ? Theme.of(context)
+                    .textTheme
+                    .subhead
+                    .apply(color: Theme.of(context).accentColor)
+                : Theme.of(context)
+                    .textTheme
+                    .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
           ),
           // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
           trailing: Icon(Icons.more_vert,
@@ -87,12 +123,15 @@ class _AnimationsListViewState extends State<AnimationsListView> {
           onTap: null,
         );
 
-    Card makeCard(String title) => Card(
+    Card makeCard(
+            {@required String title, VoidCallback onPressed, bool highlight}) =>
+        Card(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-          child: Container(
-            decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: makeListTile(title),
+          child: FlatButton(
+            onPressed: onPressed,
+            child: makeListTile(
+                title: title, highlight: highlight != null ? highlight : false),
           ),
         );
 
@@ -100,7 +139,16 @@ class _AnimationsListViewState extends State<AnimationsListView> {
       itemCount: _animations.length,
       itemBuilder: (context, index) {
         GrooveGridAnimation animation = _animations[index];
-        return makeCard(animation.title);
+        return makeCard(
+          title: animation.title,
+          onPressed: () {
+            animation.start();
+//            bool isCurrentlyRunning = animation == GrooveGridApp.runningApplication;
+//            print("This is the currently running application: $isCurrentlyRunning");
+//            print("Current running Application: ${GrooveGridApp.runningApplication}");
+          },
+          highlight: animation == GrooveGridApp.runningApplication,
+        );
       },
     );
   }
@@ -118,10 +166,12 @@ class GrooveGridAnimation extends GrooveGridApp {
     IconData iconData,
     VoidCallback startCommand,
     VoidCallback stopCommand,
+    bool hasControls,
   }) : super(
           title: title,
           iconData: iconData,
           startCommand: startCommand,
+          hasControls: hasControls,
           stopCommand: stopCommand,
         );
 }
@@ -228,11 +278,10 @@ class _GamesListViewState extends State<GamesListView> {
         return makeCard(
           title: game.title,
           onPressed: () {
-            game.start();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => game.controlsView),
-            );
+            ).then((_) => game.start());
           },
           subtitle: game.subtitle,
           icon: game.iconData,
@@ -262,19 +311,20 @@ class _GamesListViewState extends State<GamesListView> {
 }
 
 class GrooveGridGame extends GrooveGridApp {
-
   GrooveGridGame({
     @required String title,
-    this.subtitle,
-    this.progress,
     IconData iconData,
     VoidCallback startCommand,
     VoidCallback stopCommand,
+    this.subtitle,
+    this.progress,
   }) : super(
-            title: title,
-            iconData: iconData,
-            startCommand: startCommand,
-            stopCommand: stopCommand) {
+          title: title,
+          iconData: iconData,
+          hasControls: true,
+          startCommand: startCommand,
+          stopCommand: stopCommand,
+        ) {
     if (controlsView == null) controlsView = SwipeControlsView(title: title);
     if (iconData == null) iconData = Icons.videogame_asset;
   }
@@ -283,7 +333,6 @@ class GrooveGridGame extends GrooveGridApp {
   double progress = 0.0;
   Widget controlsView;
   bool isRunning = false;
-
 
   @override
   bool operator ==(other) {

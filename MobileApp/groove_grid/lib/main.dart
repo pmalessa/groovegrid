@@ -53,6 +53,17 @@ class _HomePageState extends State<HomePage> {
   String _tab1LabelText = "First Tab";
   String _tab2LabelText = "Second Tab";
 
+  _HomePageState() {
+    setupStreams();
+  }
+  void setupStreams() {
+    GrooveGridApp.onRunningApplicationChanged()
+        .listen((GrooveGridApp runningApp) {
+      print("Running App changed to $runningApp");
+      setState(() {});
+    });
+  }
+
   void _setTab1Label(String text) {
     setState(() {
       _tab1LabelText = text;
@@ -96,22 +107,24 @@ class _HomePageState extends State<HomePage> {
             GamesListView(),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SwipeControlsView(
-                        title: 'Animations/2048',
-                      )),
-            );
-          },
-          tooltip: 'Play',
-          child: Icon(Icons.play_arrow),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
+        floatingActionButton: GrooveGridApp.runningApplication == null
+            ? null
+            : !GrooveGridApp.runningApplication.hasControls
+                ? null
+                : FloatingActionButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SwipeControlsView(
+                                  title: 'Animations/2048',
+                                )),
+                      );
+                    },
+                    tooltip: 'Play',
+                    child: Icon(Icons.play_arrow),
+                  ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
   }
 }
-
-
