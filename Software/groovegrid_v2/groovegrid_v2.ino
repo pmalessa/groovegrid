@@ -7,6 +7,7 @@
 
 #include "ANIMATION.h"
 #include "Game_2048.h"
+#include "Game_TicTacToe.h"
 
 uint8_t programstate = 0;
 void setup()
@@ -22,6 +23,7 @@ void setup()
 
 	ANIMATION_vBoot();
 	Timer1.attachInterrupt(timer, 1000);
+
 }
 
 // The loop function is called in an endless loop
@@ -56,6 +58,9 @@ void timer()	//called every 1ms
 			break;
 		case 1:
 			Game_2048_vSyncTask();
+			break;
+		case 2:
+			Game_TicTacToe_Output();
 			break;
 		default:
 			break;
