@@ -93,12 +93,74 @@ abstract class GrooveGridApp {
   int get hashCode => title.hashCode;
 }
 
+class GrooveGridAnimation extends GrooveGridApp {
+  GrooveGridAnimation({
+    @required String title,
+    IconData iconData,
+    VoidCallback startCommand,
+    VoidCallback stopCommand,
+    bool hasControls,
+  }) : super(
+    title: title,
+    iconData: iconData,
+    startCommand: startCommand,
+    stopCommand: stopCommand,
+  );
+}
+
+class GrooveGridGame extends GrooveGridApp {
+  GrooveGridGame({
+    @required String title,
+    IconData iconData,
+    VoidCallback startCommand,
+    VoidCallback stopCommand,
+    this.subtitle,
+    this.progress,
+  }) : super(
+    title: title,
+    iconData: iconData,
+    startCommand: startCommand,
+    stopCommand: stopCommand,
+  ) {
+    if (controlsView == null) controlsView = SwipeControlsView(title: title);
+    if (iconData == null) iconData = Icons.videogame_asset;
+  }
+
+  String subtitle = "";
+  double progress = 0.0;
+  Widget controlsView;
+  bool isRunning = false;
+
+  @override
+  bool operator ==(other) {
+    // TODO: implement ==
+    return other is GrooveGridGame && title == other.title;
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => title.hashCode;
+}
+
+class GamesModel {
+
+}
+
+class AnimationsModel {
+  List<GrooveGridAnimation> _animations = [
+    GrooveGridAnimation(title: "Standard Animation"),
+//    GrooveGridAnimation(title: "New Animation"),
+//    GrooveGridAnimation(title: "Another New Animation"),
+  ];
+}
+
 class AnimationsListView extends StatefulWidget {
   @override
   _AnimationsListViewState createState() => _AnimationsListViewState();
 }
 
 class _AnimationsListViewState extends State<AnimationsListView> {
+
   @override
   Widget build(BuildContext context) {
     ListTile makeListTile({@required String title, bool highlight}) => ListTile(
@@ -163,21 +225,6 @@ class _AnimationsListViewState extends State<AnimationsListView> {
 //    GrooveGridAnimation(title: "New Animation"),
 //    GrooveGridAnimation(title: "Another New Animation"),
   ];
-}
-
-class GrooveGridAnimation extends GrooveGridApp {
-  GrooveGridAnimation({
-    @required String title,
-    IconData iconData,
-    VoidCallback startCommand,
-    VoidCallback stopCommand,
-    bool hasControls,
-  }) : super(
-          title: title,
-          iconData: iconData,
-          startCommand: startCommand,
-          stopCommand: stopCommand,
-        );
 }
 
 class GamesListView extends StatefulWidget {
@@ -323,38 +370,4 @@ class _GamesListViewState extends State<GamesListView> {
 //        subtitle: "Can you whack 'em all?",
 //        progress: 0.5),
   ];
-}
-
-class GrooveGridGame extends GrooveGridApp {
-  GrooveGridGame({
-    @required String title,
-    IconData iconData,
-    VoidCallback startCommand,
-    VoidCallback stopCommand,
-    this.subtitle,
-    this.progress,
-  }) : super(
-          title: title,
-          iconData: iconData,
-          startCommand: startCommand,
-          stopCommand: stopCommand,
-        ) {
-    if (controlsView == null) controlsView = SwipeControlsView(title: title);
-    if (iconData == null) iconData = Icons.videogame_asset;
-  }
-
-  String subtitle = "";
-  double progress = 0.0;
-  Widget controlsView;
-  bool isRunning = false;
-
-  @override
-  bool operator ==(other) {
-    // TODO: implement ==
-    return other is GrooveGridGame && title == other.title;
-  }
-
-  @override
-  // TODO: implement hashCode
-  int get hashCode => title.hashCode;
 }
