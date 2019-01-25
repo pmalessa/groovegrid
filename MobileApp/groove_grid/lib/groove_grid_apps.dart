@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'controls.dart';
 
 var listener = GrooveGridApp.onRunningApplicationChanged().listen(
@@ -26,20 +27,24 @@ abstract class GrooveGridApp {
     this.iconData,
     this.startCommand,
     this.stopCommand,
-    this.hasControls,
+    this.controlsView,
   }) {
     if (startCommand == null)
       startCommand = () => print("Default Start Command on $title");
     if (stopCommand == null)
       stopCommand = () => print("Default Stop Command on $title");
-    if (hasControls == null) hasControls = false;
   }
 
-  bool hasControls = false;
+  //bool hasControls = false;
+  bool get hasControls {
+    return controlsView != null;
+  }
+
   String title;
   IconData iconData;
   VoidCallback startCommand;
   VoidCallback stopCommand;
+  Widget controlsView;
 
   Future start() async {
     if (this != runningApplication) {
@@ -155,8 +160,8 @@ class _AnimationsListViewState extends State<AnimationsListView> {
 
   List<GrooveGridAnimation> _animations = [
     GrooveGridAnimation(title: "Standard Animation"),
-    GrooveGridAnimation(title: "New Animation"),
-    GrooveGridAnimation(title: "Another New Animation"),
+//    GrooveGridAnimation(title: "New Animation"),
+//    GrooveGridAnimation(title: "Another New Animation"),
   ];
 }
 
@@ -171,7 +176,6 @@ class GrooveGridAnimation extends GrooveGridApp {
           title: title,
           iconData: iconData,
           startCommand: startCommand,
-          hasControls: hasControls,
           stopCommand: stopCommand,
         );
 }
@@ -278,10 +282,16 @@ class _GamesListViewState extends State<GamesListView> {
         return makeCard(
           title: game.title,
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => game.controlsView),
-            ).then((_) => game.start());
+            game.start().then((_) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => game.controlsView),
+              );
+            });
+//            Navigator.push(
+//              context,
+//              MaterialPageRoute(builder: (context) => game.controlsView),
+//            ).then((_) => game.start());
           },
           subtitle: game.subtitle,
           icon: game.iconData,
@@ -294,19 +304,24 @@ class _GamesListViewState extends State<GamesListView> {
 
   List<GrooveGridGame> _games = [
     GrooveGridGame(
-        title: "2048", subtitle: "Can math really be fun?", progress: 0.3),
-    GrooveGridGame(
-      title: "Invisible",
-      subtitle: "Sneak yourself to victory",
-      progress: 0.8,
-      startCommand: () {
-        print("Start command called on Invisible Game");
-      },
+      title: "2048",
+      subtitle: "Can math really be fun?",
+      progress: 0.3,
+      startCommand: () => FlutterBluetoothSerial.instance.write('1'),
+      stopCommand: () => FlutterBluetoothSerial.instance.write('q'),
     ),
-    GrooveGridGame(
-        title: "Whack-A-Mole",
-        subtitle: "Can you whack 'em all?",
-        progress: 0.5),
+//    GrooveGridGame(
+//      title: "Invisible",
+//      subtitle: "Sneak yourself to victory",
+//      progress: 0.8,
+//      startCommand: () {
+//        print("Start command called on Invisible Game");
+//      },
+//    ),
+//    GrooveGridGame(
+//        title: "Whack-A-Mole",
+//        subtitle: "Can you whack 'em all?",
+//        progress: 0.5),
   ];
 }
 
@@ -321,7 +336,6 @@ class GrooveGridGame extends GrooveGridApp {
   }) : super(
           title: title,
           iconData: iconData,
-          hasControls: true,
           startCommand: startCommand,
           stopCommand: stopCommand,
         ) {

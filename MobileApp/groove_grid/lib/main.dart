@@ -60,7 +60,12 @@ class _HomePageState extends State<HomePage> {
     GrooveGridApp.onRunningApplicationChanged()
         .listen((GrooveGridApp runningApp) {
       print("Running App changed to $runningApp");
-      setState(() {});
+      // Only redraw to remove the controls floating action button
+      // When an app that has controls starts, the controls view is opened,
+      // so this view doesn't need to refresh
+      if (!runningApp.hasControls) {
+        setState(() {});
+      }
     });
   }
 
@@ -83,7 +88,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.bluetooth),
+            icon: Icon(Icons.settings_bluetooth),
             onPressed: () {
               Navigator.push(
                 context,
@@ -113,13 +118,12 @@ class _HomePageState extends State<HomePage> {
                 ? null
                 : FloatingActionButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SwipeControlsView(
-                                  title: 'Animations/2048',
-                                )),
-                      );
+                      GrooveGridApp.runningApplication.start().then((_) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GrooveGridApp.runningApplication.controlsView),
+                        );
+                      });
                     },
                     tooltip: 'Play',
                     child: Icon(Icons.play_arrow),
