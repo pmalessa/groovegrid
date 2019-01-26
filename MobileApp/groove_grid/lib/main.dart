@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:groove_grid/bloc/global_bloc.dart';
+import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:groove_grid/model.dart';
 import 'bluetooth.dart';
 import 'controls.dart';
@@ -12,25 +15,33 @@ void main() {
 class GrooveGridRemoteApp extends StatelessWidget {
   // This widget is the root of your application.
 
-  final GrooveGridAppState appState = GrooveGridAppState();
+  final GrooveGridAppsState appState = GrooveGridAppsState();
+  final GrooveGridAppsBloc appsBloc = GrooveGridAppsBloc();
+  final GlobalBloc globalBloc = GlobalBloc();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'GrooveGrid',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+    return BlocProvider(
+      bloc: globalBloc,
+      child: MaterialApp(
+        title: 'GrooveGrid',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+        ),
+        home: HomePage(
+          title: 'GrooveGrid',
+          appState: appState,
+        ),
       ),
-      home: HomePage(title: 'GrooveGrid', appState: appState,),
     );
   }
 }
@@ -48,7 +59,7 @@ class HomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
-  final GrooveGridAppState appState;
+  final GrooveGridAppsState appState;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -64,6 +75,13 @@ class _HomePageState extends State<HomePage> {
   _HomePageState() {
     setupStreams();
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   void setupStreams() {
     GrooveGridApp.onRunningApplicationChanged()
         .listen((GrooveGridApp runningApp) {
@@ -84,12 +102,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   GamesListView createGamesView() {
-    gamesView = GamesListView(games: widget.appState.games,);
+    gamesView = GamesListView(
+      games: widget.appState.games,
+    );
     return gamesView;
   }
 
   AnimationsListView createAnimationsView() {
-    animationsView = AnimationsListView(animations: widget.appState.animations,);
+    animationsView = AnimationsListView(
+      animations: widget.appState.animations,
+    );
     return animationsView;
   }
 
@@ -139,7 +161,9 @@ class _HomePageState extends State<HomePage> {
                       GrooveGridApp.runningApplication.start().then((_) {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => GrooveGridApp.runningApplication.controlsView),
+                          MaterialPageRoute(
+                              builder: (context) => GrooveGridApp
+                                  .runningApplication.controlsView),
                         );
                       });
                     },

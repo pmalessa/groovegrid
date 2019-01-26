@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:groove_grid/bloc/global_bloc.dart';
+import 'package:groove_grid/groove_grid_app_event.dart';
+import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:groove_grid/model.dart';
 import 'controls.dart';
 
 abstract class GrooveGridApp {
@@ -98,11 +103,11 @@ class GrooveGridAnimation extends GrooveGridApp {
     VoidCallback stopCommand,
     bool hasControls,
   }) : super(
-    title: title,
-    iconData: iconData,
-    startCommand: startCommand,
-    stopCommand: stopCommand,
-  );
+          title: title,
+          iconData: iconData,
+          startCommand: startCommand,
+          stopCommand: stopCommand,
+        );
 }
 
 class GrooveGridGame extends GrooveGridApp {
@@ -114,11 +119,11 @@ class GrooveGridGame extends GrooveGridApp {
     this.subtitle,
     this.progress,
   }) : super(
-    title: title,
-    iconData: iconData,
-    startCommand: startCommand,
-    stopCommand: stopCommand,
-  ) {
+          title: title,
+          iconData: iconData,
+          startCommand: startCommand,
+          stopCommand: stopCommand,
+        ) {
     if (controlsView == null) controlsView = SwipeControlsView(title: title);
     if (iconData == null) iconData = Icons.videogame_asset;
   }
@@ -140,7 +145,6 @@ class GrooveGridGame extends GrooveGridApp {
 }
 
 class AnimationsListView extends StatefulWidget {
-
   AnimationsListView({@required this.animations});
 
   final List<GrooveGridAnimation> animations;
@@ -150,7 +154,6 @@ class AnimationsListView extends StatefulWidget {
 }
 
 class _AnimationsListViewState extends State<AnimationsListView> {
-
   @override
   Widget build(BuildContext context) {
     ListTile makeListTile({@required String title, bool highlight}) => ListTile(
@@ -212,19 +215,20 @@ class _AnimationsListViewState extends State<AnimationsListView> {
 }
 
 class GamesListView extends StatefulWidget {
-  
   GamesListView({@required this.games});
-  
+
   final List<GrooveGridGame> games;
-  
+
   @override
   _GamesListViewState createState() => _GamesListViewState();
 }
 
 class _GamesListViewState extends State<GamesListView> {
-  
   @override
   Widget build(BuildContext context) {
+    final GrooveGridAppsBloc _appsBloc =
+        BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
+
     ListTile makeListTile(
             {@required String title,
             String subtitle,
@@ -312,30 +316,40 @@ class _GamesListViewState extends State<GamesListView> {
           ),
         );
 
-    return ListView.builder(
-      itemCount: widget.games.length,
-      itemBuilder: (context, index) {
-        var game = widget.games[index];
-        return makeCard(
-          title: game.title,
-          onPressed: () {
-            game.start().then((_) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => game.controlsView),
-              );
-            });
+    return BlocBuilder<GrooveGridAppEvent, GrooveGridAppsState>(
+      bloc: _appsBloc,
+      builder: (
+        BuildContext context,
+        GrooveGridAppsState state,
+      ) {
+        return ListView.builder(
+          itemCount: state.games.length,
+          itemBuilder: (context, index) {
+            var game = state.games[index];
+            return makeCard(
+              title: game.title,
+              onPressed: () {
+                game.start().then((_) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => game.controlsView),
+                  );
+                });
 //            Navigator.push(
 //              context,
 //              MaterialPageRoute(builder: (context) => game.controlsView),
 //            ).then((_) => game.start());
+              },
+              subtitle: game.subtitle,
+              icon: game.iconData,
+              progress: game.progress,
+              highlight: game == GrooveGridApp.runningApplication ? true : false,
+            );
           },
-          subtitle: game.subtitle,
-          icon: game.iconData,
-          progress: game.progress,
-          highlight: game == GrooveGridApp.runningApplication ? true : false,
         );
       },
     );
+
+
   }
 }

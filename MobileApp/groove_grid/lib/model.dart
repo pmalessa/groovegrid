@@ -2,7 +2,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:groove_grid/groove_grid_apps.dart';
 
 
-class GrooveGridAppState {
+class GrooveGridAppsState {
   List<GrooveGridAnimation> animations = [
     GrooveGridAnimation(title: "Standard Animation"),
 //    GrooveGridAnimation(title: "New Animation"),
