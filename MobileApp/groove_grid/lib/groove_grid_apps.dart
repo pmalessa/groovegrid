@@ -147,6 +147,11 @@ class GamesModel {
 }
 
 class AnimationsListView extends StatefulWidget {
+
+  AnimationsListView({@required this.animations});
+
+  final List<GrooveGridAnimation> animations;
+
   @override
   _AnimationsListViewState createState() => _AnimationsListViewState();
 }
@@ -195,9 +200,9 @@ class _AnimationsListViewState extends State<AnimationsListView> {
         );
 
     return ListView.builder(
-      itemCount: _animations.length,
+      itemCount: widget.animations.length,
       itemBuilder: (context, index) {
-        GrooveGridAnimation animation = _animations[index];
+        GrooveGridAnimation animation = widget.animations[index];
         return makeCard(
           title: animation.title,
           onPressed: () {
@@ -211,20 +216,20 @@ class _AnimationsListViewState extends State<AnimationsListView> {
       },
     );
   }
-
-  List<GrooveGridAnimation> _animations = [
-    GrooveGridAnimation(title: "Standard Animation"),
-//    GrooveGridAnimation(title: "New Animation"),
-//    GrooveGridAnimation(title: "Another New Animation"),
-  ];
 }
 
 class GamesListView extends StatefulWidget {
+  
+  GamesListView({@required this.games});
+  
+  final List<GrooveGridGame> games;
+  
   @override
   _GamesListViewState createState() => _GamesListViewState();
 }
 
 class _GamesListViewState extends State<GamesListView> {
+  
   @override
   Widget build(BuildContext context) {
     ListTile makeListTile(
@@ -315,9 +320,9 @@ class _GamesListViewState extends State<GamesListView> {
         );
 
     return ListView.builder(
-      itemCount: _games.length,
+      itemCount: widget.games.length,
       itemBuilder: (context, index) {
-        var game = _games[index];
+        var game = widget.games[index];
         return makeCard(
           title: game.title,
           onPressed: () {
@@ -340,26 +345,4 @@ class _GamesListViewState extends State<GamesListView> {
       },
     );
   }
-
-  List<GrooveGridGame> _games = [
-    GrooveGridGame(
-      title: "2048",
-      subtitle: "Can math really be fun?",
-      progress: 0.3,
-      startCommand: () => FlutterBluetoothSerial.instance.write('1'),
-      stopCommand: () => FlutterBluetoothSerial.instance.write('q'),
-    ),
-//    GrooveGridGame(
-//      title: "Invisible",
-//      subtitle: "Sneak yourself to victory",
-//      progress: 0.8,
-//      startCommand: () {
-//        print("Start command called on Invisible Game");
-//      },
-//    ),
-//    GrooveGridGame(
-//        title: "Whack-A-Mole",
-//        subtitle: "Can you whack 'em all?",
-//        progress: 0.5),
-  ];
 }

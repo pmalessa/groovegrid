@@ -84,12 +84,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   GamesListView createGamesView() {
-    gamesView = GamesListView();
+    gamesView = GamesListView(games: widget.appState.games,);
     return gamesView;
   }
 
   AnimationsListView createAnimationsView() {
-    animationsView = AnimationsListView();
+    animationsView = AnimationsListView(animations: widget.appState.animations,);
     return animationsView;
   }
 
