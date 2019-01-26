@@ -156,6 +156,9 @@ class AnimationsListView extends StatefulWidget {
 class _AnimationsListViewState extends State<AnimationsListView> {
   @override
   Widget build(BuildContext context) {
+
+    final GrooveGridAppsBloc _appsBloc = BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
+
     ListTile makeListTile({@required String title, bool highlight}) => ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
           leading: Container(
@@ -195,19 +198,24 @@ class _AnimationsListViewState extends State<AnimationsListView> {
           ),
         );
 
-    return ListView.builder(
-      itemCount: widget.animations.length,
-      itemBuilder: (context, index) {
-        GrooveGridAnimation animation = widget.animations[index];
-        return makeCard(
-          title: animation.title,
-          onPressed: () {
-            animation.start();
+    return BlocBuilder(
+      bloc: _appsBloc,
+      builder: (BuildContext context, GrooveGridAppsState state) {
+        return ListView.builder(
+          itemCount: state.animations.length,
+          itemBuilder: (context, index) {
+            GrooveGridAnimation animation = state.animations[index];
+            return makeCard(
+              title: animation.title,
+              onPressed: () {
+                animation.start();
 //            bool isCurrentlyRunning = animation == GrooveGridApp.runningApplication;
 //            print("This is the currently running application: $isCurrentlyRunning");
 //            print("Current running Application: ${GrooveGridApp.runningApplication}");
+              },
+              highlight: animation == GrooveGridApp.runningApplication,
+            );
           },
-          highlight: animation == GrooveGridApp.runningApplication,
         );
       },
     );
@@ -343,13 +351,12 @@ class _GamesListViewState extends State<GamesListView> {
               subtitle: game.subtitle,
               icon: game.iconData,
               progress: game.progress,
-              highlight: game == GrooveGridApp.runningApplication ? true : false,
+              highlight:
+                  game == GrooveGridApp.runningApplication ? true : false,
             );
           },
         );
       },
     );
-
-
   }
 }
