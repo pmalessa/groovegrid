@@ -146,14 +146,6 @@ class GamesModel {
 
 }
 
-class AnimationsModel {
-  List<GrooveGridAnimation> _animations = [
-    GrooveGridAnimation(title: "Standard Animation"),
-//    GrooveGridAnimation(title: "New Animation"),
-//    GrooveGridAnimation(title: "Another New Animation"),
-  ];
-}
-
 class AnimationsListView extends StatefulWidget {
   @override
   _AnimationsListViewState createState() => _AnimationsListViewState();

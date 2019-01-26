@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:groove_grid/model.dart';
 import 'bluetooth.dart';
 import 'controls.dart';
 import 'groove_grid_apps.dart';
@@ -10,6 +11,9 @@ void main() {
 
 class GrooveGridRemoteApp extends StatelessWidget {
   // This widget is the root of your application.
+
+  final GrooveGridAppState appState = GrooveGridAppState();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,13 +30,13 @@ class GrooveGridRemoteApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(title: 'GrooveGrid'),
+      home: HomePage(title: 'GrooveGrid', appState: appState,),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({Key key, this.title, @required this.appState}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -44,6 +48,7 @@ class HomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final GrooveGridAppState appState;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -52,6 +57,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _tab1LabelText = "First Tab";
   String _tab2LabelText = "Second Tab";
+
+  GamesListView gamesView;
+  AnimationsListView animationsView;
 
   _HomePageState() {
     setupStreams();
@@ -73,6 +81,16 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _tab1LabelText = text;
     });
+  }
+
+  GamesListView createGamesView() {
+    gamesView = GamesListView();
+    return gamesView;
+  }
+
+  AnimationsListView createAnimationsView() {
+    animationsView = AnimationsListView();
+    return animationsView;
   }
 
   @override
@@ -107,9 +125,9 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: [
-            AnimationsListView(),
+            createAnimationsView(),
             //Center(child: Text(_tab1LabelText, style: Theme.of(context).textTheme.subhead,)),
-            GamesListView(),
+            createGamesView(),
           ],
         ),
         floatingActionButton: GrooveGridApp.runningApplication == null
