@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'controls.dart';
 
-var listener = GrooveGridApp.onRunningApplicationChanged().listen(
-    (GrooveGridApp runningApp) => print("Running App changed to $runningApp"));
-
 abstract class GrooveGridApp {
   static GrooveGridApp _runningApplication;
 
@@ -140,10 +137,6 @@ class GrooveGridGame extends GrooveGridApp {
   @override
   // TODO: implement hashCode
   int get hashCode => title.hashCode;
-}
-
-class GamesModel {
-
 }
 
 class AnimationsListView extends StatefulWidget {
