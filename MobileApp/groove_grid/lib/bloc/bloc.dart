@@ -3,7 +3,11 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 
 // E is an Event Type, S is a State
-abstract class Bloc<E, S> {
+abstract class Bloc<Event, State> {
+  
+  State state;
+
+  State get initialState;
 
   @protected
   final outputController = StreamController<int>();
@@ -13,16 +17,17 @@ abstract class Bloc<E, S> {
   Stream<int> get output => outputController.stream;
 
   @protected
-  final inputController = StreamController<E>();
+  final inputController = StreamController<Event>();
   // For events, exposing only a sink which is an input
-  Sink<E> get input => inputController.sink;
+  Sink<Event> get input => inputController.sink;
 
   Bloc() {
     // Whenever there is a new event, we want to map it to a new state
+    state = initialState;
     inputController.stream.listen(mapEventToState);
   }
 
-  void mapEventToState(E event);
+  void mapEventToState(Event event);
 
   void dispose() {
     outputController.close();
