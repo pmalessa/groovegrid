@@ -1,10 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:groove_grid/bloc/bloc_provider.dart';
-import 'package:groove_grid/bloc/global_bloc.dart';
-import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
-import 'package:groove_grid/model.dart';
-import 'controls.dart';
+import 'package:groove_grid/ui/swipe_controls.dart';
 
 abstract class GrooveGridApp {
   static GrooveGridApp _runningApplication;
