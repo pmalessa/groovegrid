@@ -9,8 +9,8 @@ import 'package:groove_grid/data/groove_grid_apps.dart';
 
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
 import 'package:groove_grid/ui/animations_list_view.dart';
+import 'package:groove_grid/ui/controls_view.dart';
 import 'package:groove_grid/ui/games_list_view.dart';
-import 'package:groove_grid/ui/swipe_controls.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title,}) : super(key: key);
@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(
                         builder: (context) {
                           if(state.runningApplication.controls is SwipeControls) {
-                            return SwipeControlsView(title: state.runningApplication.title);
+                            return ControlsView(state.runningApplication);
                           }
                         }),
                   );

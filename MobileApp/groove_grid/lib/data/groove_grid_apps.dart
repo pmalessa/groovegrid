@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:groove_grid/data/controls.dart';
-import 'package:groove_grid/ui/swipe_controls.dart';
 
 abstract class GrooveGridApp {
   static GrooveGridApp _runningApplication;

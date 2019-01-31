@@ -5,7 +5,7 @@ import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 import 'package:groove_grid/data/controls.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
-import 'package:groove_grid/ui/swipe_controls.dart';
+import 'package:groove_grid/ui/controls_view.dart';
 
 class GamesListView extends StatefulWidget {
   GamesListView({@required this.games});
@@ -129,15 +129,11 @@ class _GamesListViewState extends State<GamesListView> {
                     context,
                     MaterialPageRoute(builder: (context) {
                       if (game.controls is SwipeControls) {
-                        return SwipeControlsView(title: game.title,);
+                        return ControlsView(game);
                       }
                     }),
                   );
                 });
-//            Navigator.push(
-//              context,
-//              MaterialPageRoute(builder: (context) => game.controlsView),
-//            ).then((_) => game.start());
               },
               subtitle: game.subtitle,
               icon: game.iconData,
