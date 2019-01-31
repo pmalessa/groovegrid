@@ -1,5 +1,5 @@
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:groove_grid/groove_grid_apps.dart';
+import 'package:groove_grid/data/groove_grid_apps.dart';
 
 class GrooveGridAppsState {
   //GrooveGridApp get runningApplication => GrooveGridApp.runningApplication;

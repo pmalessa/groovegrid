@@ -1,4 +1,4 @@
-import 'package:groove_grid/groove_grid_apps.dart';
+import 'package:groove_grid/data/groove_grid_apps.dart';
 
 class GrooveGridAppEvent {
 

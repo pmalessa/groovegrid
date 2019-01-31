@@ -1,8 +1,8 @@
 import 'package:groove_grid/bloc/bloc.dart';
 import 'dart:async';
 import 'package:groove_grid/bloc/groove_grid_app_event.dart';
-import 'package:groove_grid/groove_grid_apps.dart';
-import 'package:groove_grid/model.dart';
+import 'package:groove_grid/data/groove_grid_apps.dart';
+import 'package:groove_grid/data/model.dart';
 
 class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
   @override
