@@ -4,14 +4,14 @@ import 'package:groove_grid/bloc/bloc.dart';
 /// A Flutter widget which provides a bloc to its children via `BlocProvider.of(context)`.
 /// It is used as a DI widget so that a single instance of a bloc can be provided
 /// to multiple widgets within a subtree.
-class GrooveBlocProvider<T extends Bloc<dynamic, dynamic>> extends InheritedWidget {
+class BlocProvider<T extends Bloc<dynamic, dynamic>> extends InheritedWidget {
   /// The [Bloc] which is to be made available throughout the subtree
   final T bloc;
 
   /// The [Widget] and its descendants which will have access to the [Bloc].
   final Widget child;
 
-  GrooveBlocProvider({
+  BlocProvider({
     Key key,
     @required this.bloc,
     @required this.child,
@@ -22,8 +22,8 @@ class GrooveBlocProvider<T extends Bloc<dynamic, dynamic>> extends InheritedWidg
   /// Method that allows widgets to access the bloc as long as their `BuildContext`
   /// contains a `BlocProvider` instance.
   static T of<T extends Bloc<dynamic, dynamic>>(BuildContext context) {
-    final type = _typeOf<GrooveBlocProvider<T>>();
-    final GrooveBlocProvider<T> provider =
+    final type = _typeOf<BlocProvider<T>>();
+    final BlocProvider<T> provider =
         context.ancestorInheritedElementForWidgetOfExactType(type)?.widget;
 
     if (provider == null) {
@@ -43,5 +43,5 @@ class GrooveBlocProvider<T extends Bloc<dynamic, dynamic>> extends InheritedWidg
   static Type _typeOf<T>() => T;
 
   @override
-  bool updateShouldNotify(GrooveBlocProvider oldWidget) => false;
+  bool updateShouldNotify(BlocProvider oldWidget) => false;
 }

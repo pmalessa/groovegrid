@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:groove_grid/bloc/bloc.dart';
 import 'package:groove_grid/bloc/bloc_provider.dart';
@@ -25,7 +24,7 @@ class GrooveGridRemoteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GrooveBlocProvider(
+    return BlocProvider(
       bloc: globalBloc,
       child: MaterialApp(
         title: 'GrooveGrid',
@@ -122,7 +121,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
 
-    final GrooveGridAppsBloc _appsBloc = GrooveBlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
+    final GrooveGridAppsBloc _appsBloc = BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
