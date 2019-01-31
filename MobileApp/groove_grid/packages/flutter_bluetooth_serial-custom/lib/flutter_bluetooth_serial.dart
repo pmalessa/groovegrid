@@ -89,9 +89,16 @@ class BluetoothDevice {
         type = map['type'];
 
   Map<String, dynamic> toMap() => {
-        'name': this.name,
-        'address': this.address,
-        'type': this.type,
-        'connected': this.connected,
-      };
+    'name': this.name,
+    'address': this.address,
+    'type': this.type,
+    'connected': this.connected,
+  };
+
+  operator ==(Object other) {
+    return other is BluetoothDevice && other.address == this.address;
+  }
+
+  @override
+  int get hashCode => address.hashCode;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:groove_grid/services/bluetooth_service.dart';
 
 BluetoothDevice lastConnectedDevice;
 
@@ -15,7 +16,7 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   static final TextEditingController _message = new TextEditingController();
   static final TextEditingController _text = new TextEditingController();
 
-  FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
+  BluetoothService bluetooth = BluetoothService();
 
   List<BluetoothDevice> _devices = [];
   BluetoothDevice _deviceInternal;
@@ -58,7 +59,7 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
       // TODO - Error
     }
 
-    bluetooth.onStateChanged().listen((state) {
+    bluetooth.stateChange.listen((state) {
       switch (state) {
         case FlutterBluetoothSerial.CONNECTED:
           setState(() {
@@ -79,7 +80,7 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
       }
     });
 
-    bluetooth.onRead().listen((msg) {
+    bluetooth.read.listen((msg) {
       setState(() {
         print('Read: $msg');
         _text.text += msg;
