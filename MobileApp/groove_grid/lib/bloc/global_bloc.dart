@@ -1,5 +1,6 @@
 //import 'package:bloc/bloc.dart';
 import 'package:groove_grid/bloc/bloc.dart';
+import 'package:groove_grid/bloc/connection_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 
 class GlobalEvent {
@@ -11,9 +12,14 @@ class GlobalEvent {
 class GlobalBloc extends Bloc<GlobalEvent, void> {
 
   GrooveGridAppsBloc _grooveGridAppsBloc;
+  ConnectionBloc _connectionBloc;
+
+  ConnectionBloc get connectionBloc => _connectionBloc;
+  GrooveGridAppsBloc get grooveGridAppsBloc => _grooveGridAppsBloc;
 
   GlobalBloc(): super() {
     _grooveGridAppsBloc = GrooveGridAppsBloc();
+    _connectionBloc = ConnectionBloc();
   }
 
   @override
@@ -25,7 +31,5 @@ class GlobalBloc extends Bloc<GlobalEvent, void> {
     // TODO: implement mapEventToState
     return null;
   }
-
-  GrooveGridAppsBloc get grooveGridAppsBloc => _grooveGridAppsBloc;
 
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:groove_grid/bloc/bloc_provider.dart';
+import 'package:groove_grid/bloc/connection_bloc.dart';
+import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/services/bluetooth_service.dart';
 
 
@@ -14,6 +17,8 @@ class BluetoothSettingsView extends StatefulWidget {
 class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   static final TextEditingController _message = new TextEditingController();
   static final TextEditingController _text = new TextEditingController();
+
+  ConnectionBloc _connectionBloc;
 
   BluetoothService bluetooth = BluetoothService();
 
@@ -36,6 +41,7 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   @override
   void initState() {
     super.initState();
+    _connectionBloc = BlocProvider.of<GlobalBloc>(context).connectionBloc;
     _device = bluetooth.lastConnectedDevice;
     bluetooth.isConnected.then((connected) {
       setState(() {
@@ -59,26 +65,40 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
       // TODO - Error
     }
 
-    bluetooth.stateChange.listen((state) {
-      switch (state) {
-        case FlutterBluetoothSerial.CONNECTED:
-          setState(() {
-            _connected = true;
-            _pressed = false;
-          });
-          break;
-        case FlutterBluetoothSerial.DISCONNECTED:
-          setState(() {
-            _connected = false;
-            _pressed = false;
-          });
-          break;
-        default:
-        // TODO
-          print(state);
-          break;
+    _connectionBloc.output.listen((state) {
+      if (state.isConnected) {
+        setState(() {
+          _connected = true;
+          _pressed = false;
+        });
+      } else {
+        setState(() {
+          _connected = false;
+          _pressed = false;
+        });
       }
     });
+
+//    bluetooth.stateChange.listen((state) {
+//      switch (state) {
+//        case FlutterBluetoothSerial.CONNECTED:
+//          setState(() {
+//            _connected = true;
+//            _pressed = false;
+//          });
+//          break;
+//        case FlutterBluetoothSerial.DISCONNECTED:
+//          setState(() {
+//            _connected = false;
+//            _pressed = false;
+//          });
+//          break;
+//        default:
+//        // TODO
+//          print(state);
+//          break;
+//      }
+//    });
 
     bluetooth.read.listen((msg) {
       setState(() {
