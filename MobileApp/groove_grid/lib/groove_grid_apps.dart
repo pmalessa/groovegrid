@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:groove_grid/bloc/bloc_provider.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
-import 'package:groove_grid/groove_grid_app_event.dart';
+import 'package:groove_grid/bloc/groove_grid_app_event.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:groove_grid/model.dart';
@@ -157,7 +158,7 @@ class _AnimationsListViewState extends State<AnimationsListView> {
   @override
   Widget build(BuildContext context) {
 
-    final GrooveGridAppsBloc _appsBloc = BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
+    final GrooveGridAppsBloc _appsBloc = GrooveBlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
     ListTile makeListTile({@required String title, bool highlight}) => ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
@@ -213,7 +214,7 @@ class _AnimationsListViewState extends State<AnimationsListView> {
 //            print("This is the currently running application: $isCurrentlyRunning");
 //            print("Current running Application: ${GrooveGridApp.runningApplication}");
               },
-              highlight: animation == GrooveGridApp.runningApplication,
+              highlight: animation == state.runningApplication,
             );
           },
         );
@@ -235,7 +236,7 @@ class _GamesListViewState extends State<GamesListView> {
   @override
   Widget build(BuildContext context) {
     final GrooveGridAppsBloc _appsBloc =
-        BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
+        GrooveBlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
     ListTile makeListTile(
             {@required String title,

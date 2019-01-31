@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:groove_grid/bloc/bloc.dart';
+import 'package:groove_grid/bloc/bloc_provider.dart';
+
 import 'package:groove_grid/model.dart';
 import 'bluetooth.dart';
 import 'controls.dart';
@@ -21,7 +25,7 @@ class GrooveGridRemoteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return GrooveBlocProvider(
       bloc: globalBloc,
       child: MaterialApp(
         title: 'GrooveGrid',
@@ -73,7 +77,7 @@ class _HomePageState extends State<HomePage> {
   AnimationsListView animationsView;
 
   _HomePageState() {
-    setupStreams();
+    //setupStreams();
   }
 
   @override
@@ -117,6 +121,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final GrooveGridAppsBloc _appsBloc = GrooveBlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -152,24 +159,30 @@ class _HomePageState extends State<HomePage> {
             createGamesView(),
           ],
         ),
-        floatingActionButton: GrooveGridApp.runningApplication == null
-            ? null
-            : !GrooveGridApp.runningApplication.hasControls
-                ? null
+        floatingActionButton: BlocBuilder(
+          bloc: _appsBloc,
+          builder: (BuildContext context, GrooveGridAppsState state) {
+            return state.runningApplication == null
+                ? Container(width: 0, height: 0,)
+                : !state.runningApplication.hasControls
+                ? Container(width: 0, height: 0,)
                 : FloatingActionButton(
-                    onPressed: () {
-                      GrooveGridApp.runningApplication.start().then((_) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => GrooveGridApp
-                                  .runningApplication.controlsView),
-                        );
-                      });
-                    },
-                    tooltip: 'Play',
-                    child: Icon(Icons.play_arrow),
-                  ), // This trailing comma makes auto-formatting nicer for build methods.
+              onPressed: () {
+                state.runningApplication.start().then((_) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => state
+                            .runningApplication.controlsView),
+                  );
+                });
+              },
+              tooltip: 'Play',
+              child: Icon(Icons.play_arrow),
+            );
+          },
+        ),
+         // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
   }
