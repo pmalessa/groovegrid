@@ -159,9 +159,11 @@ class _HomePageState extends State<HomePage> {
             createGamesView(),
           ],
         ),
-        floatingActionButton: BlocBuilder(
-          bloc: _appsBloc,
-          builder: (BuildContext context, GrooveGridAppsState state) {
+        floatingActionButton: StreamBuilder(
+          initialData: _appsBloc.state,
+          stream: _appsBloc.output,
+          builder: (BuildContext context, AsyncSnapshot<GrooveGridAppsState> snapshot) {
+            GrooveGridAppsState state = snapshot.data;
             return state.runningApplication == null
                 ? Container(width: 0, height: 0,)
                 : !state.runningApplication.hasControls

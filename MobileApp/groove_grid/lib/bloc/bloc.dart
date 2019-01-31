@@ -10,7 +10,7 @@ abstract class Bloc<Event, State> {
   State get initialState;
 
   @protected
-  final outputController = StreamController<State>();
+  final outputController = StreamController<State>.broadcast();
   @protected
   StreamSink<State> get outputSink => outputController.sink;
   // For state, exposing only a stream which outputs data
@@ -19,7 +19,7 @@ abstract class Bloc<Event, State> {
   Stream<State> get output => outputController.stream;
 
   @protected
-  final inputController = StreamController<Event>();
+  final inputController = StreamController<Event>.broadcast();
   // For events, exposing only a sink which is an input
   Sink<Event> get input => inputController.sink;
 

@@ -199,9 +199,11 @@ class _AnimationsListViewState extends State<AnimationsListView> {
           ),
         );
 
-    return BlocBuilder(
-      bloc: _appsBloc,
-      builder: (BuildContext context, GrooveGridAppsState state) {
+    return StreamBuilder(
+      initialData: _appsBloc.state,
+      stream: _appsBloc.output,
+      builder: (BuildContext context, AsyncSnapshot<GrooveGridAppsState> snapshot) {
+        GrooveGridAppsState state = snapshot.data;
         return ListView.builder(
           itemCount: state.animations.length,
           itemBuilder: (context, index) {
@@ -325,12 +327,14 @@ class _GamesListViewState extends State<GamesListView> {
           ),
         );
 
-    return BlocBuilder<GrooveGridAppEvent, GrooveGridAppsState>(
-      bloc: _appsBloc,
+    return StreamBuilder(
+      initialData: _appsBloc.state,
+      stream: _appsBloc.output,
       builder: (
         BuildContext context,
-        GrooveGridAppsState state,
+        AsyncSnapshot<GrooveGridAppsState> snapshot,
       ) {
+        GrooveGridAppsState state = snapshot.data;
         return ListView.builder(
           itemCount: state.games.length,
           itemBuilder: (context, index) {
