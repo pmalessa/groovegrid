@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'bluetooth.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class SwipeControlsView extends StatefulWidget {

@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 
-import 'package:groove_grid/bloc/bloc.dart';
 import 'package:groove_grid/bloc/bloc_provider.dart';
 
 import 'package:groove_grid/model.dart';
 import 'bluetooth.dart';
-import 'controls.dart';
 import 'groove_grid_apps.dart';
 
 void main() {
@@ -69,8 +67,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _tab1LabelText = "First Tab";
-  String _tab2LabelText = "Second Tab";
 
   GamesListView gamesView;
   AnimationsListView animationsView;
@@ -95,12 +91,6 @@ class _HomePageState extends State<HomePage> {
       if (!runningApp.hasControls) {
         setState(() {});
       }
-    });
-  }
-
-  void _setTab1Label(String text) {
-    setState(() {
-      _tab1LabelText = text;
     });
   }
 

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:groove_grid/bloc/groove_grid_app_event.dart';
 import 'package:groove_grid/groove_grid_apps.dart';
 import 'package:groove_grid/model.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
   @override

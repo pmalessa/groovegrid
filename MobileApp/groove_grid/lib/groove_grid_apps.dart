@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:groove_grid/bloc/bloc_provider.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_app_event.dart';
