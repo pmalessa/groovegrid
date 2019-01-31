@@ -3,12 +3,14 @@ import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 
 import 'package:groove_grid/bloc/bloc_provider.dart';
+import 'package:groove_grid/data/controls.dart';
 import 'package:groove_grid/ui/bluetooth_settings_screen.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
 import 'package:groove_grid/ui/animations_list_view.dart';
 import 'package:groove_grid/ui/games_list_view.dart';
+import 'package:groove_grid/ui/swipe_controls.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title,}) : super(key: key);
@@ -116,8 +118,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => state
-                            .runningApplication.controlsView),
+                        builder: (context) {
+                          if(state.runningApplication.controls is SwipeControls) {
+                            return SwipeControlsView(title: state.runningApplication.title);
+                          }
+                        }),
                   );
                 });
               },

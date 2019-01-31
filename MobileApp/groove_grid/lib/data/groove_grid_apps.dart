@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:groove_grid/data/controls.dart';
 import 'package:groove_grid/ui/swipe_controls.dart';
 
 abstract class GrooveGridApp {
@@ -23,7 +24,7 @@ abstract class GrooveGridApp {
     this.iconData,
     this.startCommand,
     this.stopCommand,
-    this.controlsView,
+    this.controls,
   }) {
     if (startCommand == null)
       startCommand = () => print("Default Start Command on $title");
@@ -33,14 +34,14 @@ abstract class GrooveGridApp {
 
   //bool hasControls = false;
   bool get hasControls {
-    return controlsView != null;
+    return controls != null;
   }
 
   String title;
   IconData iconData;
   VoidCallback startCommand;
   VoidCallback stopCommand;
-  Widget controlsView;
+  Controls controls;
 
   Future start() async {
     if (this != runningApplication) {
@@ -118,13 +119,12 @@ class GrooveGridGame extends GrooveGridApp {
           startCommand: startCommand,
           stopCommand: stopCommand,
         ) {
-    if (controlsView == null) controlsView = SwipeControlsView(title: title);
+    if (controls == null) controls = SwipeControls();
     if (iconData == null) iconData = Icons.videogame_asset;
   }
 
   String subtitle = "";
   double progress = 0.0;
-  Widget controlsView;
   bool isRunning = false;
 
   @override
