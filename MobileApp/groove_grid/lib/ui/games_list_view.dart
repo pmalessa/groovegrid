@@ -3,7 +3,7 @@ import 'package:groove_grid/bloc/bloc_provider.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
-import 'package:groove_grid/data/model.dart';
+import 'package:groove_grid/data/groove_grid_apps_state.dart';
 
 class GamesListView extends StatefulWidget {
   GamesListView({@required this.games});
