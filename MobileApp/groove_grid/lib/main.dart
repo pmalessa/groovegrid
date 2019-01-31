@@ -5,6 +5,8 @@ import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 import 'package:groove_grid/bloc/bloc_provider.dart';
 
 import 'package:groove_grid/model.dart';
+import 'package:groove_grid/ui/animations_list_view.dart';
+import 'package:groove_grid/ui/games_list_view.dart';
 import 'bluetooth.dart';
 import 'groove_grid_apps.dart';
 
@@ -173,7 +175,6 @@ class _HomePageState extends State<HomePage> {
             );
           },
         ),
-         // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
   }
