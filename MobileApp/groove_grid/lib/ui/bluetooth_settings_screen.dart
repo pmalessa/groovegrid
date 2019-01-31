@@ -10,7 +10,7 @@ class BluetoothSettingsView extends StatefulWidget {
   _BluetoothSettingsViewState createState() => new _BluetoothSettingsViewState();
 }
 
-
+// TODO: Split up UI and Service code
 class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   static final TextEditingController _message = new TextEditingController();
   static final TextEditingController _text = new TextEditingController();
