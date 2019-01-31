@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:groove_grid/services/bluetooth_service.dart';
 
-BluetoothDevice lastConnectedDevice;
 
 class BluetoothSettingsView extends StatefulWidget {
 
@@ -26,7 +25,6 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   }
   set _device(BluetoothDevice newDevice) {
     _deviceInternal = newDevice;
-    lastConnectedDevice = newDevice;
   }
   bool _connected = false;
   bool _pressed = false;
@@ -38,9 +36,11 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   @override
   void initState() {
     super.initState();
-    _device = lastConnectedDevice;
+    _device = bluetooth.lastConnectedDevice;
     bluetooth.isConnected.then((connected) {
       setState(() {
+        print("isConnected Future triggered with: $connected!");
+        print("Connected Device: ${bluetooth.connectedDevice?.name}");
         _connected = connected;
       });
     });
@@ -223,7 +223,6 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
       bluetooth.isConnected.then((isConnected) {
         if (!isConnected) {
           bluetooth.connect(_device).catchError((error) {
-            lastConnectedDevice = _device;
             setState(() => _pressed = false);
           });
           setState(() => _pressed = true);
