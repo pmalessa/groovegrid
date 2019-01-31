@@ -4,9 +4,9 @@ import 'package:groove_grid/data/controls.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/ui/swipe_controls_view.dart';
 
-class ControlsView extends StatelessWidget {
+class ControlsViewBuilder extends StatelessWidget {
 
-  ControlsView(this.app): assert(app.hasControls);
+  ControlsViewBuilder(this.app): assert(app.hasControls);
 
   final GrooveGridApp app;
 
