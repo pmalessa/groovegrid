@@ -1,6 +1,6 @@
 abstract class ConnectionService {
 
-  Stream<int> get stateChange;
+  Stream<dynamic> get stateChange;
 
   Future<bool> get isConnected;
 

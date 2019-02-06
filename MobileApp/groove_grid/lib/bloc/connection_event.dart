@@ -1,3 +1,4 @@
+import 'package:groove_grid/services/bluetooth_service.dart';
 import 'package:meta/meta.dart';
 
 class ConnectionEvent {
@@ -5,7 +6,13 @@ class ConnectionEvent {
 }
 
 class ConnectionStateChanged extends ConnectionEvent {
-  int state;
+  BluetoothState state;
 
   ConnectionStateChanged({@required this.state}): super();
+}
+
+class MessageReceived extends ConnectionEvent {
+  String message;
+
+  MessageReceived(this.message): super();
 }
