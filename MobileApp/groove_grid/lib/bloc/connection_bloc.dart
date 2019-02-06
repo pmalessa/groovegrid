@@ -3,12 +3,13 @@ import 'package:groove_grid/bloc/connection_event.dart';
 import 'package:groove_grid/data/connection_state.dart';
 import 'package:groove_grid/services/bluetooth_service.dart';
 
+
+// TODO: Split up into ConnectionBloc and MessageBloc
 class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
 
   BluetoothService bluetooth = BluetoothService();
 
   @override
-  // TODO: implement initialState
   GridConnectionState get initialState => GridConnectionState();
 
   @override
