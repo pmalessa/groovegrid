@@ -7,3 +7,5 @@ Software/16door/.settings/
 *.hex
 Software/16door/Release/
 Software/groovegrid_v2/.settings
+*.s#*
+*.b#*
