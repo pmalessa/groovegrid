@@ -6,7 +6,6 @@ import 'package:groove_grid/bloc/connection_bloc.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/data/connection_state.dart';
 import 'package:groove_grid/services/bluetooth_service.dart';
-import 'package:groove_grid/data/connection_state.dart';
 
 class BluetoothSettingsView extends StatefulWidget {
 

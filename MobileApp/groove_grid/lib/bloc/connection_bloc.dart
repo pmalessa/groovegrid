@@ -17,10 +17,10 @@ class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
     Set<Sink> sinks = Set<Sink>();
 
     if (event is ConnectionStateChanged) {
-      if (event.state == BluetoothStatus.CONNECTED) {
+      if (event.state == BluetoothState.CONNECTED) {
         state.isConnected = true;
         sinks.add(outputSink);
-      } else if (event.state == BluetoothStatus.DISCONNECTED) {
+      } else if (event.state == BluetoothState.DISCONNECTED) {
         state.isConnected = false;
         sinks.add(outputSink);
       }
