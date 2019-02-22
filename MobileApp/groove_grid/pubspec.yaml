@@ -15,6 +15,9 @@ environment:
 dependencies:
   flutter_bluetooth_serial:
     path: packages/flutter_bluetooth_serial-custom/
+
+  tuple: ^1.0.2
+
   flutter:
     sdk: flutter
 

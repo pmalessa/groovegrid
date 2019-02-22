@@ -2,6 +2,7 @@
 import 'package:groove_grid/bloc/bloc.dart';
 import 'package:groove_grid/bloc/connection_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
+import 'package:tuple/tuple.dart';
 
 class GlobalEvent {
 
@@ -27,7 +28,7 @@ class GlobalBloc extends Bloc<GlobalEvent, void> {
   void get initialState => null;
 
   @override
-  Future<List<Sink>> mapEventToState(GlobalEvent event) {
+  Future<Tuple2<void, Set<Sink>>> mapEventToState(GlobalEvent event) {
     // TODO: implement mapEventToState
     return null;
   }
