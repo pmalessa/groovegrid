@@ -14,15 +14,16 @@ class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
   }
 
   void setupStreams() {
-    GrooveGridApp.onRunningApplicationChanged().listen((GrooveGridApp runningApp) {
+    GrooveGridApp.onRunningApplicationChanged()
+        .listen((GrooveGridApp runningApp) {
       print("Running App Changed! Received in BLoC Class");
       dispatch(RunningAppChanged(runningApp));
     });
   }
 
   @override
-  Future<Tuple2<GrooveGridAppsState, Set<Sink>>> mapEventToState(GrooveGridAppEvent event) async {
-    // TODO: implement mapEventToState
+  Future<Tuple2<GrooveGridAppsState, Set<Sink>>> mapEventToState(
+      GrooveGridAppEvent event) async {
     Set<Sink> sinks = Set<Sink>();
     if (event is RunningAppChanged) {
       print("Changing State...");
@@ -32,21 +33,6 @@ class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
     }
     return Tuple2<GrooveGridAppsState, Set<Sink>>(state, sinks);
   }
-
-//  @override
-//  Stream<GrooveGridAppsState> mapEventToState(
-//    GrooveGridAppsState currentState,
-//    GrooveGridAppEvent event,
-//  ) async* {
-//    // TODO: implement mapEventToState
-//
-//    if (event is RunningAppChanged) {
-//      print("Changing State...");
-//      yield GrooveGridAppsState()..runningApplication = event.runningApp;
-//    }
-//
-//
-//  }
 
   @override
   void dispose() {

@@ -24,12 +24,10 @@ class GlobalBloc extends Bloc<GlobalEvent, void> {
   }
 
   @override
-  // TODO: implement initialState
   void get initialState => null;
 
   @override
   Future<Tuple2<void, Set<Sink>>> mapEventToState(GlobalEvent event) {
-    // TODO: implement mapEventToState
     return null;
   }
 

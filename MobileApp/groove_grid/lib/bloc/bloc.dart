@@ -48,7 +48,7 @@ abstract class Bloc<Event, State> {
 
   /// Receives an [Event] and modifies the [State] object
   /// according to the data contained in the [Event].
-  /// Returns a [List] of [Sink]s that should be triggered with the new [State].
+  /// Returns a [Set] of [Sink]s that should be triggered with the new [State].
   /// If the [State] did not change, null or an empty [List] may be returned
   /// which causes no sinks to be triggered.
   Future<Tuple2<State, Set<Sink>>> mapEventToState(Event event);

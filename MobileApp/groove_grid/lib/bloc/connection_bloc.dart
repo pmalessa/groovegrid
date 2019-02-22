@@ -4,18 +4,16 @@ import 'package:groove_grid/data/connection_state.dart';
 import 'package:groove_grid/services/bluetooth_service.dart';
 import 'package:tuple/tuple.dart';
 
-
 // TODO: Split up into ConnectionBloc and MessageBloc
 class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
-
   BluetoothService bluetooth = BluetoothService();
 
   @override
   GridConnectionState get initialState => GridConnectionState();
 
   @override
-  Future<Tuple2<GridConnectionState, Set<Sink>>> mapEventToState(ConnectionEvent event) async {
-    // TODO: implement mapEventToState
+  Future<Tuple2<GridConnectionState, Set<Sink>>> mapEventToState(
+      ConnectionEvent event) async {
     Set<Sink> sinks = Set<Sink>();
 
     if (event is ConnectionStateChanged) {
@@ -26,8 +24,7 @@ class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
         state.isConnected = false;
         sinks.add(outputSink);
       }
-    }
-    else if (event is MessageReceived) {
+    } else if (event is MessageReceived) {
       state.lastReceivedMessage = event.message;
       sinks.add(outputSink);
     }
@@ -40,8 +37,9 @@ class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
   }
 
   void setupListeners() {
-    bluetooth.stateChange.listen((BluetoothState state) => dispatch(ConnectionStateChanged(state: state)));
-    bluetooth.read.listen((String message) => dispatch(MessageReceived(message)));
+    bluetooth.stateChange.listen((BluetoothState state) =>
+        dispatch(ConnectionStateChanged(state: state)));
+    bluetooth.read
+        .listen((String message) => dispatch(MessageReceived(message)));
   }
-
 }
