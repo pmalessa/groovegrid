@@ -4680,6 +4680,7 @@ Source: AVX .. aphvc.pdf</description>
 <sheets>
 <sheet>
 <plain>
+<text x="200.66" y="-15.24" size="1.778" layer="91">CHECK PINOUT</text>
 </plain>
 <instances>
 <instance part="X1" gate="-1" x="2.54" y="12.7" smashed="yes">
