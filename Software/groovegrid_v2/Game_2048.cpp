@@ -12,6 +12,8 @@
 
 #include "GameState_2048.h"
 
+#define GAME_SPEED 200	//lower is faster
+
 GameState_2048 game = GameState_2048();
 direction_t movdir = NONE;
 
@@ -121,7 +123,7 @@ void Game_2048_vSyncTask()	//every 1 ms
 	static uint16_t game_cnt = 0;
 	static uint8_t move_possible = 0;
 	game_cnt++;
-	if(game_cnt > 300)
+	if(game_cnt > GAME_SPEED)
 	{
 		game_cnt = 0;
 
