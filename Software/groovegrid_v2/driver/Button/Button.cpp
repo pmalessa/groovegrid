@@ -4,7 +4,8 @@
 	MIT licensed.
 */
 
-#include "Button.h"
+#include "../../driver/Button/Button.h"
+
 #include <Arduino.h>
 
 Button::Button(uint8_t pin)

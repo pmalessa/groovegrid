@@ -6,9 +6,9 @@
  */
 #include "Game_2048.h"
 
-#include "BUTTON.h"
+#include "../driver/BUTTON.h"
 #include "HardwareSerial.h"
-#include "LED.h"
+#include "../driver/LED.h"
 
 #include "GameState_2048.h"
 

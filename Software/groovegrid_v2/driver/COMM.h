@@ -8,7 +8,7 @@
 #ifndef COMM_H_
 #define COMM_H_
 
-#include "PLATFORM.h"
+#include "../PLATFORM.h"
 
 void COMM_Init();
 void COMM_println(const char str[]);

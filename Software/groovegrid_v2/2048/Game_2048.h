@@ -8,7 +8,7 @@
 #ifndef GAME_2048_H_
 #define GAME_2048_H_
 
-#include "PLATFORM.h"
+#include "../PLATFORM.h"
 
 void Game_2048_vSetup();
 /*

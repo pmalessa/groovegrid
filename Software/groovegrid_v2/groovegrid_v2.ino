@@ -1,13 +1,13 @@
 
 #include "PLATFORM.h"
-#include "TIMER.h"
-#include "LED.h"
-#include "BUTTON.h"
-#include "COMM.h"
+#include "driver/TIMER.h"
+#include "driver/LED.h"
+#include "driver/BUTTON.h"
+#include "driver/COMM.h"
 
-#include "ANIMATION.h"
-#include "Game_2048.h"
-#include "Game_TicTacToe.h"
+#include "Animation/ANIMATION.h"
+#include "2048/Game_2048.h"
+#include "TicTacToe/Game_TicTacToe.h"
 
 uint8_t programstate = 0;
 void setup()

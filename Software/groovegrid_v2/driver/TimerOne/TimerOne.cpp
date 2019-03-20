@@ -14,7 +14,7 @@
  *
  */
 
-#include "TimerOne.h"
+#include "../../driver/TimerOne/TimerOne.h"
 
 TimerOne Timer1;              // preinstatiate
 

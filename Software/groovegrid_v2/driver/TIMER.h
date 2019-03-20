@@ -8,7 +8,7 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-#include "PLATFORM.h"
+#include "../PLATFORM.h"
 
 void TIMER_Init();
 void TIMER_attach(void (*isr)(), unsigned long microseconds);

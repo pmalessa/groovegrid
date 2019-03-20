@@ -6,7 +6,7 @@
  */
 
 #include "Arduino.h"
-#include "LED.h"
+#include "../driver/LED.h"
 #include "Game_TicTacToe.h"
 
 static uint8_t GameBoard[][4] = {{0,1,1,2},{1,0,2,0},{1,2,0,1},{1,2,2,0}};

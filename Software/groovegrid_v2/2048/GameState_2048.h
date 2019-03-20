@@ -6,7 +6,7 @@
  */
 #ifndef GameState_h
 #define GameState_h
-#include "PLATFORM.h"
+#include "../PLATFORM.h"
 
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX

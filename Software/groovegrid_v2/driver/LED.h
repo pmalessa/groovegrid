@@ -8,7 +8,7 @@
 #ifndef LED_H_
 #define LED_H_
 
-#include "PLATFORM.h"
+#include "../PLATFORM.h"
 
 typedef enum{
 	COLOR_RED = 0xFF0000,
