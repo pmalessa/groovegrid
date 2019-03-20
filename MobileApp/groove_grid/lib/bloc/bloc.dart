@@ -37,18 +37,19 @@ abstract class Bloc<Event, State> {
   }
 
   void _processEvent(Event event) async {
-    List<Sink> sinks = await mapEventToState(event);
-    if (sinks == null || sinks.isEmpty) return;
-
-    sinks.forEach((sink) => sink.add(state));
+    State newState = await mapEventToState(event);
+    if (newState != null) {
+      this.state = newState;
+      outputSink.add(newState);
+    }
   }
 
   /// Receives an [Event] and modifies the [State] object
   /// according to the data contained in the [Event].
-  /// Returns a [List] of [Sink]s that should be triggered with the new [State].
+  /// Returns a [Set] of [Sink]s that should be triggered with the new [State].
   /// If the [State] did not change, null or an empty [List] may be returned
   /// which causes no sinks to be triggered.
-  Future<List<Sink>> mapEventToState(Event event);
+  Future<State> mapEventToState(Event event);
 
   /// Closes the [Event] and [State] [Stream]s.
   void dispose() {

@@ -13,39 +13,23 @@ class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
   }
 
   void setupStreams() {
-    GrooveGridApp.onRunningApplicationChanged().listen((GrooveGridApp runningApp) {
+    GrooveGridApp.onRunningApplicationChanged()
+        .listen((GrooveGridApp runningApp) {
       print("Running App Changed! Received in BLoC Class");
       dispatch(RunningAppChanged(runningApp));
     });
   }
 
   @override
-  Future<List<Sink>> mapEventToState(GrooveGridAppEvent event) async {
-    // TODO: implement mapEventToState
-    List<Sink> sinks = [];
+  Future<GrooveGridAppsState> mapEventToState(
+      GrooveGridAppEvent event) async {
     if (event is RunningAppChanged) {
       print("Changing State...");
       state.runningApplication = event.runningApp;
-      sinks.add(outputSink);
       //bool connected = await FlutterBluetoothSerial.instance.isConnected;
     }
-    return sinks;
+    return state;
   }
-
-//  @override
-//  Stream<GrooveGridAppsState> mapEventToState(
-//    GrooveGridAppsState currentState,
-//    GrooveGridAppEvent event,
-//  ) async* {
-//    // TODO: implement mapEventToState
-//
-//    if (event is RunningAppChanged) {
-//      print("Changing State...");
-//      yield GrooveGridAppsState()..runningApplication = event.runningApp;
-//    }
-//
-//
-//  }
 
   @override
   void dispose() {

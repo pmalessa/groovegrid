@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-
-BluetoothDevice lastConnectedDevice;
+import 'package:groove_grid/bloc/bloc_provider.dart';
+import 'package:groove_grid/bloc/connection_bloc.dart';
+import 'package:groove_grid/bloc/global_bloc.dart';
+import 'package:groove_grid/data/connection_state.dart';
+import 'package:groove_grid/services/bluetooth_service.dart';
 
 class BluetoothSettingsView extends StatefulWidget {
 
@@ -15,7 +18,9 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   static final TextEditingController _message = new TextEditingController();
   static final TextEditingController _text = new TextEditingController();
 
-  FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
+  ConnectionBloc _connectionBloc;
+
+  BluetoothService bluetooth = BluetoothService();
 
   List<BluetoothDevice> _devices = [];
   BluetoothDevice _deviceInternal;
@@ -25,7 +30,6 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   }
   set _device(BluetoothDevice newDevice) {
     _deviceInternal = newDevice;
-    lastConnectedDevice = newDevice;
   }
   bool _connected = false;
   bool _pressed = false;
@@ -37,9 +41,12 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   @override
   void initState() {
     super.initState();
-    _device = lastConnectedDevice;
+    _connectionBloc = BlocProvider.of<GlobalBloc>(context).connectionBloc;
+    _device = bluetooth.lastConnectedDevice;
     bluetooth.isConnected.then((connected) {
       setState(() {
+        print("isConnected Future triggered with: $connected!");
+        print("Connected Device: ${bluetooth.connectedDevice?.name}");
         _connected = connected;
       });
     });
@@ -58,42 +65,57 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
       // TODO - Error
     }
 
-    bluetooth.onStateChanged().listen((state) {
-      switch (state) {
-        case FlutterBluetoothSerial.CONNECTED:
-          setState(() {
-            _connected = true;
-            _pressed = false;
-          });
-          break;
-        case FlutterBluetoothSerial.DISCONNECTED:
-          setState(() {
-            _connected = false;
-            _pressed = false;
-          });
-          break;
-        default:
-        // TODO
-          print(state);
-          break;
-      }
+    _connectionBloc.output.listen((state) {
+      setState(() {
+        setConnectionVariables(state);
+      });
+
     });
 
-    bluetooth.onRead().listen((msg) {
+//    bluetooth.stateChange.listen((state) {
+//      switch (state) {
+//        case FlutterBluetoothSerial.CONNECTED:
+//          setState(() {
+//            _connected = true;
+//            _pressed = false;
+//          });
+//          break;
+//        case FlutterBluetoothSerial.DISCONNECTED:
+//          setState(() {
+//            _connected = false;
+//            _pressed = false;
+//          });
+//          break;
+//        default:
+//        // TODO
+//          print(state);
+//          break;
+//      }
+//    });
+
+    _connectionBloc.output.listen((state) {
+      String msg = state.lastReceivedMessage;
       setState(() {
         print('Read: $msg');
         _text.text += msg;
       });
     });
 
+//    bluetooth.read.listen((msg) {
+//      setState(() {
+//        print('Read: $msg');
+//        _text.text += msg;
+//      });
+//    });
+
     //if (!mounted) return;
     setState(() {
       _devices = devices;
-      if (_device != null) {
-        _device = _devices.where((BluetoothDevice device) => device.name == _device.name).elementAt(0);
-        print("Last used Device name: ");
-        print(_device.name);
-      }
+//      if (_device != null) {
+//        _device = _devices.where((BluetoothDevice device) => device.name == _device.name).elementAt(0);
+//        print("Last used Device name: ");
+//        print(_device.name);
+//      }
     });
   }
 
@@ -127,10 +149,16 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
                       onChanged: (value) => setState(() => _device = value),
                       value: _device,
                     ),
-                    RaisedButton(
-                      onPressed:
-                      _pressed ? null : _connected ? _disconnect : _connect,
-                      child: Text(_connected ? 'Disconnect' : 'Connect'),
+                    StreamBuilder(
+                      initialData: _connectionBloc.state,
+                      stream: _connectionBloc.output,
+                      builder: (BuildContext context, AsyncSnapshot<GridConnectionState> snapshot) {
+                        return RaisedButton(
+                          onPressed:
+                          _pressed ? null : _connected ? _disconnect : _connect,
+                          child: Text(_connected ? 'Disconnect' : 'Connect'),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -222,7 +250,6 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
       bluetooth.isConnected.then((isConnected) {
         if (!isConnected) {
           bluetooth.connect(_device).catchError((error) {
-            lastConnectedDevice = _device;
             setState(() => _pressed = false);
           });
           setState(() => _pressed = true);
@@ -272,5 +299,15 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
         duration: duration,
       ),
     );
+  }
+
+  void setConnectionVariables(GridConnectionState state) {
+    if (state.isConnected) {
+      _connected = true;
+      _pressed = false;
+    } else {
+      _connected = false;
+      _pressed = false;
+    }
   }
 }
