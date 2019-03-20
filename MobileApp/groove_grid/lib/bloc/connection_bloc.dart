@@ -13,19 +13,15 @@ class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
   @override
   Future<GridConnectionState> mapEventToState(
       ConnectionEvent event) async {
-    Set<Sink> sinks = Set<Sink>();
 
     if (event is ConnectionStateChanged) {
       if (event.state == BluetoothState.CONNECTED) {
         state.isConnected = true;
-        sinks.add(outputSink);
       } else if (event.state == BluetoothState.DISCONNECTED) {
         state.isConnected = false;
-        sinks.add(outputSink);
       }
     } else if (event is MessageReceived) {
       state.lastReceivedMessage = event.message;
-      sinks.add(outputSink);
     }
 
     return this.state;
