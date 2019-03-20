@@ -4,8 +4,8 @@
  *  Created on: 11.01.2019
  *      Author: pmale
  */
-#include "Arduino.h"
 #include "Game_2048.h"
+
 #include "BUTTON.h"
 #include "HardwareSerial.h"
 #include "LED.h"

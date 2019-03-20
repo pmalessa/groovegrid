@@ -6,8 +6,6 @@
  */
 #include "GameState_2048.h"
 
-#include "Arduino.h"
-
 #include "LED.h"
 
 GameState_2048::GameState_2048()

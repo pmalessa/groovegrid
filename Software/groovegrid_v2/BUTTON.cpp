@@ -4,9 +4,9 @@
  *  Created on: 05.01.2019
  *      Author: pmale
  */
-
 #include "BUTTON.h"
-#include "libraries/Button/Button.h"
+
+#include "Button/Button.h"
 
 
 Button bUp = Button(BUTTON_UP);

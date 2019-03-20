@@ -8,7 +8,7 @@
 #ifndef BUTTON_H_
 #define BUTTON_H_
 
-#include "Arduino.h"
+#include "PLATFORM.h"
 
 #define BUTTON_UP 2
 #define BUTTON_DOWN 9

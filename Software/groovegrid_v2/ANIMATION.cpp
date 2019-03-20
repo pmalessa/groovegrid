@@ -4,8 +4,9 @@
  *  Created on: 22.09.2017
  *      Author: pmale
  */
-#include "LED.h"
 #include"ANIMATION.h"
+
+#include "LED.h"
 
 void ANIMATION_vBoot()
 {

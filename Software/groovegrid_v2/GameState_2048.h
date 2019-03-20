@@ -6,8 +6,7 @@
  */
 #ifndef GameState_h
 #define GameState_h
-#include "Arduino.h"
-#include "LED.h"
+#include "PLATFORM.h"
 
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX

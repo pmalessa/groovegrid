@@ -4,13 +4,11 @@
  *  Created on: 04.01.2019
  *      Author: pmale
  */
-#include "Arduino.h"
+#include "LED.h"
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
-
-#include "LED.h"
 
 //4x4 display, starting at top left and going down zigzag
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(XMAX, YMAX, DATA_PIN,

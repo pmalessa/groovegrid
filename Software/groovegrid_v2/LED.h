@@ -8,11 +8,7 @@
 #ifndef LED_H_
 #define LED_H_
 
-#include "Arduino.h"
-
-#define XMAX 4
-#define YMAX 4
-#define DATA_PIN 6
+#include "PLATFORM.h"
 
 typedef enum{
 	COLOR_RED = 0xFF0000,
