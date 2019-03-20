@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:groove_grid/bloc/groove_grid_app_event.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
-import 'package:tuple/tuple.dart';
 
 class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
   @override
@@ -22,16 +21,14 @@ class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
   }
 
   @override
-  Future<Tuple2<GrooveGridAppsState, Set<Sink>>> mapEventToState(
+  Future<GrooveGridAppsState> mapEventToState(
       GrooveGridAppEvent event) async {
-    Set<Sink> sinks = Set<Sink>();
     if (event is RunningAppChanged) {
       print("Changing State...");
       state.runningApplication = event.runningApp;
-      sinks.add(outputSink);
       //bool connected = await FlutterBluetoothSerial.instance.isConnected;
     }
-    return Tuple2<GrooveGridAppsState, Set<Sink>>(state, sinks);
+    return state;
   }
 
   @override

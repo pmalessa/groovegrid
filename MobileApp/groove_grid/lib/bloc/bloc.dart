@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:tuple/tuple.dart';
 
 import 'package:meta/meta.dart';
 
@@ -38,12 +37,11 @@ abstract class Bloc<Event, State> {
   }
 
   void _processEvent(Event event) async {
-    Tuple2<State, Set<Sink>> result = await mapEventToState(event);
-    Set<Sink> sinks = result.item2;
-    State resultState = result.item1;
-    if (sinks == null || sinks.isEmpty) return;
-
-    sinks.forEach((sink) => sink.add(resultState));
+    State newState = await mapEventToState(event);
+    if (newState != null) {
+      this.state = newState;
+      outputSink.add(newState);
+    }
   }
 
   /// Receives an [Event] and modifies the [State] object
@@ -51,7 +49,7 @@ abstract class Bloc<Event, State> {
   /// Returns a [Set] of [Sink]s that should be triggered with the new [State].
   /// If the [State] did not change, null or an empty [List] may be returned
   /// which causes no sinks to be triggered.
-  Future<Tuple2<State, Set<Sink>>> mapEventToState(Event event);
+  Future<State> mapEventToState(Event event);
 
   /// Closes the [Event] and [State] [Stream]s.
   void dispose() {

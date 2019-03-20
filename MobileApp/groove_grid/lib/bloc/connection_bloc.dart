@@ -2,7 +2,6 @@ import 'package:groove_grid/bloc/bloc.dart';
 import 'package:groove_grid/bloc/connection_event.dart';
 import 'package:groove_grid/data/connection_state.dart';
 import 'package:groove_grid/services/bluetooth_service.dart';
-import 'package:tuple/tuple.dart';
 
 // TODO: Split up into ConnectionBloc and MessageBloc
 class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
@@ -12,7 +11,7 @@ class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
   GridConnectionState get initialState => GridConnectionState();
 
   @override
-  Future<Tuple2<GridConnectionState, Set<Sink>>> mapEventToState(
+  Future<GridConnectionState> mapEventToState(
       ConnectionEvent event) async {
     Set<Sink> sinks = Set<Sink>();
 
@@ -29,7 +28,7 @@ class ConnectionBloc extends Bloc<ConnectionEvent, GridConnectionState> {
       sinks.add(outputSink);
     }
 
-    return Tuple2<GridConnectionState, Set<Sink>>(this.state, sinks);
+    return this.state;
   }
 
   ConnectionBloc() {
