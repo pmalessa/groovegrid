@@ -1,9 +1,10 @@
 #include "Arduino.h"
 
-#include <TimerOne.h>
+
+#include "TIMER.h"
 #include "LED.h"
 #include "BUTTON.h"
-#include "HardwareSerial.h"
+#include "COMM.h"
 
 #include "ANIMATION.h"
 #include "Game_2048.h"
@@ -12,18 +13,18 @@
 uint8_t programstate = 0;
 void setup()
 {
-	Timer1.initialize();
+	TIMER_Init();
 	LED_vInit();
 	BUTTON_vInit();
-	Serial.begin(9600);
+	COMM_Init();
+#if defined(__AVR__)
 	srand(eeprom_read_word((uint16_t *)0x23));
 	eeprom_update_word((uint16_t *)0x23, (uint16_t)rand());
-	Serial.begin(9600);
-	Serial.println("Hey!");
+#endif
+	COMM_println("Hey!");
 
 	ANIMATION_vBoot();
-	Timer1.attachInterrupt(timer, 1000);
-
+	TIMER_attach(timer, 1000);
 }
 
 // The loop function is called in an endless loop
