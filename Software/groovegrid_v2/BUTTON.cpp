@@ -32,6 +32,7 @@ void BUTTON_vRead()
 
 bool BUTTON_bIsPressed(uint8_t id)
 {
+#if defined(AVR)
 	switch (id) {
 		case BUTTON_UP:
 			return bUp.pressed();
@@ -49,4 +50,7 @@ bool BUTTON_bIsPressed(uint8_t id)
 			return false;
 			break;
 	}
+#elif defined(ESP32)
+	return false;
+#endif
 }
