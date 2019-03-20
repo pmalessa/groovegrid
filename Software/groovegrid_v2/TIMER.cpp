@@ -18,7 +18,7 @@ void TIMER_Init()
 #if defined(__AVR__)
 	Timer1.initialize();
 #elif defined(ESP32)
-//	  timer = timerBegin(0, 80, true);
+	  timer = timerBegin(0, 80, true);
 #endif
 }
 
@@ -27,8 +27,8 @@ void TIMER_attach(void (*isr)(), unsigned long microseconds)
 #if defined(__AVR__)
 	Timer1.attachInterrupt(isr, microseconds);
 #elif defined(ESP32)
-//	  timerAttachInterrupt(timer, isr, true);
-//	  timerAlarmWrite(timer, microseconds, true);
-//	  timerAlarmEnable(timer);
+	  timerAttachInterrupt(timer, isr, true);
+	  timerAlarmWrite(timer, microseconds, true);
+	  timerAlarmEnable(timer);
 #endif
 }

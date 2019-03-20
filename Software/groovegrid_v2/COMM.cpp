@@ -18,11 +18,11 @@ void COMM_Init()
 #if defined(__AVR__)
 	Serial.begin(9600);
 #elif defined(ESP32)
-//	Serial.begin(115200);
+	Serial.begin(115200);
 #endif
 }
 
 void COMM_println(const char str[])
 {
-//	Serial.println(str);
+	Serial.println(str);
 }
