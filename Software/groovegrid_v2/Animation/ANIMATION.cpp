@@ -30,11 +30,11 @@ void ANIMATION_randomPixels()
 	{
 		if(rand()%2)	//clear or draw
 		{
-			LED_vDrawPixel(rand()%4, rand()%4, LED_u16Color(rand()%256, rand()%256, rand()%256));
+			LED_vDrawPixel(rand()%XMAX, rand()%YMAX, LED_u16Color(rand()%256, rand()%256, rand()%256));
 		}
 		else
 		{
-			LED_vDrawPixel(rand()%4, rand()%4, LED_u16Color(0, 0, 0));
+			LED_vDrawPixel(rand()%XMAX, rand()%YMAX, LED_u16Color(0, 0, 0));
 		}
 
 		wait = rand()%300;
@@ -55,7 +55,7 @@ void ANIMATION_randomPulseRects()
 		init = 0;
 		up = 1;
 		r = rand()%256; g = rand()%256; b = rand()%256;
-		x = rand()%4; y = rand()%4; w = rand()%4; h = rand()%4;
+		x = rand()%XMAX; y = rand()%YMAX; w = rand()%XMAX; h = rand()%YMAX;
 		speed = (rand()%3) +1;
 		r_cur = 0; g_cur = 0; b_cur = 0;
 	}
@@ -92,11 +92,11 @@ void ANIMATION_randomLines()
 	{
 		if(rand()%2)
 		{
-			LED_vDrawLine(rand()%4,rand()%4,rand()%4,rand()%4,LED_u16Color(rand()%256, rand()%256, rand()%256));
+			LED_vDrawLine(rand()%XMAX,rand()%YMAX,rand()%XMAX,rand()%YMAX,LED_u16Color(rand()%256, rand()%256, rand()%256));
 		}
 		else
 		{
-			LED_vDrawLine(rand()%4,rand()%4,rand()%4,rand()%4,LED_u16Color(0, 0, 0));
+			LED_vDrawLine(rand()%XMAX,rand()%YMAX,rand()%XMAX,rand()%YMAX,LED_u16Color(0, 0, 0));
 		}
 
 		wait = rand()%300;
