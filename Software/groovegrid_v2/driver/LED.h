@@ -5,10 +5,11 @@
  *      Author: pmale
  */
 
-#ifndef LED_H_
-#define LED_H_
+#ifndef GRID_H_
+#define GRID_H_
 
 #include "../PLATFORM.h"
+#include "Adafruit_GFX.h"
 
 typedef enum{
 	COLOR_RED = 0xFF0000,
@@ -27,13 +28,26 @@ typedef enum{
 	COLOR_WHITE = 0xFFFFFF
 }color_t;
 
-void LED_vInit();
-void LED_vDrawPixel(uint16_t x, uint16_t y, uint16_t color);
-void LED_vDrawRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
-void LED_vDrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
-void LED_vClear();
-void LED_vShow();
-uint16_t LED_u16Color(uint8_t r, uint8_t g, uint8_t b);
-uint16_t LED_u16rgbColor(uint32_t rgb_color);
+class Grid : public Adafruit_GFX {
+ public:
+	static Grid& getInstance();
+	~Grid(void);
 
-#endif /* LED_H_ */
+	void         display(void);
+	void         clearDisplay(void);
+	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
+	boolean      getPixel(int16_t x, int16_t y);
+	void 		 endWrite(void);
+	void		 clear(void);
+
+	static uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
+	static uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
+
+ private:
+	Grid();
+	Grid(const Grid&);
+	Grid & operator = (const Grid &);
+	int8_t       data_pin;
+	Adafruit_NeoMatrix matrix;
+};
+#endif /* GRID_H_ */

@@ -8,6 +8,7 @@
 
 #include "../driver/LED.h"
 
+
 void ANIMATION_vBoot()
 {
 	for (uint8_t i=0; i < YMAX; i++) {

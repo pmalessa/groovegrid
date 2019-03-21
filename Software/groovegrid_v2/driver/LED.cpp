@@ -11,47 +11,46 @@
 #include <Adafruit_NeoPixel.h>
 
 //4x4 display, starting at top left and going down zigzag
-Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(XMAX, YMAX, DATA_PIN,
-		  NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
-		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
-		  NEO_GRB            + NEO_KHZ800);
+Adafruit_NeoMatrix Grid::matrix;
 
-void LED_vInit()
+static Grid& Grid::getInstance()
 {
+	static Grid _instance;
+	return _instance;
+}
+
+Grid::~Grid(){}
+Grid::Grid():Adafruit_GFX(XMAX, YMAX)
+{
+	data_pin = DATA_PIN;
+	uint8_t b = 0;
+	matrix = Adafruit_NeoMatrix(_width, _height, data_pin,
+			  NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
+			  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
+			  NEO_GRB            + NEO_KHZ800);
 	matrix.begin();
 }
 
-void LED_vDrawPixel(uint16_t x, uint16_t y, uint16_t color)
+void Grid::drawPixel(int16_t x, int16_t y, uint16_t color)
 {
 	matrix.drawPixel(x, y, color);
 }
 
-void LED_vDrawRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color)
-{
-	matrix.drawRect(x, y, w, h, color);
-}
-
-void LED_vDrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
-{
-	matrix.drawLine(x0, y0, x1, y1, color);
-}
-
-void LED_vClear()
-{
-	matrix.clear();
-}
-
-void LED_vShow()
+void Grid::endWrite()
 {
 	matrix.show();
 }
 
-uint16_t LED_u16Color(uint8_t r, uint8_t g, uint8_t b)
+void Grid::clear()
+{
+	matrix.clear();
+}
+
+static uint16_t Grid::RGB(uint8_t r, uint8_t g, uint8_t b)
 {
 	return matrix.Color(r, g, b);
 }
-
-uint16_t LED_u16rgbColor(uint32_t rgb_color)
+static uint16_t Grid::HSV(uint8_t h, uint8_t s, uint8_t v)
 {
-	return matrix.Color((rgb_color &0xFF0000) >> 16, (rgb_color &0x00FF00) >> 8, rgb_color &0x0000FF);
+	//TODO
 }
