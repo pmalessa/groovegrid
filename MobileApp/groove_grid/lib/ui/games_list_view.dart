@@ -71,14 +71,22 @@ class _GamesListViewState extends State<GamesListView> {
                     child: LinearProgressIndicator(
                         backgroundColor: Color.fromRGBO(209, 224, 224, 0.4),
                         value: progress != null ? progress : 0.0,
-                        valueColor: AlwaysStoppedAnimation(Colors.green)),
+                        valueColor: highlight
+                            ? AlwaysStoppedAnimation(Theme.of(context).accentColor)
+                            : AlwaysStoppedAnimation(Theme.of(context).primaryTextTheme.body1.color)
+                      ,
+                    ),
                   )),
               Expanded(
                 flex: 4,
                 child: Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(subtitle != null ? subtitle : "Undefined",
-                        style: Theme.of(context).textTheme.body1)),
+                        style: highlight
+                        ? Theme.of(context).textTheme.body1.apply(color: Theme.of(context).accentColor)
+                            : Theme.of(context).textTheme.body1
+                    ),
+                ),
               )
             ],
           ),
