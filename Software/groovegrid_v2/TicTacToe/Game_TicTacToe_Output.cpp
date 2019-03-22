@@ -14,14 +14,9 @@ static uint8_t GameBoard[][4] = {{0,1,1,2},{1,0,2,0},{1,2,0,1},{1,2,2,0}};
 static uint8_t playerPosition[] = {1,1};
 static uint8_t playerTurn = 2;
 
-Grid grid;
-
-void Game_TicTacToe_Setup(){
-	grid = grid.getInstance();
-}
-
-void Game_TicTacToe_Output(){
-
+void Game_TicTacToe_Output()
+{
+	static Grid& grid = Grid::getInstance();
 	static uint16_t game_cnt = 0;
 	static uint8_t blink_cnt = 0;
 	// draw complete board

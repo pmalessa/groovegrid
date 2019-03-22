@@ -6,8 +6,6 @@
  */
 #include "GameState_2048.h"
 
-#include "../driver/GRID.h"
-
 GameState_2048::GameState_2048()
 {
 }

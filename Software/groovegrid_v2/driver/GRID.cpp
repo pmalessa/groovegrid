@@ -16,7 +16,7 @@ Adafruit_NeoMatrix Grid::matrix = Adafruit_NeoMatrix(XMAX, YMAX, DATA_PIN,
 		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
 		  NEO_GRB            + NEO_KHZ800);;
 
-static Grid& Grid::getInstance()
+Grid& Grid::getInstance()
 {
 	static Grid _instance;
 	return _instance;
@@ -44,7 +44,7 @@ void Grid::endWrite()
 	matrix.show();
 }
 
-void Grid::clear()
+void Grid::clearDisplay()
 {
 	matrix.clear();
 }

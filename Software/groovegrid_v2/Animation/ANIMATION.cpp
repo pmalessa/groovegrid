@@ -9,33 +9,34 @@
 #include "../driver/GRID.h"
 
 
+
 void ANIMATION_vBoot()
 {
+	static Grid& grid = Grid::getInstance();
 	for (uint8_t i=0; i < YMAX; i++) {
-		LED_vDrawLine(0, i, XMAX-1, i, LED_u16Color(255, 0, 0));
-		LED_vShow();
+		grid.drawLine(0, i, XMAX-1, i, grid.RGB(255, 0, 0));
 		delay(100);
 	}
 	for (uint8_t i=0; i < YMAX; i++) {
-		LED_vDrawLine(0, i, XMAX-1, i, LED_u16Color(0, 0, 0));
-		LED_vShow();
+		grid.drawLine(0, i, XMAX-1, i, grid.RGB(0, 0, 0));
 		delay(100);
 	}
 }
 
 void ANIMATION_randomPixels()
 {
+	static Grid& grid = Grid::getInstance();
 	static uint32_t wait = 0;
 
 	if(wait == 0)
 	{
 		if(rand()%2)	//clear or draw
 		{
-			LED_vDrawPixel(rand()%XMAX, rand()%YMAX, LED_u16Color(rand()%256, rand()%256, rand()%256));
+			grid.drawPixel(rand()%XMAX, rand()%YMAX, grid.RGB(rand()%256, rand()%256, rand()%256));
 		}
 		else
 		{
-			LED_vDrawPixel(rand()%XMAX, rand()%YMAX, LED_u16Color(0, 0, 0));
+			grid.drawPixel(rand()%XMAX, rand()%YMAX, grid.RGB(0, 0, 0));
 		}
 
 		wait = rand()%300;
@@ -48,6 +49,7 @@ void ANIMATION_randomPixels()
 
 void ANIMATION_randomPulseRects()
 {
+	static Grid& grid = Grid::getInstance();
 	static uint8_t init = 0, up = 1;
 	static uint8_t r,g,b,x,y,w,h, r_cur, g_cur, b_cur, speed;
 
@@ -63,7 +65,7 @@ void ANIMATION_randomPulseRects()
 
 	if(up)	//clear or draw
 	{
-		LED_vDrawRect(x, y, w, h, LED_u16Color(r_cur, g_cur, b_cur));
+		grid.drawRect(x, y, w, h, grid.RGB(r_cur, g_cur, b_cur));
 		if((uint16_t)r_cur+speed > r) r_cur = r; else r_cur += speed;
 		if((uint16_t)g_cur+speed > g) g_cur = g; else g_cur += speed;
 		if((uint16_t)b_cur+speed > b) b_cur = b; else b_cur += speed;
@@ -74,7 +76,7 @@ void ANIMATION_randomPulseRects()
 	}
 	else
 	{
-		LED_vDrawRect(x, y, w, h, LED_u16Color(r, g, b));
+		grid.drawRect(x, y, w, h, grid.RGB(r, g, b));
 		if((int8_t)r-speed < 0) r=0; else r -= speed;
 		if((int8_t)g-speed < 0) g=0; else g -= speed;
 		if((int8_t)b-speed < 0) b=0; else b -= speed;
@@ -87,17 +89,18 @@ void ANIMATION_randomPulseRects()
 
 void ANIMATION_randomLines()
 {
+	static Grid& grid = Grid::getInstance();
 	static uint32_t wait = 0;
 
 	if(wait == 0)
 	{
 		if(rand()%2)
 		{
-			LED_vDrawLine(rand()%XMAX,rand()%YMAX,rand()%XMAX,rand()%YMAX,LED_u16Color(rand()%256, rand()%256, rand()%256));
+			grid.drawLine(rand()%XMAX, rand()%YMAX, rand()%XMAX, rand()%YMAX, grid.RGB(rand()%256, rand()%256, rand()%256));
 		}
 		else
 		{
-			LED_vDrawLine(rand()%XMAX,rand()%YMAX,rand()%XMAX,rand()%YMAX,LED_u16Color(0, 0, 0));
+			grid.drawLine(rand()%XMAX, rand()%YMAX, rand()%XMAX, rand()%YMAX, grid.RGB(0, 0, 0));
 		}
 
 		wait = rand()%300;
@@ -110,12 +113,13 @@ void ANIMATION_randomLines()
 
 void ANIMATION_vRunner()
 {
+	static Grid& grid = Grid::getInstance();
 	static uint32_t wait = 30000;
 	static uint8_t state = 0;
 	if(wait == 0)
 	{
 		state++;	//switch Animation every 10 seconds
-		LED_vClear();
+		grid.clearDisplay();
 		wait = 30000;
 	}
 	wait--;
@@ -133,5 +137,4 @@ void ANIMATION_vRunner()
 			state = 0;
 			break;
 	}
-	LED_vShow();
 }

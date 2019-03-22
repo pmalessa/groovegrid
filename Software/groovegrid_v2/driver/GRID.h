@@ -40,7 +40,6 @@ class Grid : public Adafruit_GFX {
 	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
 	boolean      getPixel(int16_t x, int16_t y);
 	void 		 endWrite(void);
-	void		 clear(void);
 
 uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
 uint16_t RGB(uint32_t rgb);
