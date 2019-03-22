@@ -10,6 +10,7 @@
 
 #include "../PLATFORM.h"
 #include "Adafruit_GFX.h"
+#include "Adafruit_NeoMatrix.h"
 
 typedef enum{
 	COLOR_RED = 0xFF0000,
@@ -35,19 +36,20 @@ class Grid : public Adafruit_GFX {
 
 	void         display(void);
 	void         clearDisplay(void);
+	void 		 writePixel(int16_t x, int16_t y, uint16_t color);
 	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
 	boolean      getPixel(int16_t x, int16_t y);
 	void 		 endWrite(void);
 	void		 clear(void);
 
-	static uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
-	static uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
+uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
+uint16_t RGB(uint32_t rgb);
+uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
 
  private:
 	Grid();
 	Grid(const Grid&);
 	Grid & operator = (const Grid &);
-	int8_t       data_pin;
-	Adafruit_NeoMatrix matrix;
+	static Adafruit_NeoMatrix matrix;
 };
 #endif /* GRID_H_ */

@@ -10,10 +10,10 @@
 #include "TicTacToe/Game_TicTacToe.h"
 
 uint8_t programstate = 0;
+
 void setup()
 {
 	TIMER_Init();
-	LED_vInit();
 	BUTTON_vInit();
 	COMM_Init();
 #if defined(__AVR__)
