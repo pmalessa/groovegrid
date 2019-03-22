@@ -6,6 +6,8 @@ import 'package:groove_grid/data/controls.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
 import 'package:groove_grid/ui/controls_view_builder.dart';
+import 'package:groove_grid/ui/grid_card.dart';
+import 'package:groove_grid/ui/grid_theme.dart';
 
 class GamesListView extends StatefulWidget {
   GamesListView({@required this.games});
@@ -95,16 +97,18 @@ class _GamesListViewState extends State<GamesListView> {
           onTap: null,
         );
 
-    Card makeCard(
+    Widget makeCard(
         {@required String title,
           @required VoidCallback onPressed,
           String subtitle,
           IconData icon,
           double progress,
           bool highlight}) =>
-        Card(
+        GridCard(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          //shadowColor: GridTheme.of(context).shadowColor,
+          shadowColor: GridTheme.of(context).shadowColor,
           child: FlatButton(
             onPressed: onPressed,
             child: makeListTile(
