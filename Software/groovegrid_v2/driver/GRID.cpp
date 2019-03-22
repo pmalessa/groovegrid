@@ -4,7 +4,7 @@
  *  Created on: 04.01.2019
  *      Author: pmale
  */
-#include "LED.h"
+#include "GRID.h"
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoMatrix.h>

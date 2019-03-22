@@ -8,8 +8,8 @@
 
 #include "../driver/BUTTON.h"
 #include "HardwareSerial.h"
-#include "../driver/LED.h"
 
+#include "../driver/GRID.h"
 #include "GameState_2048.h"
 
 #define GAME_SPEED 200	//lower is faster
