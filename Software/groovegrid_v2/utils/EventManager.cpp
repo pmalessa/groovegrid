@@ -5,7 +5,7 @@
  *      Author: pmale
  */
 
-
+#if not defined(AVR)
 #include "EventManager.h"
 
 void EventManager::addListener( Listener *l )
@@ -27,3 +27,4 @@ void EventManager::dispatchEvent()
 	}
 }
 
+#endif

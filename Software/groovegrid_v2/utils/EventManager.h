@@ -8,6 +8,7 @@
 #ifndef UTILS_EVENTMANAGER_H_
 #define UTILS_EVENTMANAGER_H_
 
+#if not defined(AVR)
 #include "Listener.h"
 #include <stdio.h>
 #include <vector>
@@ -22,5 +23,6 @@ protected:
 	std::vector<Listener*> mListeners;
 	virtual void dispatchEvent();
 };
+#endif
 
 #endif /* UTILS_EVENTMANAGER_H_ */
