@@ -65,7 +65,7 @@ void ANIMATION_randomPulseRects()
 
 	if(up)	//clear or draw
 	{
-		grid.drawRect(x, y, w, h, grid.RGB(r_cur, g_cur, b_cur));
+		grid.fillRect(x, y, w, h, grid.RGB(r_cur, g_cur, b_cur));
 		if((uint16_t)r_cur+speed > r) r_cur = r; else r_cur += speed;
 		if((uint16_t)g_cur+speed > g) g_cur = g; else g_cur += speed;
 		if((uint16_t)b_cur+speed > b) b_cur = b; else b_cur += speed;
@@ -76,7 +76,7 @@ void ANIMATION_randomPulseRects()
 	}
 	else
 	{
-		grid.drawRect(x, y, w, h, grid.RGB(r, g, b));
+		grid.fillRect(x, y, w, h, grid.RGB(r, g, b));
 		if((int8_t)r-speed < 0) r=0; else r -= speed;
 		if((int8_t)g-speed < 0) g=0; else g -= speed;
 		if((int8_t)b-speed < 0) b=0; else b -= speed;
