@@ -11,7 +11,7 @@
 #include "../driver/COMM.h"
 #include "../driver/GRID.h"
 
-#define GAME_SPEED 200	//lower is faster
+#define GAME_SPEED 20	//lower is faster
 
 GameState_2048 game = GameState_2048();
 direction_t movdir = NONE;
@@ -19,11 +19,20 @@ direction_t movdir = NONE;
 Game_2048::Game_2048()
 {
 	game.initializeBoard();
-	//DrawBoard(game.board);
 }
 
 Game_2048::~Game_2048()
 {
+}
+
+void Game_2048::Start()
+{
+	DrawBoard(game.board);
+}
+
+void Game_2048::Reset()
+{
+
 }
 
 void Game_2048::move(direction_t dir) {
@@ -125,7 +134,7 @@ void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 	grid.writePixel(x, y, col);
 }
 
-void Game_2048::SyncTask()	//every 1 ms
+void Game_2048::SyncTask()	//every 10 ms
 {
 	static uint16_t game_cnt = 0;
 	static uint8_t move_possible = 0;

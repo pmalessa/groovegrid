@@ -3,6 +3,7 @@
 #include "driver/TIMER.h"
 #include "driver/BUTTON.h"
 #include "driver/GRID.h"
+#include "driver/COMM.h"
 
 #include "Animation/ANIMATION.h"
 #include "2048/Game_2048.h"
@@ -27,13 +28,15 @@ void setup()
 // The loop function is called in an endless loop
 void loop()
 {
+	static COMM& comm = COMM::getInstance();
 	switch (programstate) {
 		case 0:	//ANIMATION
-			if(BUTTON_bIsPressed(BUTTON_UP) || Serial.read() == '1')
+			if(BUTTON_bIsPressed(BUTTON_UP) || comm.read() == '1')
 			{
 				programstate = 1;
 				ANIMATION_vBoot();
-				//Reset Game State
+				game_2048.Reset();
+				game_2048.Start();
 			}
 			break;
 		case 1:
@@ -64,7 +67,7 @@ void timer()	//called every 10ms
 			break;
 	}
 	button_cnt++;
-	if(button_cnt > 100)	//every 100ms
+	if(button_cnt > 10)	//every 100ms
 	{
 		button_cnt = 0;
 		BUTTON_vRead();		//read Buttons

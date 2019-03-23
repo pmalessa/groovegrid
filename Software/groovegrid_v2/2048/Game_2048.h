@@ -26,6 +26,8 @@ class Game_2048
 public:
 	Game_2048();
 	~Game_2048();
+	void Start();
+	void Reset();
 	uint8_t Loop();
 	void SyncTask();
 private:
