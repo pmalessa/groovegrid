@@ -18,7 +18,8 @@ class GrooveGridRemoteApp extends StatelessWidget {
   final GlobalBloc globalBloc = GlobalBloc();
 
   final GridThemeData connectedGridTheme = GridThemeData(
-    shadowColor: Color(0x80831255),
+    shadowColor: Color(0xFF831255),
+    //shadowColor: Colors.white,
   );
 
   final ThemeData connectedTheme = ThemeData(
@@ -28,6 +29,9 @@ class GrooveGridRemoteApp extends StatelessWidget {
     accentColor: Colors.yellow[700],
     canvasColor: Color(0xFF0F0025),
     cardColor: Color(0xFF21192C),
+    cardTheme: CardTheme(
+      elevation: 20.0,
+    ),
     //canvasColor: Color.fromRGBO(15, 0, 37, 1.0),
   );
 

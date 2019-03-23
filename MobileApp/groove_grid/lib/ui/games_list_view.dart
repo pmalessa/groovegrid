@@ -105,7 +105,6 @@ class _GamesListViewState extends State<GamesListView> {
           double progress,
           bool highlight}) =>
         GridCard(
-          elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           //shadowColor: GridTheme.of(context).shadowColor,
           shadowColor: GridTheme.of(context).shadowColor,
