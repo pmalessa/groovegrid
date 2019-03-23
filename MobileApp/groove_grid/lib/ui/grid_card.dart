@@ -250,7 +250,8 @@ class GridCard extends StatelessWidget {
     this.clipBehavior,
     this.child,
     this.semanticContainer = true,
-    this.shadowColor = Colors.black,
+    this.shadowColor,
+    this.decoration,
   }) : assert(elevation == null || elevation >= 0.0),
         assert(borderOnForeground != null),
         super(key: key);
@@ -321,6 +322,8 @@ class GridCard extends StatelessWidget {
   /// The default color is fully opaque black.
   final Color shadowColor;
 
+  final Decoration decoration;
+
   /// The widget below this widget in the tree.
   ///
   /// {@macro flutter.widgets.child}
@@ -330,14 +333,27 @@ class GridCard extends StatelessWidget {
   static const Clip _defaultClipBehavior = Clip.none;
   static const Color _defaultShadowColor = Colors.black;
 
+
+
   @override
   Widget build(BuildContext context) {
     final CardTheme cardTheme = CardTheme.of(context);
+
+    final Decoration defaultDecoration = BoxDecoration(
+      boxShadow: <BoxShadow>[
+        BoxShadow(
+          color: GridTheme.of(context).shadowColor,
+          blurRadius: 20.0,
+          offset: Offset(0, 2),
+        ),
+      ],
+    );
 
     return Semantics(
       container: semanticContainer,
       child: Container(
         margin: margin ?? cardTheme.margin ?? const EdgeInsets.all(4.0),
+        decoration: decoration ?? defaultDecoration,
         child: Material(
           type: MaterialType.card,
           color: color ?? cardTheme.color ?? Theme.of(context).cardColor,

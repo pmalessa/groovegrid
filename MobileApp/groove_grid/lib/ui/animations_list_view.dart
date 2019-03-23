@@ -4,6 +4,7 @@ import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/bloc/bloc_provider.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
+import 'package:groove_grid/ui/grid_card.dart';
 
 class AnimationsListView extends StatefulWidget {
   AnimationsListView({@required this.animations});
@@ -47,9 +48,9 @@ class _AnimationsListViewState extends State<AnimationsListView> {
       onTap: null,
     );
 
-    Card makeCard(
+    Widget makeCard(
         {@required String title, VoidCallback onPressed, bool highlight}) =>
-        Card(
+        GridCard(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: FlatButton(

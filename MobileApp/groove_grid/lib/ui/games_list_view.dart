@@ -106,8 +106,6 @@ class _GamesListViewState extends State<GamesListView> {
           bool highlight}) =>
         GridCard(
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-          //shadowColor: GridTheme.of(context).shadowColor,
-          shadowColor: GridTheme.of(context).shadowColor,
           child: FlatButton(
             onPressed: onPressed,
             child: makeListTile(
