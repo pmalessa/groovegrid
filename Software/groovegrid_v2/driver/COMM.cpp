@@ -13,16 +13,34 @@
 #include "HardwareSerial.h"
 #endif
 
-void COMM_Init()
+COMM& COMM::getInstance()
+{
+	static COMM _instance;
+	return _instance;
+}
+
+COMM::~COMM(){}
+COMM::COMM()
 {
 #if defined(__AVR__)
 	Serial.begin(9600);
 #elif defined(ESP32)
-	Serial.begin(115200);
+
 #endif
 }
 
-void COMM_println(const char str[])
+void  setCallback(void *functionPointer, COMM::Event eventType)
 {
-	Serial.println(str);
+
+}
+
+void  removeCallback(void *functionPointer)
+{
+
+}
+
+//Call repeatedly in loop to process input
+int COMM::read()
+{
+	return Serial.read();
 }

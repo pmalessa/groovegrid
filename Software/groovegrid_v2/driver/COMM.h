@@ -10,8 +10,27 @@
 
 #include "../PLATFORM.h"
 
-void COMM_Init();
-void COMM_println(const char str[]);
+
+class COMM {
+ public:
+	enum Event{
+		SWIPEDIRECTION,
+		GAMESTATE,
+		SERIALINPUT
+	};
+
+	static COMM& getInstance();
+	~COMM(void);
+	int 		 read();
+	void         setCallback(void *functionPointer, COMM::Event eventType);
+	void         removeCallback(void *functionPointer);
+
+ private:
+	COMM();
+	COMM(const COMM&);
+	COMM & operator = (const COMM &);
+
+};
 
 
 #endif /* COMM_H_ */
