@@ -39,7 +39,7 @@ void ANIMATION_randomPixels()
 			grid.drawPixel(rand()%XMAX, rand()%YMAX, grid.RGB(0, 0, 0));
 		}
 
-		wait = rand()%300;
+		wait = rand()%30;
 	}
 	else
 	{
@@ -103,7 +103,7 @@ void ANIMATION_randomLines()
 			grid.drawLine(rand()%XMAX, rand()%YMAX, rand()%XMAX, rand()%YMAX, grid.RGB(0, 0, 0));
 		}
 
-		wait = rand()%300;
+		wait = rand()%30;
 	}
 	else
 	{
@@ -114,13 +114,13 @@ void ANIMATION_randomLines()
 void ANIMATION_vRunner()
 {
 	static Grid& grid = Grid::getInstance();
-	static uint32_t wait = 30000;
+	static uint32_t wait = 3000;
 	static uint8_t state = 0;
 	if(wait == 0)
 	{
 		state++;	//switch Animation every 10 seconds
 		grid.clearDisplay();
-		wait = 30000;
+		wait = 3000;
 	}
 	wait--;
 	switch (state) {

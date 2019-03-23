@@ -21,7 +21,7 @@ void setup()
 #endif
 
 	ANIMATION_vBoot();
-	TIMER_attach(timer, 1000);
+	TIMER_attach(timer, 10000);
 }
 
 // The loop function is called in an endless loop
@@ -47,7 +47,7 @@ void loop()
 	}
 }
 
-void timer()	//called every 1ms
+void timer()	//called every 10ms
 {
 	static uint16_t button_cnt = 0;
 	switch (programstate) {
