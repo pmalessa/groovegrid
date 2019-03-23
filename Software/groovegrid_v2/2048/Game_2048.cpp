@@ -19,7 +19,7 @@ direction_t movdir = NONE;
 Game_2048::Game_2048()
 {
 	game.initializeBoard();
-	DrawBoard(game.board);
+	//DrawBoard(game.board);
 }
 
 Game_2048::~Game_2048()

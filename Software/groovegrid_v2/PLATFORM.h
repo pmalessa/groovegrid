@@ -11,8 +11,8 @@
 #include "Arduino.h"
 
 // PLATFORM DEFINITION
-//#define DOOR16
-#define TABLE
+#define DOOR16
+//#define TABLE
 
 #if defined(DOOR16)
 #define XMAX 4
