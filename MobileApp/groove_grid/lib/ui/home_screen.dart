@@ -38,6 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
   GamesListView gamesView;
   AnimationsListView animationsView;
 
+  int tabIndex = 0;
+
   _HomeScreenState() {
     //setupStreams();
   }
@@ -66,6 +68,16 @@ class _HomeScreenState extends State<HomeScreen> {
     final GrooveGridAppsBloc _appsBloc =
         BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
+    List tabs = [
+      AnimationsListView(
+        animations: _appsBloc.state.animations,
+      ),
+      //Center(child: Text(_tab1LabelText, style: Theme.of(context).textTheme.subhead,)),
+      GamesListView(
+        games: _appsBloc.state.games,
+      ),
+    ];
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -89,33 +101,28 @@ class _HomeScreenState extends State<HomeScreen> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
-          bottom: TabBar(tabs: [
-            Tab(icon: Icon(Icons.bubble_chart)),
-            Tab(icon: Icon(Icons.videogame_asset)),
-          ]),
         ),
-        body: TabBarView(
-          children: [
-            AnimationsListView(
-              animations: _appsBloc.state.animations,
+        body: tabs[tabIndex],
+        bottomNavigationBar: CupertinoTabBar(
+          activeColor: Theme.of(context).textTheme.subhead.color,
+          inactiveColor: Theme.of(context).hintColor,
+          currentIndex: tabIndex,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bubble_chart),
             ),
-            //Center(child: Text(_tab1LabelText, style: Theme.of(context).textTheme.subhead,)),
-            GamesListView(
-              games: _appsBloc.state.games,
+            BottomNavigationBarItem(
+              icon: Icon(Icons.videogame_asset),
             ),
           ],
+          onTap: (int index) {
+            if (index != tabIndex) {
+              setState(() {
+                tabIndex = index;
+              });
+            }
+          },
         ),
-        bottomNavigationBar: CupertinoTabBar(
-            activeColor: Theme.of(context).textTheme.subhead.color,
-            inactiveColor: Theme.of(context).hintColor,
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.bubble_chart),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.videogame_asset),
-              ),
-            ]),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: StreamBuilder(
           initialData: _appsBloc.state,
