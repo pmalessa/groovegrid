@@ -13,6 +13,8 @@ import 'package:groove_grid/ui/animations_list_view.dart';
 import 'package:groove_grid/ui/controls_view_builder.dart';
 import 'package:groove_grid/ui/diamond_border.dart';
 import 'package:groove_grid/ui/games_list_view.dart';
+import 'package:groove_grid/ui/grid_fab.dart';
+import 'package:groove_grid/ui/grid_theme.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({
@@ -141,28 +143,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: 0,
                         height: 0,
                       )
-                    : SizedBox(
-                        width: 75,
-                        height: 75,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            state.runningApplication.start().then((_) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) {
-                                  if (state.runningApplication.controls
-                                      is SwipeControls) {
-                                    return ControlsViewBuilder(
-                                        state.runningApplication);
-                                  }
-                                }),
-                              );
-                            });
-                          },
-                          tooltip: 'Play',
-                          shape: DiamondBorder(),
-                          child: Icon(Icons.play_arrow),
-                        ));
+                    : GridFAB(
+                        onPressed: () {
+                          state.runningApplication.start().then((_) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                if (state.runningApplication.controls
+                                    is SwipeControls) {
+                                  return ControlsViewBuilder(
+                                      state.runningApplication);
+                                }
+                              }),
+                            );
+                          });
+                        },
+                      );
           },
         ),
       ),
