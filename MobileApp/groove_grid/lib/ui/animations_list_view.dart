@@ -4,6 +4,7 @@ import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/bloc/bloc_provider.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
+import 'package:groove_grid/ui/games_list_view.dart';
 import 'package:groove_grid/ui/grid_card.dart';
 import 'package:groove_grid/ui/grid_theme.dart';
 
@@ -78,7 +79,18 @@ class _AnimationsListViewState extends State<AnimationsListView> {
           itemCount: state.animations.length,
           itemBuilder: (context, index) {
             GrooveGridAnimation animation = state.animations[index];
-            return makeCard(
+//            return makeCard(
+//              title: animation.title,
+//              onPressed: () {
+//                animation.start();
+////            bool isCurrentlyRunning = animation == GrooveGridApp.runningApplication;
+////            print("This is the currently running application: $isCurrentlyRunning");
+////            print("Current running Application: ${GrooveGridApp.runningApplication}");
+//              },
+//              highlight: animation == state.runningApplication,
+//            );
+
+            return GridAppListItem(
               title: animation.title,
               onPressed: () {
                 animation.start();
@@ -87,6 +99,7 @@ class _AnimationsListViewState extends State<AnimationsListView> {
 //            print("Current running Application: ${GrooveGridApp.runningApplication}");
               },
               highlight: animation == state.runningApplication,
+              icon: Icons.bubble_chart,
             );
           },
         );

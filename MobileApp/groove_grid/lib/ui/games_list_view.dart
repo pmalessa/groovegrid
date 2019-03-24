@@ -148,7 +148,7 @@ class _GamesListViewState extends State<GamesListView> {
                 });
               },
               subtitle: game.subtitle,
-              icon: game.iconData,
+              icon: game.iconData ?? Icons.videogame_asset,
               progress: game.progress,
               highlight:
                   game == GrooveGridApp.runningApplication ? true : false,
@@ -167,14 +167,17 @@ class GridAppListItem extends StatelessWidget {
   final IconData icon;
   final double progress;
   final VoidCallback onPressed;
+  final Widget trailing;
 
-  GridAppListItem(
-      {this.highlight,
-      this.onPressed,
-      @required this.title,
-      this.subtitle,
-      this.icon,
-      this.progress = null});
+  GridAppListItem({
+    this.highlight,
+    this.onPressed,
+    @required this.title,
+    this.subtitle,
+    this.icon,
+    this.progress = null,
+    this.trailing,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +221,8 @@ class GridAppListItem extends StatelessWidget {
         flex: 4,
         child: Padding(
           padding: EdgeInsets.only(left: 10.0),
-          child: Text(subtitle,
+          child: Text(
+            subtitle,
             style:
                 Theme.of(context).textTheme.body1.apply(color: foregroundColor),
           ),
@@ -236,7 +240,7 @@ class GridAppListItem extends StatelessWidget {
             VoidCallback onPressed,
             @required bool highlight}) =>
         ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+          contentPadding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 0.0),
           leading: Container(
             padding: EdgeInsets.only(right: 12.0),
             decoration: new BoxDecoration(
@@ -247,10 +251,17 @@ class GridAppListItem extends StatelessWidget {
                 ),
               ),
             ),
-            child: Icon(
-              Icons.videogame_asset,
-              color: mutedForegroundColor,
-            ),
+
+
+
+
+
+            child: this.icon != null
+                ? Icon(
+                    this.icon,
+                    color: mutedForegroundColor,
+                  )
+                : Container(width: 0, height: 0),
           ),
           title: Text(
             title,
@@ -270,8 +281,10 @@ class GridAppListItem extends StatelessWidget {
                   children: subtitleItems,
                 )
               : null,
-          trailing: Icon(Icons.keyboard_arrow_right,
-              color: mutedForegroundColor, size: 30.0),
+          trailing: trailing != null
+              ? trailing
+              : Icon(Icons.keyboard_arrow_right,
+                  color: mutedForegroundColor, size: 30.0),
           onTap: onPressed,
         );
 
