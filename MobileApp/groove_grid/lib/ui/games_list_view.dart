@@ -98,7 +98,6 @@ class GridAppListItem extends StatelessWidget {
       mutedForegroundColor = Theme.of(context).hintColor;
     }
 
-
     // Setup ListTile subtitle display
     Widget progressIndicator;
     Widget subtitleWidget;
@@ -119,7 +118,7 @@ class GridAppListItem extends StatelessWidget {
       displayListTileSubtitle = true;
 
       subtitleItems.add(progressIndicator);
-    } else {}
+    }
 
     if (subtitle != null) {
       subtitleWidget = Expanded(
@@ -137,85 +136,43 @@ class GridAppListItem extends StatelessWidget {
       displayListTileSubtitle = true;
     }
 
-    ListTile makeListTile(
-            {@required String title,
-            String subtitle,
-            IconData icon,
-            double progress,
-            VoidCallback onPressed,
-            @required bool highlight}) =>
-        ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 0.0),
-
-          leading: Container(
-            padding: EdgeInsets.only(right: 12.0),
-            decoration: new BoxDecoration(
-              border: new Border(
-                right: new BorderSide(
-                  width: 1.0,
-                  color: mutedForegroundColor,
-                ),
+    return GridCard(
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 0.0),
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          decoration: new BoxDecoration(
+            border: new Border(
+              right: new BorderSide(
+                width: 1.0,
+                color: mutedForegroundColor,
               ),
             ),
-            child: this.icon != null
-                ? Icon(
-                    this.icon,
-                    color: mutedForegroundColor,
-                  )
-                : Container(width: 0, height: 0),
           ),
-
-          title: Text(
-            title,
-            style: highlight
-                ? Theme.of(context)
-                    .textTheme
-                    .subhead
-                    .apply(color: Theme.of(context).accentColor)
-                : Theme.of(context)
-                    .textTheme
-                    .subhead, 
-          ),
-
-          subtitle: displayListTileSubtitle
-              ? Row(
-                  children: subtitleItems,
+          child: this.icon != null
+              ? Icon(
+                  this.icon,
+                  color: mutedForegroundColor,
                 )
-              : null,
-
-          trailing: trailing != null
-              ? trailing
-              : Icon(Icons.keyboard_arrow_right,
-                  color: mutedForegroundColor, size: 30.0),
-
-          onTap: onPressed,
-        );
-
-    Widget makeCard(
-            {@required String title,
-            @required VoidCallback onPressed,
-            String subtitle,
-            IconData icon,
-            double progress,
-            bool highlight}) =>
-        GridCard(
-          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-          child: makeListTile(
-            title: title,
-            subtitle: subtitle,
-            icon: icon,
-            progress: progress,
-            highlight: highlight,
-            onPressed: onPressed,
-          ),
-        );
-
-    return makeCard(
-        title: this.title,
-        onPressed: this.onPressed,
-        subtitle: this.subtitle,
-        progress: this.progress,
-        icon: this.icon,
-        highlight: this.highlight);
+              : Container(width: 0, height: 0),
+        ),
+        title: Text(
+          title,
+          style:
+              Theme.of(context).textTheme.subhead.apply(color: foregroundColor),
+        ),
+        subtitle: displayListTileSubtitle
+            ? Row(
+                children: subtitleItems,
+              )
+            : null,
+        trailing: trailing != null
+            ? trailing
+            : Icon(Icons.keyboard_arrow_right,
+                color: mutedForegroundColor, size: 30.0),
+        onTap: onPressed,
+      ),
+    );
   }
 }
