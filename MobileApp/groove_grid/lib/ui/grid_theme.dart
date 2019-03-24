@@ -11,9 +11,13 @@ class GridThemeData {
   final Color highlightedShadowColor;
 
   final Highlight highlightBehaviour;
+  final Gradient highlightGradient;
 
   GridThemeData(
-      {this.shadowColor, this.highlightedShadowColor, this.highlightBehaviour});
+      {this.shadowColor,
+      this.highlightedShadowColor,
+      this.highlightBehaviour,
+      this.highlightGradient});
 
   @override
   bool operator ==(other) {

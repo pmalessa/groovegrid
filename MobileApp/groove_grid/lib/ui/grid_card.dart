@@ -243,6 +243,7 @@ class GridCard extends StatelessWidget {
   const GridCard({
     Key key,
     this.color,
+    this.gradient,
     this.elevation,
     this.shape,
     this.borderOnForeground = true,
@@ -252,6 +253,7 @@ class GridCard extends StatelessWidget {
     this.semanticContainer = true,
     this.shadowColor,
     this.decoration,
+    this.border,
   }) : assert(elevation == null || elevation >= 0.0),
         assert(borderOnForeground != null),
         super(key: key);
@@ -263,6 +265,13 @@ class GridCard extends StatelessWidget {
   /// If this property is null then [ThemeData.cardTheme.color] is used,
   /// if that's null then [ThemeData.cardColor] is used.
   final Color color;
+
+  /// If [gradient] is specified, the card no longer uses the background color
+  /// as defined by [color]. Instead [gradient] is used for the card's background.
+  ///
+  /// If this property is null then the card has
+  /// a single background color defined by [color].
+  final Gradient gradient;
 
   /// The z-coordinate at which to place this card. This controls the size of
   /// the shadow below the card.
@@ -324,6 +333,8 @@ class GridCard extends StatelessWidget {
 
   final Decoration decoration;
 
+  final Border border;
+
   /// The widget below this widget in the tree.
   ///
   /// {@macro flutter.widgets.child}
@@ -340,15 +351,16 @@ class GridCard extends StatelessWidget {
     final CardTheme cardTheme = CardTheme.of(context);
 
     final Decoration defaultDecoration = BoxDecoration(
-      color: color ?? cardTheme.color ?? Theme.of(context).cardColor,
+      color: gradient != null ? null : color ?? cardTheme.color ?? Theme.of(context).cardColor,
+      gradient: gradient,
       boxShadow: <BoxShadow>[
         BoxShadow(
-          color: GridTheme.of(context).shadowColor,
+          color: shadowColor ?? GridTheme.of(context).shadowColor,
           blurRadius: 20.0,
           offset: Offset(0, 2),
         ),
       ],
-      border: Border.all(
+      border: border ?? Border.all(
         color: Color(0xFFA9156D),
         width: 1,
       ),

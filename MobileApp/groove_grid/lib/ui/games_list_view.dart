@@ -72,6 +72,11 @@ class GridAppListItem extends StatelessWidget {
   final VoidCallback onPressed;
   final Widget trailing;
 
+  static const Gradient defaultGradient = LinearGradient(colors: [
+    Color(0xFFBC247E),
+    Color(0xFF6425C0),
+  ]);
+
   GridAppListItem({
     this.highlight,
     this.onPressed,
@@ -87,15 +92,29 @@ class GridAppListItem extends StatelessWidget {
     // Setup Highlight Properties
     Color foregroundColor;
     Color mutedForegroundColor;
+    Color backgroundColor;
+    Color shadowColor;
+    Gradient backgroundGradient;
+    Border border;
 
     if (highlight) {
       if (GridTheme.of(context).highlightBehaviour == Highlight.foreground) {
         foregroundColor = Theme.of(context).accentColor;
         mutedForegroundColor = foregroundColor;
-      } else {}
+        backgroundColor = Theme.of(context).cardTheme.color;
+      } else {
+        foregroundColor = Theme.of(context).textTheme.subhead.color;
+        mutedForegroundColor = foregroundColor;
+        backgroundColor = Colors.pink;
+        backgroundGradient =
+            GridTheme.of(context).highlightGradient ?? defaultGradient;
+        border = Border.all();
+        shadowColor = GridTheme.of(context).highlightedShadowColor;
+      }
     } else {
       foregroundColor = Theme.of(context).textTheme.subhead.color;
       mutedForegroundColor = Theme.of(context).hintColor;
+      backgroundColor = Theme.of(context).cardTheme.color;
     }
 
     // Setup ListTile subtitle display
@@ -138,6 +157,10 @@ class GridAppListItem extends StatelessWidget {
 
     return GridCard(
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      color: backgroundColor,
+      gradient: backgroundGradient,
+      border: border,
+      shadowColor: shadowColor,
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 0.0),
         leading: Container(
