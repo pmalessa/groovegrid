@@ -24,103 +24,6 @@ class _GamesListViewState extends State<GamesListView> {
     final GrooveGridAppsBloc _appsBloc =
         BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
-    ListTile makeListTile(
-            {@required String title,
-            String subtitle,
-            IconData icon,
-            double progress,
-            @required bool highlight}) =>
-        ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-          leading: Container(
-            padding: EdgeInsets.only(right: 12.0),
-            decoration: new BoxDecoration(
-              border: new Border(
-                right: new BorderSide(
-                  width: 1.0,
-                  color: highlight
-                      ? Theme.of(context).accentColor
-                      : Theme.of(context).hintColor,
-                ),
-              ),
-            ),
-            child: Icon(
-              Icons.videogame_asset,
-              color: highlight
-                  ? Theme.of(context).accentColor
-                  : Theme.of(context).hintColor,
-            ),
-          ),
-          title: Text(
-            title,
-            style: highlight
-                ? Theme.of(context)
-                    .textTheme
-                    .subhead
-                    .apply(color: Theme.of(context).accentColor)
-                : Theme.of(context)
-                    .textTheme
-                    .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
-          ),
-          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-          subtitle: Row(
-            children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Container(
-                    // tag: 'hero',
-                    child: LinearProgressIndicator(
-                      backgroundColor: Color.fromRGBO(209, 224, 224, 0.4),
-                      value: progress != null ? progress : 0.0,
-                      valueColor: highlight
-                          ? AlwaysStoppedAnimation(
-                              Theme.of(context).accentColor)
-                          : AlwaysStoppedAnimation(
-                              Theme.of(context).primaryTextTheme.body1.color),
-                    ),
-                  )),
-              Expanded(
-                flex: 4,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Text(subtitle != null ? subtitle : "Undefined",
-                      style: highlight
-                          ? Theme.of(context)
-                              .textTheme
-                              .body1
-                              .apply(color: Theme.of(context).accentColor)
-                          : Theme.of(context).textTheme.body1),
-                ),
-              )
-            ],
-          ),
-          trailing: Icon(Icons.keyboard_arrow_right,
-              color: Theme.of(context).hintColor, size: 30.0),
-          onTap: null,
-        );
-
-    Widget makeCard(
-            {@required String title,
-            @required VoidCallback onPressed,
-            String subtitle,
-            IconData icon,
-            double progress,
-            bool highlight}) =>
-        GridCard(
-          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-          child: FlatButton(
-            onPressed: onPressed,
-            child: makeListTile(
-              title: title,
-              subtitle: subtitle,
-              icon: icon,
-              progress: progress,
-              highlight: highlight,
-            ),
-          ),
-        );
-
     return StreamBuilder(
       initialData: _appsBloc.state,
       stream: _appsBloc.output,
@@ -181,7 +84,7 @@ class GridAppListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Setup
+    // Setup Highlight Properties
     Color foregroundColor;
     Color mutedForegroundColor;
 
@@ -195,6 +98,8 @@ class GridAppListItem extends StatelessWidget {
       mutedForegroundColor = Theme.of(context).hintColor;
     }
 
+
+    // Setup ListTile subtitle display
     Widget progressIndicator;
     Widget subtitleWidget;
     bool displayListTileSubtitle = false;
@@ -241,6 +146,7 @@ class GridAppListItem extends StatelessWidget {
             @required bool highlight}) =>
         ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 0.0),
+
           leading: Container(
             padding: EdgeInsets.only(right: 12.0),
             decoration: new BoxDecoration(
@@ -251,11 +157,6 @@ class GridAppListItem extends StatelessWidget {
                 ),
               ),
             ),
-
-
-
-
-
             child: this.icon != null
                 ? Icon(
                     this.icon,
@@ -263,6 +164,7 @@ class GridAppListItem extends StatelessWidget {
                   )
                 : Container(width: 0, height: 0),
           ),
+
           title: Text(
             title,
             style: highlight
@@ -281,10 +183,12 @@ class GridAppListItem extends StatelessWidget {
                   children: subtitleItems,
                 )
               : null,
+
           trailing: trailing != null
               ? trailing
               : Icon(Icons.keyboard_arrow_right,
                   color: mutedForegroundColor, size: 30.0),
+
           onTap: onPressed,
         );
 
@@ -315,128 +219,4 @@ class GridAppListItem extends StatelessWidget {
         icon: this.icon,
         highlight: this.highlight);
   }
-
-//  @override
-//  Widget build(BuildContext context) {
-//    // Setup
-//    Color foregroundColor;
-//    Color mutedForegroundColor;
-//    print("Highlight: $highlight");
-//
-//    if (highlight) {
-//      if (GridTheme.of(context).highlightBehaviour == Highlight.foreground) {
-//        foregroundColor = Theme.of(context).accentColor;
-//        mutedForegroundColor = foregroundColor;
-//      } else {
-//
-//      }
-//    } else {
-//      foregroundColor = Theme.of(context).textTheme.subhead.color;
-//      mutedForegroundColor = Theme.of(context).hintColor;
-//    }
-//
-//    ListTile makeListTile(
-//            {@required String title,
-//            String subtitle,
-//            IconData icon,
-//            double progress,
-//            @required bool highlight}) =>
-//        ListTile(
-//          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-//          leading: Container(
-//            padding: EdgeInsets.only(right: 12.0),
-//            decoration: new BoxDecoration(
-//              border: new Border(
-//                right: new BorderSide(
-//                  width: 1.0,
-//                  color: highlight
-//                      ? Theme.of(context).accentColor
-//                      : Theme.of(context).hintColor,
-//                ),
-//              ),
-//            ),
-//            child: Icon(
-//              this.icon,
-//              color: highlight
-//                  ? Theme.of(context).accentColor
-//                  : Theme.of(context).hintColor,
-//            ),
-//          ),
-//          title: Text(
-//            title,
-//            style: highlight
-//                ? Theme.of(context)
-//                    .textTheme
-//                    .subhead
-//                    .apply(color: Theme.of(context).accentColor)
-//                : Theme.of(context)
-//                    .textTheme
-//                    .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
-//          ),
-//          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-//
-//          subtitle: Row(
-//            children: <Widget>[
-//              Expanded(
-//                  flex: 1,
-//                  child: Container(
-//                    // tag: 'hero',
-//                    child: LinearProgressIndicator(
-//                      backgroundColor: Color.fromRGBO(209, 224, 224, 0.4),
-//                      value: progress != null ? progress : 0.0,
-//                      valueColor: highlight
-//                          ? AlwaysStoppedAnimation(
-//                              Theme.of(context).accentColor)
-//                          : AlwaysStoppedAnimation(
-//                              Theme.of(context).primaryTextTheme.body1.color),
-//                    ),
-//                  )),
-//              Expanded(
-//                flex: 4,
-//                child: Padding(
-//                  padding: EdgeInsets.only(left: 10.0),
-//                  child: Text(subtitle != null ? subtitle : "Undefined",
-//                      style: highlight
-//                          ? Theme.of(context)
-//                              .textTheme
-//                              .body1
-//                              .apply(color: Theme.of(context).accentColor)
-//                          : Theme.of(context).textTheme.body1),
-//                ),
-//              )
-//            ],
-//          ),
-//          trailing: Icon(Icons.keyboard_arrow_right,
-//              color: Theme.of(context).hintColor, size: 30.0),
-//          onTap: null,
-//        );
-//
-//    Widget makeCard(
-//            {@required String title,
-//            @required VoidCallback onPressed,
-//            String subtitle,
-//            IconData icon,
-//            double progress,
-//            bool highlight}) =>
-//        GridCard(
-//          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-//          child: FlatButton(
-//            onPressed: onPressed,
-//            child: makeListTile(
-//              title: title,
-//              subtitle: subtitle,
-//              icon: icon,
-//              progress: progress,
-//              highlight: highlight,
-//            ),
-//          ),
-//        );
-//
-//    return makeCard(
-//        title: title,
-//        onPressed: onPressed,
-//        subtitle: subtitle,
-//        icon: icon,
-//        progress: progress);
-//  }
 }
