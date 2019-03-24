@@ -1,45 +1,46 @@
-#include "Arduino.h"
 
-#include <TimerOne.h>
-#include "LED.h"
-#include "BUTTON.h"
-#include "HardwareSerial.h"
+#include "PLATFORM.h"
+#include "driver/TIMER.h"
+#include "driver/BUTTON.h"
+#include "driver/GRID.h"
+#include "driver/COMM.h"
 
-#include "ANIMATION.h"
-#include "Game_2048.h"
-#include "Game_TicTacToe.h"
+#include "Animation/ANIMATION.h"
+#include "2048/Game_2048.h"
+#include "TicTacToe/Game_TicTacToe.h"
 
 uint8_t programstate = 0;
+Game_2048 game_2048 = Game_2048();
+
 void setup()
 {
-	Timer1.initialize();
-	LED_vInit();
+	TIMER_Init();
 	BUTTON_vInit();
-	Serial.begin(9600);
+#if defined(__AVR__)
 	srand(eeprom_read_word((uint16_t *)0x23));
 	eeprom_update_word((uint16_t *)0x23, (uint16_t)rand());
-	Serial.begin(9600);
-	Serial.println("Hey!");
+#endif
 
 	ANIMATION_vBoot();
-	Timer1.attachInterrupt(timer, 1000);
-
+	TIMER_attach(timer, 10000);
 }
 
 // The loop function is called in an endless loop
 void loop()
 {
+	static COMM& comm = COMM::getInstance();
 	switch (programstate) {
 		case 0:	//ANIMATION
-			if(BUTTON_bIsPressed(BUTTON_UP) || Serial.read() == '1')
+			if(BUTTON_bIsPressed(BUTTON_UP) || comm.read() == '1')
 			{
 				programstate = 1;
 				ANIMATION_vBoot();
-				Game_2048_vSetup();
+				game_2048.Reset();
+				game_2048.Start();
 			}
 			break;
 		case 1:
-			if(!Game_2048_u8Loop())
+			if(!game_2048.Loop())
 			{
 				programstate = 0;//quit
 			}
@@ -49,7 +50,7 @@ void loop()
 	}
 }
 
-void timer()	//called every 1ms
+void timer()	//called every 10ms
 {
 	static uint16_t button_cnt = 0;
 	switch (programstate) {
@@ -57,7 +58,7 @@ void timer()	//called every 1ms
 			ANIMATION_vRunner();
 			break;
 		case 1:
-			Game_2048_vSyncTask();
+			game_2048.SyncTask();
 			break;
 		case 2:
 			Game_TicTacToe_Output();
@@ -66,7 +67,7 @@ void timer()	//called every 1ms
 			break;
 	}
 	button_cnt++;
-	if(button_cnt > 100)	//every 100ms
+	if(button_cnt > 10)	//every 100ms
 	{
 		button_cnt = 0;
 		BUTTON_vRead();		//read Buttons

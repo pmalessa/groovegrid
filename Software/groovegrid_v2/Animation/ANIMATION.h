@@ -8,6 +8,7 @@
 #ifndef ANIMATION_H_
 #define ANIMATION_H_
 
+#include "../PLATFORM.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>

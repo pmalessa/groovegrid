@@ -6,7 +6,8 @@
  */
 
 #include "Arduino.h"
-#include "LED.h"
+
+#include "../driver/GRID.h"
 #include "Game_TicTacToe.h"
 
 
