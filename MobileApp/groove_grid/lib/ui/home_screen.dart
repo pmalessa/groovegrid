@@ -11,6 +11,7 @@ import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
 import 'package:groove_grid/ui/animations_list_view.dart';
 import 'package:groove_grid/ui/controls_view_builder.dart';
+import 'package:groove_grid/ui/diamond_border.dart';
 import 'package:groove_grid/ui/games_list_view.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -140,24 +141,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: 0,
                         height: 0,
                       )
-                    : FloatingActionButton(
-                        onPressed: () {
-                          state.runningApplication.start().then((_) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                if (state.runningApplication.controls
-                                    is SwipeControls) {
-                                  return ControlsViewBuilder(
-                                      state.runningApplication);
-                                }
-                              }),
-                            );
-                          });
-                        },
-                        tooltip: 'Play',
-                        child: Icon(Icons.play_arrow),
-                      );
+                    : SizedBox(
+                        width: 75,
+                        height: 75,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            state.runningApplication.start().then((_) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  if (state.runningApplication.controls
+                                      is SwipeControls) {
+                                    return ControlsViewBuilder(
+                                        state.runningApplication);
+                                  }
+                                }),
+                              );
+                            });
+                          },
+                          tooltip: 'Play',
+                          shape: DiamondBorder(),
+                          child: Icon(Icons.play_arrow),
+                        ));
           },
         ),
       ),
