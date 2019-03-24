@@ -19,7 +19,8 @@ class GrooveGridRemoteApp extends StatelessWidget {
 
   final GridThemeData connectedGridTheme = GridThemeData(
     shadowColor: Color(0x80831255),
-    //shadowColor: Colors.white,
+    highlightedShadowColor: Color(0xFF831255),
+    highlightBehaviour: Highlight.foreground,
   );
 
   final ThemeData connectedTheme = ThemeData(

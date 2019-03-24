@@ -5,6 +5,7 @@ import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/bloc/bloc_provider.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
 import 'package:groove_grid/ui/grid_card.dart';
+import 'package:groove_grid/ui/grid_theme.dart';
 
 class AnimationsListView extends StatefulWidget {
   AnimationsListView({@required this.animations});
@@ -18,38 +19,45 @@ class AnimationsListView extends StatefulWidget {
 class _AnimationsListViewState extends State<AnimationsListView> {
   @override
   Widget build(BuildContext context) {
+    final GrooveGridAppsBloc _appsBloc =
+        BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
-    final GrooveGridAppsBloc _appsBloc = BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
+    ListTile makeListTile({@required String title, bool highlight}) {
+      TextStyle textStyle = () {
+        if (highlight &&
+            GridTheme.of(context).highlightBehaviour == Highlight.foreground) {
+          return Theme.of(context)
+              .textTheme
+              .subhead
+              .apply(color: Theme.of(context).accentColor);
+        } else {
+          return Theme.of(context).textTheme.subhead;
+        }
+      }();
 
-    ListTile makeListTile({@required String title, bool highlight}) => ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-      leading: Container(
-        padding: EdgeInsets.only(right: 12.0),
-        decoration: new BoxDecoration(
-            border: new Border(
-                right: new BorderSide(
-                    width: 1.0, color: Theme.of(context).hintColor))),
-        child: Icon(Icons.bubble_chart, color: Theme.of(context).hintColor),
-      ),
-      title: Text(
-        title,
-        style: highlight
-            ? Theme.of(context)
-            .textTheme
-            .subhead
-            .apply(color: Theme.of(context).accentColor)
-            : Theme.of(context)
-            .textTheme
-            .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
-      ),
-      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-      trailing: Icon(Icons.more_vert,
-          color: Theme.of(context).hintColor, size: 25.0),
-      onTap: null,
-    );
+      return ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          decoration: new BoxDecoration(
+              border: new Border(
+                  right: new BorderSide(
+                      width: 1.0, color: Theme.of(context).hintColor))),
+          child: Icon(Icons.bubble_chart, color: Theme.of(context).hintColor),
+        ),
+        title: Text(
+          title,
+          style: textStyle, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+        ),
+        // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+        trailing: Icon(Icons.more_vert,
+            color: Theme.of(context).hintColor, size: 25.0),
+        onTap: null,
+      );
+    }
 
     Widget makeCard(
-        {@required String title, VoidCallback onPressed, bool highlight}) =>
+            {@required String title, VoidCallback onPressed, bool highlight}) =>
         GridCard(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
@@ -63,7 +71,8 @@ class _AnimationsListViewState extends State<AnimationsListView> {
     return StreamBuilder(
       initialData: _appsBloc.state,
       stream: _appsBloc.output,
-      builder: (BuildContext context, AsyncSnapshot<GrooveGridAppsState> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<GrooveGridAppsState> snapshot) {
         GrooveGridAppsState state = snapshot.data;
         return ListView.builder(
           itemCount: state.animations.length,
