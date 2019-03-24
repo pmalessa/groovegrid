@@ -174,9 +174,8 @@ class GridAppListItem extends StatelessWidget {
                     .apply(color: Theme.of(context).accentColor)
                 : Theme.of(context)
                     .textTheme
-                    .subhead, //TextStyle(color: Theme.of(context).text, fontWeight: FontWeight.bold),
+                    .subhead, 
           ),
-          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
           subtitle: displayListTileSubtitle
               ? Row(
