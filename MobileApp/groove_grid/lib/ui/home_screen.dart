@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
 import 'package:groove_grid/bloc/groove_grid_apps_bloc.dart';
@@ -13,7 +14,10 @@ import 'package:groove_grid/ui/controls_view_builder.dart';
 import 'package:groove_grid/ui/games_list_view.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key, this.title,}) : super(key: key);
+  HomeScreen({
+    Key key,
+    this.title,
+  }) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -31,7 +35,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   GamesListView gamesView;
   AnimationsListView animationsView;
 
@@ -58,11 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    final GrooveGridAppsBloc _appsBloc = BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
+    final GrooveGridAppsBloc _appsBloc =
+        BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -103,32 +105,52 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+        bottomNavigationBar: CupertinoTabBar(
+            activeColor: Theme.of(context).textTheme.subhead.color,
+            inactiveColor: Theme.of(context).hintColor,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bubble_chart),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.videogame_asset),
+              ),
+            ]),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: StreamBuilder(
           initialData: _appsBloc.state,
           stream: _appsBloc.output,
-          builder: (BuildContext context, AsyncSnapshot<GrooveGridAppsState> snapshot) {
+          builder: (BuildContext context,
+              AsyncSnapshot<GrooveGridAppsState> snapshot) {
             GrooveGridAppsState state = snapshot.data;
             return state.runningApplication == null
-                ? Container(width: 0, height: 0,)
+                ? Container(
+                    width: 0,
+                    height: 0,
+                  )
                 : !state.runningApplication.hasControls
-                ? Container(width: 0, height: 0,)
-                : FloatingActionButton(
-              onPressed: () {
-                state.runningApplication.start().then((_) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) {
-                          if(state.runningApplication.controls is SwipeControls) {
-                            return ControlsViewBuilder(state.runningApplication);
-                          }
-                        }),
-                  );
-                });
-              },
-              tooltip: 'Play',
-              child: Icon(Icons.play_arrow),
-            );
+                    ? Container(
+                        width: 0,
+                        height: 0,
+                      )
+                    : FloatingActionButton(
+                        onPressed: () {
+                          state.runningApplication.start().then((_) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                if (state.runningApplication.controls
+                                    is SwipeControls) {
+                                  return ControlsViewBuilder(
+                                      state.runningApplication);
+                                }
+                              }),
+                            );
+                          });
+                        },
+                        tooltip: 'Play',
+                        child: Icon(Icons.play_arrow),
+                      );
           },
         ),
       ),
