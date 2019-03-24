@@ -340,6 +340,7 @@ class GridCard extends StatelessWidget {
     final CardTheme cardTheme = CardTheme.of(context);
 
     final Decoration defaultDecoration = BoxDecoration(
+      color: color ?? cardTheme.color ?? Theme.of(context).cardColor,
       boxShadow: <BoxShadow>[
         BoxShadow(
           color: GridTheme.of(context).shadowColor,
@@ -347,6 +348,11 @@ class GridCard extends StatelessWidget {
           offset: Offset(0, 2),
         ),
       ],
+      border: Border.all(
+        color: Color(0xFFA9156D),
+        width: 1,
+      ),
+      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(100), topRight: Radius.circular(100)),
     );
 
     return Semantics(
@@ -355,8 +361,7 @@ class GridCard extends StatelessWidget {
         margin: margin ?? cardTheme.margin ?? const EdgeInsets.all(4.0),
         decoration: decoration ?? defaultDecoration,
         child: Material(
-          type: MaterialType.card,
-          color: color ?? cardTheme.color ?? Theme.of(context).cardColor,
+          type: MaterialType.transparency,
           shadowColor: this.shadowColor ?? GridTheme.of(context).shadowColor ?? _defaultShadowColor,
           elevation: elevation ?? cardTheme.elevation ?? _defaultElevation,
           shape: shape ?? cardTheme.shape ?? const RoundedRectangleBorder(
