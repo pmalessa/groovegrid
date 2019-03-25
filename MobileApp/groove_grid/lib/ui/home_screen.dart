@@ -111,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
         bottomNavigationBar: GridNavigationBar(
           currentIndex: tabIndex,
           shape: CircularNotchedRectangle(),
+          notchMargin: 20.0,
           color: Theme.of(context).hintColor,
           items: <GridNavigationBarItem>[
             GridNavigationBarItem(

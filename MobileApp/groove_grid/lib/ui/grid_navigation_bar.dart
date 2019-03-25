@@ -18,6 +18,7 @@ class GridNavigationBar extends StatefulWidget {
     this.shape,
     this.onTap,
     this.currentIndex = 0,
+    this.notchMargin,
   }) {
     assert(this.items.length == 2 || this.items.length == 4);
   }
@@ -31,6 +32,7 @@ class GridNavigationBar extends StatefulWidget {
   final NotchedShape shape;
   final ValueChanged<int> onTap;
   final int currentIndex;
+  final double notchMargin;
 
   @override
   State<StatefulWidget> createState() => GridNavigationBarState();
@@ -64,6 +66,7 @@ class GridNavigationBarState extends State<GridNavigationBar> {
 
     return BottomAppBar(
       shape: widget.shape,
+      notchMargin: widget.notchMargin,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
