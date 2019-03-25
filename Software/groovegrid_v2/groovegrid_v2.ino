@@ -12,6 +12,30 @@
 uint8_t programstate = 0;
 Game_2048 game_2048 = Game_2048();
 
+void timer()	//called every 10ms
+{
+	static uint16_t button_cnt = 0;
+	switch (programstate) {
+		case 0: //ANIMATION
+			ANIMATION_vRunner();
+			break;
+		case 1:
+			game_2048.SyncTask();
+			break;
+		case 2:
+			Game_TicTacToe_Output();
+			break;
+		default:
+			break;
+	}
+	button_cnt++;
+	if(button_cnt > 10)	//every 100ms
+	{
+		button_cnt = 0;
+		BUTTON_vRead();		//read Buttons
+	}
+}
+
 void setup()
 {
 	TIMER_Init();
@@ -47,29 +71,5 @@ void loop()
 			break;
 		default:
 			break;
-	}
-}
-
-void timer()	//called every 10ms
-{
-	static uint16_t button_cnt = 0;
-	switch (programstate) {
-		case 0: //ANIMATION
-			ANIMATION_vRunner();
-			break;
-		case 1:
-			game_2048.SyncTask();
-			break;
-		case 2:
-			Game_TicTacToe_Output();
-			break;
-		default:
-			break;
-	}
-	button_cnt++;
-	if(button_cnt > 10)	//every 100ms
-	{
-		button_cnt = 0;
-		BUTTON_vRead();		//read Buttons
 	}
 }

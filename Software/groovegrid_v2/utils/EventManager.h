@@ -9,19 +9,19 @@
 #define UTILS_EVENTMANAGER_H_
 
 #if not defined(AVR)
-#include "Listener.h"
-#include <stdio.h>
 #include <vector>
-#include <algorithm>
+#include <list>
+#include "Listener.h"
 
-class EventManager {
+class EventManager
+{
+    //Lets keep a track of all the shops we have observing
+    std::vector<Listener*> list;
+
 public:
-	void addListener( Listener* );
-	void removeListener( Listener* );
-
-protected:
-	std::vector<Listener*> mListeners;
-	virtual void dispatchEvent();
+    void Attach(Listener *listener);
+    void Detach(Listener *listener);
+    void onEvent();
 };
 #endif
 
