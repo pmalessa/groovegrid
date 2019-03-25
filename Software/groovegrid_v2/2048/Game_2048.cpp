@@ -9,7 +9,7 @@
 #include "../driver/BUTTON.h"
 #include "HardwareSerial.h"
 #include "../driver/COMM.h"
-#include "../driver/GRID.h"
+#include "../driver/Grid.h"
 
 #define GAME_SPEED 20	//lower is faster
 

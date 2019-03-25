@@ -15,7 +15,6 @@
 
 class EventManager
 {
-    //Lets keep a track of all the shops we have observing
     std::vector<Listener*> list;
 
 public:

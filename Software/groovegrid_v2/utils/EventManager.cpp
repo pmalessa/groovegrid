@@ -9,8 +9,6 @@
 #include "EventManager.h"
 #include <algorithm>
 
-using namespace std;
-
 void EventManager::Attach(Listener *listener)
 {
     list.push_back(listener);
@@ -22,7 +20,7 @@ void EventManager::Detach(Listener *listener)
 
 void EventManager::onEvent()
 {
-    for(vector<Listener*>::const_iterator iter = list.begin(); iter != list.end(); ++iter)
+    for(std::vector<Listener*>::const_iterator iter = list.begin(); iter != list.end(); ++iter)
     {
         if(*iter != 0)
         {
