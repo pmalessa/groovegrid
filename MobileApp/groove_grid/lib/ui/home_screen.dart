@@ -14,6 +14,7 @@ import 'package:groove_grid/ui/controls_view_builder.dart';
 import 'package:groove_grid/ui/diamond_border.dart';
 import 'package:groove_grid/ui/games_list_view.dart';
 import 'package:groove_grid/ui/grid_fab.dart';
+import 'package:groove_grid/ui/grid_navigation_bar.dart';
 import 'package:groove_grid/ui/grid_theme.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -106,16 +107,19 @@ class _HomeScreenState extends State<HomeScreen> {
           title: Text(widget.title),
         ),
         body: tabs[tabIndex],
-        bottomNavigationBar: CupertinoTabBar(
-          activeColor: Theme.of(context).textTheme.subhead.color,
-          inactiveColor: Theme.of(context).hintColor,
+
+        bottomNavigationBar: GridNavigationBar(
           currentIndex: tabIndex,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bubble_chart),
+          shape: CircularNotchedRectangle(),
+          color: Theme.of(context).hintColor,
+          items: <GridNavigationBarItem>[
+            GridNavigationBarItem(
+              icon: Icons.bubble_chart,
+              title: "Animations",
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.videogame_asset),
+            GridNavigationBarItem(
+              icon: Icons.videogame_asset,
+              title: "Games",
             ),
           ],
           onTap: (int index) {
@@ -126,6 +130,82 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
         ),
+
+//        bottomNavigationBar: BottomAppBar(
+//          color: Colors.pink,
+//          shape: CircularNotchedRectangle(),
+//          notchMargin: 10,
+//          child: Container(
+//            height: 100,
+//            child: BottomNavigationBar(
+//              currentIndex: tabIndex,
+//              type: BottomNavigationBarType.shifting,
+//              items: <BottomNavigationBarItem>[
+//                BottomNavigationBarItem(
+//                  icon: Icon(Icons.bubble_chart),
+//                  title: Text("Animations"),
+//                  backgroundColor: Colors.transparent,
+//                ),
+//                BottomNavigationBarItem(
+//                  icon: Icon(Icons.videogame_asset),
+//                  title: Text("Games"),
+//                  backgroundColor: Colors.transparent,
+//                ),
+//              ],
+//              onTap: (int index) {
+//                if (index != tabIndex) {
+//                  setState(() {
+//                    tabIndex = index;
+//                  });
+//                }
+//              },
+//            ),
+//          ),
+//          child: BottomNavigationBar(
+//            currentIndex: tabIndex,
+//            items: <BottomNavigationBarItem>[
+//              BottomNavigationBarItem(
+//                icon: Icon(Icons.bubble_chart),
+//                title: Text("Animations"),
+//                backgroundColor: Colors.transparent,
+//              ),
+//              BottomNavigationBarItem(
+//                icon: Icon(Icons.videogame_asset),
+//                title: Text("Games"),
+//                backgroundColor: Colors.transparent,
+//              ),
+//            ],
+//            onTap: (int index) {
+//              if (index != tabIndex) {
+//                setState(() {
+//                  tabIndex = index;
+//                });
+//              }
+//            },
+//          ),
+
+//          child: CupertinoTabBar(
+//            backgroundColor: Colors.transparent,
+//            activeColor: Theme.of(context).textTheme.subhead.color,
+//            inactiveColor: Theme.of(context).hintColor,
+//            currentIndex: tabIndex,
+//            items: <BottomNavigationBarItem>[
+//              BottomNavigationBarItem(
+//                icon: Icon(Icons.bubble_chart),
+//              ),
+//              BottomNavigationBarItem(
+//                icon: Icon(Icons.videogame_asset),
+//              ),
+//            ],
+//            onTap: (int index) {
+//              if (index != tabIndex) {
+//                setState(() {
+//                  tabIndex = index;
+//                });
+//              }
+//            },
+//          ),
+        //),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: StreamBuilder(
           initialData: _appsBloc.state,
