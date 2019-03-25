@@ -13,6 +13,7 @@ import 'package:groove_grid/ui/animations_list_view.dart';
 import 'package:groove_grid/ui/controls_view_builder.dart';
 import 'package:groove_grid/ui/diamond_border.dart';
 import 'package:groove_grid/ui/games_list_view.dart';
+import 'package:groove_grid/ui/grid_box_border.dart';
 import 'package:groove_grid/ui/grid_fab.dart';
 import 'package:groove_grid/ui/grid_navigation_bar.dart';
 import 'package:groove_grid/ui/grid_theme.dart';
@@ -110,8 +111,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
         bottomNavigationBar: GridNavigationBar(
           currentIndex: tabIndex,
-          shape: CircularNotchedRectangle(),
-          notchMargin: 20.0,
+//          shape: AutomaticNotchedShape(
+//            GridBoxBorder(),
+//            DiamondBorder(),
+//          ),
+        shape: CircularNotchedRectangle(),
+          notchMargin: 10.0,
           color: Theme.of(context).hintColor,
           items: <GridNavigationBarItem>[
             GridNavigationBarItem(
