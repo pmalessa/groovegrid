@@ -12,35 +12,30 @@
 #include "esp32-hal-timer.h"
 #endif
 
-Timer& Timer::getInstance()
-{
-	static Timer _instance;
-	return _instance;
-}
+//in c++, static variables have to be declared in cpp file as well...
+uint32_t Timer::millisCounter;
+hw_timer_t * Timer::hwtimer;
 
-Timer::~Timer(){}
-Timer::Timer()
+void Timer::start()
 {
-	call_period = 1000;
+	millisCounter = 0;
 #if defined(__AVR__)
 	Timer1.initialize();
-	Timer1.attachInterrupt(isr, microseconds);
+	Timer1.attachInterrupt(isr, 1000);	//1ms
 #elif defined(ESP32)
-	  timer = timerBegin(0, 80, true);
-	  timerAttachInterrupt(timer, onEvent, true);	//call onEvent function
-	  timerAlarmWrite(timer, call_period, true);
-	  timerAlarmEnable(timer);
+	  hwtimer = timerBegin(0, 80, true);
+	  timerAttachInterrupt(hwtimer, isr, true);	//call isr function
+	  timerAlarmWrite(hwtimer, 1000, true);		//1ms
+	  timerAlarmEnable(hwtimer);
 #endif
 }
 
-void Timer::setGlobalCallPeriod(uint32_t microseconds)
+void Timer::isr()
 {
-#if defined(__AVR__)
-	Timer1.	//Todo
-	Timer1.attachInterrupt(isr, microseconds);
-#elif defined(ESP32)
-	  timerAlarmDisable(timer);
-	  timerAlarmWrite(timer, call_period, true);
-	  timerAlarmEnable(timer);
-#endif
+	millisCounter++;
+}
+
+uint32_t Timer::getMillis()
+{
+	return millisCounter;
 }

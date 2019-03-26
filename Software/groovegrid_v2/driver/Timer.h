@@ -9,22 +9,20 @@
 #define TIMER_H_
 
 #include "../PLATFORM.h"
-#include "../utils/EventManager.h"
 
-class Timer: public EventManager{
+class Timer{
 public:
-	static Timer& getInstance();
-	~Timer(void);
-
-	void setGlobalCallPeriod(uint32_t microseconds);
-
+	static uint32_t getMillis();
+	static void start();
+	static void stop();
  private:
 	Timer();
 	Timer(const Timer&);
 	Timer & operator = (const Timer &);
+	static void isr();
 
-	static uint32_t call_period;	//1ms standard
-	static hw_timer_t * timer;
+	static uint32_t millisCounter;
+	static hw_timer_t * hwtimer;
 };
 
 #endif /* TIMER_H_ */
