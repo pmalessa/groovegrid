@@ -15,11 +15,28 @@ class GrooveGridAppsState {
 //        progress: Random().nextDouble(),
 //      ));
 //    }
+//    print("uiTestGamesList length: ${gamesList.length}");
 //
-//    return gamesList;
+//    return [
+//      GrooveGridGame(
+//        title: "2048",
+//        subtitle: "Can math really be fun?",
+//        progress: 0.3,
+//        startCommand: () async {
+//          if (await FlutterBluetoothSerial.instance.isConnected) {
+//            FlutterBluetoothSerial.instance.write('1');
+//          }
+//        },
+//        stopCommand: () async {
+//          if (await FlutterBluetoothSerial.instance.isConnected) {
+//            FlutterBluetoothSerial.instance.write('q');
+//          }
+//        },
+//      ),
+//    ];
 //  }();
 
-  static List<GrooveGridGame> uiTestGamesList = [];
+  //static List<GrooveGridGame> uiTestGamesList = [];
 
   GrooveGridApp runningApplication;
 

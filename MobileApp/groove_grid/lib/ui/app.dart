@@ -9,7 +9,7 @@ import 'package:groove_grid/ui/grid_theme.dart';
 class GrooveGridRemoteApp extends StatelessWidget {
   // This widget is the root of your application.
 
-  final GrooveGridAppsBloc appsBloc = GrooveGridAppsBloc();
+  //final GrooveGridAppsBloc appsBloc = GrooveGridAppsBloc();
   final GlobalBloc globalBloc = GlobalBloc();
 
   final GridThemeData connectedGridTheme = GridThemeData(
