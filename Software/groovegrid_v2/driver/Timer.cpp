@@ -13,7 +13,7 @@
 #endif
 
 //in c++, static variables have to be declared in cpp file as well...
-uint32_t Timer::millisCounter;
+volatile uint32_t Timer::millisCounter;
 hw_timer_t * Timer::hwtimer;
 
 void Timer::start()

@@ -21,7 +21,7 @@ public:
 	Timer & operator = (const Timer &);
 	static void isr();
 
-	static uint32_t millisCounter;
+	static volatile uint32_t millisCounter;
 	static hw_timer_t * hwtimer;
 };
 
