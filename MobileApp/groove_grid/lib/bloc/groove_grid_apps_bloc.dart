@@ -3,8 +3,14 @@ import 'dart:async';
 import 'package:groove_grid/bloc/groove_grid_app_event.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
+import 'package:groove_grid/global_variables.dart';
 
 class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
+//  @override
+//  GrooveGridAppsState get initialState => GlobalVariables.uiTest
+//      ? GrooveGridAppsState(games: GrooveGridAppsState.uiTestGamesList)
+//      : GrooveGridAppsState();
+
   @override
   GrooveGridAppsState get initialState => GrooveGridAppsState();
 
@@ -21,8 +27,7 @@ class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
   }
 
   @override
-  Future<GrooveGridAppsState> mapEventToState(
-      GrooveGridAppEvent event) async {
+  Future<GrooveGridAppsState> mapEventToState(GrooveGridAppEvent event) async {
     if (event is RunningAppChanged) {
       print("Changing State...");
       state.runningApplication = event.runningApp;
