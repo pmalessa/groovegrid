@@ -17,6 +17,7 @@ class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
 //  GrooveGridAppsState get initialState => GrooveGridAppsState();
 
   List<GrooveGridGame> uiTestGamesList;
+  List<GrooveGridAnimation> uiTestAnimations;
 
   GrooveGridAppsBloc() {
     setupStreams();
@@ -34,9 +35,16 @@ class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
       ));
     }
 
+    uiTestAnimations = [];
+    int numberOfAnimationsToBeAdded = 20;
+    for (int i = 0; i < numberOfAnimationsToBeAdded; ++i) {
+      uiTestAnimations.add(GrooveGridAnimation(title: "Standard Animation $i"));
+    }
+
     // I'm updating the state here, because initial drawing with uiTestGamesList = null
     // may have already occurred. Therefore the UI needs to be redrawn with the new state data
     state.games = uiTestGamesList;
+    state.animations = uiTestAnimations;
     outputSink.add(state);
   }
 
