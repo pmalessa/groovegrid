@@ -44,6 +44,17 @@ class _HomeScreenState extends State<HomeScreen> {
   GamesListView gamesView;
   AnimationsListView animationsView;
 
+  final List tabsGenerator = [
+    (appsBloc) => AppsListView(
+      apps: appsBloc.state.animations,
+      appType: GrooveGridAnimation,
+    ),
+    (appsBloc) => AppsListView(
+      apps: appsBloc.state.games,
+      appType: GrooveGridGame,
+    ),
+  ];
+
   int tabIndex = 0;
 
   _HomeScreenState() {
@@ -74,17 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final GrooveGridAppsBloc _appsBloc =
         BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
-    List tabs = [
-      AppsListView(
-        apps: _appsBloc.state.animations,
-        appType: GrooveGridAnimation,
-      ),
-      //Center(child: Text(_tab1LabelText, style: Theme.of(context).textTheme.subhead,)),
-      AppsListView(
-        apps: _appsBloc.state.games,
-        appType: GrooveGridGame,
-      ),
-    ];
+    Widget currentTab = tabsGenerator[tabIndex](_appsBloc);
+    
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -110,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
         ),
-        body: tabs[tabIndex],
+        body: currentTab,
 
         bottomNavigationBar: GridNavigationBar(
           currentIndex: tabIndex,
