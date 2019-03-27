@@ -10,11 +10,14 @@
 #include "HardwareSerial.h"
 #include "../driver/COMM.h"
 #include "../driver/Grid.h"
+#include "../driver/Timer.h"
 
 #define GAME_SPEED 20	//lower is faster
 
 GameState_2048 game = GameState_2048();
 direction_t movdir = NONE;
+bool running = false;
+uint32_t previousMillisCounter = 0;
 
 Game_2048::Game_2048()
 {
@@ -25,14 +28,20 @@ Game_2048::~Game_2048()
 {
 }
 
-void Game_2048::Start()
+void Game_2048::start()
 {
+	running = true;
 	DrawBoard(game.board);
 }
 
-void Game_2048::Reset()
+void Game_2048::reset()
 {
 
+}
+
+bool Game_2048::isRunning()
+{
+	return running;
 }
 
 void Game_2048::move(direction_t dir) {
@@ -42,7 +51,7 @@ void Game_2048::move(direction_t dir) {
 	}
 }
 
-uint8_t Game_2048::Loop()
+void Game_2048::run()
 {
 	static COMM& comm = COMM::getInstance();
 	int b = comm.read();
@@ -62,7 +71,7 @@ uint8_t Game_2048::Loop()
 			move(LEFT);
 			break;
 		case 'q':
-			return false;
+			running = false;
 			break;
 		default:
 			break;
@@ -77,7 +86,10 @@ uint8_t Game_2048::Loop()
 	if(BUTTON_bIsPressed(BUTTON_RIGHT))
 		move(RIGHT);
 
-	return true;	//keep running
+	if((Timer::getMillis()-previousMillisCounter) >= 10)	//every 10ms
+	{
+
+	}
 }
 
 void Game_2048::DrawBoard(uint16_t arr[YMAX][XMAX])

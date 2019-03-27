@@ -2,6 +2,7 @@
 #include "PLATFORM.h"
 #include "driver/BUTTON.h"
 #include "driver/COMM.h"
+#include "utils/TaskScheduler.h"
 
 #include "Animation/ANIMATION.h"
 #include "2048/Game_2048.h"
@@ -21,10 +22,6 @@ void timer()
 			ANIMATION_vRunner();
 			break;
 		case 1:
-			game_2048.SyncTask();
-			break;
-		case 2:
-			Game_TicTacToe_Output();
 			break;
 		default:
 			break;
@@ -51,20 +48,25 @@ void setup()
 // The loop function is called in an endless loop
 void loop()
 {
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static COMM& comm = COMM::getInstance();
+
+	tsched.handleTasks();
+
 	switch (programstate) {
 		case 0:	//ANIMATION
 			if(BUTTON_bIsPressed(BUTTON_UP) || comm.read() == '1')
 			{
 				programstate = 1;
 				ANIMATION_vBoot();
-				game_2048.Reset();
-				game_2048.Start();
+				game_2048.reset();
+				tsched.Attach(&game_2048);
 			}
 			break;
 		case 1:
-			if(!game_2048.Loop())
+			if(!game_2048.isRunning())
 			{
+				tsched.Detach(&game_2048);
 				programstate = 0;//quit
 			}
 			break;
