@@ -11,6 +11,7 @@
 
 uint8_t programstate = 0;
 Game_2048 game_2048 = Game_2048();
+uint32_t prevCounter = 0;
 
 void timer()
 {
@@ -38,7 +39,6 @@ void timer()
 
 void setup()
 {
-	Timer::getMillis();
 
 	BUTTON_vInit();
 #if defined(__AVR__)
@@ -70,5 +70,10 @@ void loop()
 			break;
 		default:
 			break;
+	}
+	if(Timer::getMillis() > prevCounter)	//if 1ms passed
+	{
+		prevCounter = Timer::getMillis();
+		timer();	//call Timer functions
 	}
 }
