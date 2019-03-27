@@ -1,11 +1,11 @@
 
+#include "2048/Game_2048.h"
 #include "PLATFORM.h"
 #include "driver/BUTTON.h"
 #include "driver/COMM.h"
 #include "utils/TaskScheduler.h"
 
 #include "Animation/ANIMATION.h"
-#include "2048/Game_2048.h"
 #include "driver/Grid.h"
 #include "driver/Timer.h"
 #include "TicTacToe/Game_TicTacToe.h"
@@ -36,13 +36,13 @@ void timer()
 
 void setup()
 {
-
 	BUTTON_vInit();
 #if defined(__AVR__)
 	srand(eeprom_read_word((uint16_t *)0x23));
 	eeprom_update_word((uint16_t *)0x23, (uint16_t)rand());
 #endif
 	ANIMATION_vBoot();
+	Timer::start();
 }
 
 // The loop function is called in an endless loop
@@ -60,6 +60,7 @@ void loop()
 				programstate = 1;
 				ANIMATION_vBoot();
 				game_2048.reset();
+				game_2048.start();
 				tsched.Attach(&game_2048);
 			}
 			break;

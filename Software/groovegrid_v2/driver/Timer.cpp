@@ -14,7 +14,9 @@
 
 //in c++, static variables have to be declared in cpp file as well...
 volatile uint32_t Timer::millisCounter;
+#ifndef __AVR__
 hw_timer_t * Timer::hwtimer;
+#endif
 
 void Timer::start()
 {

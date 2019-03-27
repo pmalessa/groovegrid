@@ -6,11 +6,10 @@
  */
 
 #include "TaskScheduler.h"
-#include <algorithm>
 
 TaskScheduler::TaskScheduler()
 {
-
+	list.setStorage(storage, MAX_TASK_NUM, 0);
 }
 
 TaskScheduler::~TaskScheduler()
@@ -29,17 +28,22 @@ void TaskScheduler::Attach(Task *task)
 }
 void TaskScheduler::Detach(Task *task)
 {
-    list.erase(std::remove(list.begin(), list.end(), task), list.end());
+	for (uint16_t i=0; i < list.size(); i++) {
+		if(list.at(i) == task)
+		{
+			list.remove(i);
+		}
+	}
 }
 
 //Call run function of each Task before returning
 void TaskScheduler::handleTasks()
 {
-    for(std::vector<Task*>::const_iterator iter = list.begin(); iter != list.end(); ++iter)
-    {
-        if(*iter != 0)
-        {
-            (*iter)->run();
-        }
-    }
+	if(!list.empty())
+	{
+		for(uint16_t i=0; i<list.size();i++)
+		{
+			list.at(i)->run();
+		}
+	}
 }

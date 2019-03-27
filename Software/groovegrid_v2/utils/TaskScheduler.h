@@ -7,9 +7,10 @@
 
 #ifndef UTILS_TASKSCHEDULER_H_
 #define UTILS_TASKSCHEDULER_H_
-#include <vector>
-#include <list>
+#include "Vector.h"
 #include "Task.h"
+
+#define MAX_TASK_NUM 10
 
 //Singleton
 class TaskScheduler
@@ -24,7 +25,8 @@ private:
     TaskScheduler();
     TaskScheduler(const TaskScheduler&);
     TaskScheduler & operator = (const TaskScheduler &);
-    std::vector<Task*> list;
+    Vector<Task*> list;
+    Task* storage[MAX_TASK_NUM];
 };
 
 

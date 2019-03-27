@@ -22,7 +22,9 @@ public:
 	static void isr();
 
 	static volatile uint32_t millisCounter;
+#ifndef __AVR__
 	static hw_timer_t * hwtimer;
+#endif
 };
 
 #endif /* TIMER_H_ */

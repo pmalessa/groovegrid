@@ -4,12 +4,13 @@
  *  Created on: 11.01.2019
  *      Author: pmale
  */
+#include "Game_2048.h"
+
 #include "../driver/BUTTON.h"
 #include "HardwareSerial.h"
 #include "../driver/COMM.h"
 #include "../driver/Grid.h"
 #include "../driver/Timer.h"
-#include "GroovegridApp_2048.h"
 
 #define GAME_SPEED 200	//lower is faster
 
