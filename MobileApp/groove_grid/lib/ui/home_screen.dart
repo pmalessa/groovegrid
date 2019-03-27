@@ -23,6 +23,8 @@ class HomeScreen extends StatefulWidget {
   HomeScreen({
     Key key,
     this.title,
+    this.bottomNavBarHeight = 60.0,
+    this.topAppBarHeight = 60.0,
   }) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -36,6 +38,9 @@ class HomeScreen extends StatefulWidget {
 
   final String title;
 
+  final double bottomNavBarHeight;
+  final double topAppBarHeight;
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -43,18 +48,23 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   GamesListView gamesView;
   AnimationsListView animationsView;
+  ScrollController scrollController;
 
   final List tabsGenerator = [
-    (appsBloc, {double endWhiteSpace}) => AppsListView(
-      apps: appsBloc.state.animations,
-      appType: GrooveGridAnimation,
-      endWhiteSpace: endWhiteSpace,
-    ),
-    (appsBloc, {double endWhiteSpace}) => AppsListView(
-      apps: appsBloc.state.games,
-      appType: GrooveGridGame,
-      endWhiteSpace: endWhiteSpace,
-    ),
+    (appsBloc, {double endWhiteSpace, ScrollController controller}) =>
+        AppsListView(
+          apps: appsBloc.state.animations,
+          appType: GrooveGridAnimation,
+          controller: controller,
+          endWhiteSpace: endWhiteSpace,
+        ),
+    (appsBloc, {double endWhiteSpace, ScrollController controller}) =>
+        AppsListView(
+          apps: appsBloc.state.games,
+          appType: GrooveGridGame,
+          controller: controller,
+          endWhiteSpace: endWhiteSpace,
+        ),
   ];
 
   int tabIndex = 0;
@@ -67,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    scrollController = ScrollController();
   }
 
   void setupStreams() {
@@ -87,9 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final GrooveGridAppsBloc _appsBloc =
         BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
-    Widget currentTab = tabsGenerator[tabIndex](_appsBloc, endWhiteSpace: 100.0);
-    //Widget backgroundTab = tabsGenerator[tabIndex](_appsBloc, endWhiteSpace: 100.0);
-
+    Widget currentTab = tabsGenerator[tabIndex](_appsBloc);
+    Widget backgroundTab = tabsGenerator[tabIndex](_appsBloc,
+        endWhiteSpace: widget.bottomNavBarHeight, controller: scrollController);
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -97,52 +108,77 @@ class _HomeScreenState extends State<HomeScreen> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.settings_bluetooth),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => BluetoothSettingsView()),
-              );
+    return Stack(
+      children: <Widget>[
+        Column(children: <Widget>[
+          Container(
+            height: widget.topAppBarHeight,
+          ),
+          Expanded(
+            child: backgroundTab,
+          )
+        ]),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(widget.topAppBarHeight),
+            child: AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.settings_bluetooth),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BluetoothSettingsView()),
+                  );
+                },
+              ),
+              // Here we take the value from the MyHomePage object that was created by
+              // the App.build method, and use it to set our appbar title.
+              title: Text(widget.title),
+            ),
+          ),
+          body: Stack(
+            children: <Widget>[
+              Container(
+                color: Theme.of(context).canvasColor,
+              ),
+              NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {
+                  scrollController.jumpTo(scrollNotification.metrics.pixels);
+                },
+                child: currentTab,
+              ),
+            ],
+          ),
+
+          bottomNavigationBar: GridNavigationBar(
+            currentIndex: tabIndex,
+            height: widget.bottomNavBarHeight,
+            shape: AutomaticNotchedShape(
+              RoundedRectangleBorder(),
+              DiamondBorder(),
+            ),
+            notchMargin: 30.0,
+            color: Theme.of(context).hintColor,
+            items: <GridNavigationBarItem>[
+              GridNavigationBarItem(
+                icon: Icons.bubble_chart,
+                title: "Animations",
+              ),
+              GridNavigationBarItem(
+                icon: Icons.videogame_asset,
+                title: "Games",
+              ),
+            ],
+            onTap: (int index) {
+              if (index != tabIndex) {
+                setState(() {
+                  tabIndex = index;
+                });
+              }
             },
           ),
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Text(widget.title),
-        ),
-        body: currentTab,
-
-        bottomNavigationBar: GridNavigationBar(
-          currentIndex: tabIndex,
-          shape: AutomaticNotchedShape(
-            RoundedRectangleBorder(),
-            DiamondBorder(),
-          ),
-          notchMargin: 10.0,
-          color: Theme.of(context).hintColor,
-          items: <GridNavigationBarItem>[
-            GridNavigationBarItem(
-              icon: Icons.bubble_chart,
-              title: "Animations",
-            ),
-            GridNavigationBarItem(
-              icon: Icons.videogame_asset,
-              title: "Games",
-            ),
-          ],
-          onTap: (int index) {
-            if (index != tabIndex) {
-              setState(() {
-                tabIndex = index;
-              });
-            }
-          },
-        ),
 
 //        bottomNavigationBar: BottomAppBar(
 //          color: Colors.pink,
@@ -218,43 +254,45 @@ class _HomeScreenState extends State<HomeScreen> {
 //              }
 //            },
 //          ),
-        //),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: StreamBuilder(
-          initialData: _appsBloc.state,
-          stream: _appsBloc.output,
-          builder: (BuildContext context,
-              AsyncSnapshot<GrooveGridAppsState> snapshot) {
-            GrooveGridAppsState state = snapshot.data;
-            return state.runningApplication == null
-                ? Container(
-                    width: 0,
-                    height: 0,
-                  )
-                : !state.runningApplication.hasControls
-                    ? Container(
-                        width: 0,
-                        height: 0,
-                      )
-                    : GridFAB(
-                        onPressed: () {
-                          state.runningApplication.start().then((_) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                if (state.runningApplication.controls
-                                    is SwipeControls) {
-                                  return ControlsViewBuilder(
-                                      state.runningApplication);
-                                }
-                              }),
-                            );
-                          });
-                        },
-                      );
-          },
+          //),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: StreamBuilder(
+            initialData: _appsBloc.state,
+            stream: _appsBloc.output,
+            builder: (BuildContext context,
+                AsyncSnapshot<GrooveGridAppsState> snapshot) {
+              GrooveGridAppsState state = snapshot.data;
+              return state.runningApplication == null
+                  ? Container(
+                      width: 0,
+                      height: 0,
+                    )
+                  : !state.runningApplication.hasControls
+                      ? Container(
+                          width: 0,
+                          height: 0,
+                        )
+                      : GridFAB(
+                          onPressed: () {
+                            state.runningApplication.start().then((_) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  if (state.runningApplication.controls
+                                      is SwipeControls) {
+                                    return ControlsViewBuilder(
+                                        state.runningApplication);
+                                  }
+                                }),
+                              );
+                            });
+                          },
+                        );
+            },
+          ),
         ),
-      ),
+      ],
     );
   }
 }
