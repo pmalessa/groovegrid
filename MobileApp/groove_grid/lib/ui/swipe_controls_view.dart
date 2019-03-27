@@ -24,6 +24,12 @@ class _SwipeControlsViewState extends State<SwipeControlsView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.refresh), onPressed: (){
+            print("Restarting Groovegrid App");
+            FlutterBluetoothSerial.instance.write('x');
+          }),
+        ],
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
