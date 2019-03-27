@@ -4,15 +4,14 @@
  *  Created on: 11.01.2019
  *      Author: pmale
  */
-#include "Game_2048.h"
-
 #include "../driver/BUTTON.h"
 #include "HardwareSerial.h"
 #include "../driver/COMM.h"
 #include "../driver/Grid.h"
 #include "../driver/Timer.h"
+#include "GroovegridApp_2048.h"
 
-#define GAME_SPEED 20	//lower is faster
+#define GAME_SPEED 200	//lower is faster
 
 GameState_2048 game = GameState_2048();
 direction_t movdir = NONE;
@@ -86,9 +85,27 @@ void Game_2048::run()
 	if(BUTTON_bIsPressed(BUTTON_RIGHT))
 		move(RIGHT);
 
-	if((Timer::getMillis()-previousMillisCounter) >= 10)	//every 10ms
+	static uint8_t move_possible = 0;
+	if((Timer::getMillis()-previousMillisCounter) >= GAME_SPEED)
 	{
+		if (movdir != NONE)	//moving
+		{
+			if(game.canStep(movdir) || game.canMerge(movdir))	//if move possible
+			{
+				move_possible = 1;
+			}
+			if(game.move(movdir))	//if move finished
+			{
+				movdir = NONE;
 
+				if(move_possible > 0)	//if it was moving, spawn new field
+				{
+					game.fillRandomField();
+				}
+				move_possible = 0;
+			}
+			DrawBoard(game.board);
+		}
 	}
 }
 
@@ -144,36 +161,6 @@ void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 			break;
 	}
 	grid.writePixel(x, y, col);
-}
-
-void Game_2048::SyncTask()	//every 10 ms
-{
-	static uint16_t game_cnt = 0;
-	static uint8_t move_possible = 0;
-	game_cnt++;
-	if(game_cnt > GAME_SPEED)
-	{
-		game_cnt = 0;
-
-		if (movdir != NONE)	//moving
-		{
-			if(game.canStep(movdir) || game.canMerge(movdir))	//if move possible
-			{
-				move_possible = 1;
-			}
-			if(game.move(movdir))	//if move finished
-			{
-				movdir = NONE;
-
-				if(move_possible > 0)	//if it was moving, spawn new field
-				{
-					game.fillRandomField();
-				}
-				move_possible = 0;
-			}
-			DrawBoard(game.board);
-		}
-	}
 }
 
 GameState_2048::GameState_2048()

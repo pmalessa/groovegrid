@@ -9,7 +9,7 @@
 #define GAME_2048_H_
 
 #include "../PLATFORM.h"
-#include "../utils/Game.h"
+#include "../utils/GroovegridApp.h"
 
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX
@@ -22,7 +22,7 @@ enum direction_t{
 	UP
 };
 
-class Game_2048 : public Game
+class Game_2048 : public Groovegrid_App
 {
 public:
 	Game_2048();
