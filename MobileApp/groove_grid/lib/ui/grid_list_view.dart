@@ -44,14 +44,12 @@ class AppsListView extends StatelessWidget {
         if (endWhiteSpace != null) {
           ++itemCount;
         }
-        print("$appType item count: $itemCount");
 
         return ListView.builder(
           controller: controller,
           itemCount: itemCount,
           itemBuilder: (context, index) {
             var app;
-            print("Building $appType index $index");
 
             if (appType == GrooveGridAnimation) {
 
