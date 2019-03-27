@@ -80,8 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
         appType: GrooveGridAnimation,
       ),
       //Center(child: Text(_tab1LabelText, style: Theme.of(context).textTheme.subhead,)),
-      GamesListView(
-        games: _appsBloc.state.games,
+      AppsListView(
+        apps: _appsBloc.state.games,
+        appType: GrooveGridGame,
       ),
     ];
 
