@@ -10,10 +10,16 @@ import 'package:groove_grid/ui/grid_card.dart';
 import 'package:groove_grid/ui/grid_theme.dart';
 
 class AppsListView extends StatelessWidget {
-  AppsListView({@required this.apps, @required this.appType});
+  AppsListView(
+      {@required this.apps,
+      @required this.appType,
+      this.controller,
+      this.endWhiteSpace});
 
   final List<GrooveGridApp> apps;
   final Type appType;
+  final ScrollController controller;
+  final double endWhiteSpace;
 
   @override
   Widget build(BuildContext context) {
@@ -28,45 +34,69 @@ class AppsListView extends StatelessWidget {
         AsyncSnapshot<GrooveGridAppsState> snapshot,
       ) {
         GrooveGridAppsState state = snapshot.data;
+        int itemCount;
+        if (appType == GrooveGridGame) {
+          itemCount = state.games.length;
+        } else if (appType == GrooveGridAnimation) {
+          itemCount = state.animations.length;
+        }
+
+        if (endWhiteSpace != null) {
+          ++itemCount;
+        }
+        print("$appType item count: $itemCount");
+
         return ListView.builder(
-          itemCount: appType == GrooveGridGame
-              ? state.games.length
-              : appType == GrooveGridAnimation ? state.animations.length : null,
+          controller: controller,
+          itemCount: itemCount,
           itemBuilder: (context, index) {
             var app;
+            print("Building $appType index $index");
 
             if (appType == GrooveGridAnimation) {
-              app = state.animations[index];
 
-              return GridAppListItem(
-                title: app.title,
-                onPressed: app.start,
-                icon: app.iconData ?? Icons.bubble_chart,
-                highlight: app == state.runningApplication,
-              );
-            }
-            else if (appType == GrooveGridGame) {
-              app = state.games[index];
 
-              return GridAppListItem(
-                title: app.title,
-                onPressed: () {
-                  app.start().then((_) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        if (app.controls is SwipeControls) {
-                          return ControlsViewBuilder(app);
-                        }
-                      }),
-                    );
-                  });
-                },
-                subtitle: app.subtitle,
-                icon: app.iconData ?? Icons.videogame_asset,
-                progress: app.progress,
-                highlight: app == state.runningApplication,
-              );
+              if (index < state.animations.length) {
+                app = state.animations[index];
+                return GridAppListItem(
+                  title: app.title,
+                  onPressed: app.start,
+                  icon: app.iconData ?? Icons.bubble_chart,
+                  highlight: app == state.runningApplication,
+                );
+              } else {
+                return Container(
+                  height: endWhiteSpace,
+                );
+              }
+            } else if (appType == GrooveGridGame) {
+              if (index < state.games.length) {
+                app = state.games[index];
+
+                return GridAppListItem(
+                  title: app.title,
+                  onPressed: () {
+                    app.start().then((_) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          if (app.controls is SwipeControls) {
+                            return ControlsViewBuilder(app);
+                          }
+                        }),
+                      );
+                    });
+                  },
+                  subtitle: app.subtitle,
+                  icon: app.iconData ?? Icons.videogame_asset,
+                  progress: app.progress,
+                  highlight: app == state.runningApplication,
+                );
+              } else {
+                return Container(
+                  height: endWhiteSpace,
+                );
+              }
             }
           },
         );

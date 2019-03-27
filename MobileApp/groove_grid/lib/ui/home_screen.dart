@@ -45,13 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
   AnimationsListView animationsView;
 
   final List tabsGenerator = [
-    (appsBloc) => AppsListView(
+    (appsBloc, {double endWhiteSpace}) => AppsListView(
       apps: appsBloc.state.animations,
       appType: GrooveGridAnimation,
+      endWhiteSpace: endWhiteSpace,
     ),
-    (appsBloc) => AppsListView(
+    (appsBloc, {double endWhiteSpace}) => AppsListView(
       apps: appsBloc.state.games,
       appType: GrooveGridGame,
+      endWhiteSpace: endWhiteSpace,
     ),
   ];
 
@@ -85,8 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final GrooveGridAppsBloc _appsBloc =
         BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
-    Widget currentTab = tabsGenerator[tabIndex](_appsBloc);
-    
+    Widget currentTab = tabsGenerator[tabIndex](_appsBloc, endWhiteSpace: 100.0);
+    //Widget backgroundTab = tabsGenerator[tabIndex](_appsBloc, endWhiteSpace: 100.0);
+
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
