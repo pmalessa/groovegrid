@@ -9,16 +9,18 @@ import 'package:groove_grid/ui/controls_view_builder.dart';
 import 'package:groove_grid/ui/grid_card.dart';
 import 'package:groove_grid/ui/grid_theme.dart';
 
-class GamesListView extends StatefulWidget {
-  GamesListView({@required this.games});
+class AppsListView extends StatelessWidget {
+  AppsListView(
+      {@required this.apps,
+      @required this.appType,
+      this.controller,
+      this.endWhiteSpace});
 
-  final List<GrooveGridGame> games;
+  final List<GrooveGridApp> apps;
+  final Type appType;
+  final ScrollController controller;
+  final double endWhiteSpace;
 
-  @override
-  _GamesListViewState createState() => _GamesListViewState();
-}
-
-class _GamesListViewState extends State<GamesListView> {
   @override
   Widget build(BuildContext context) {
     final GrooveGridAppsBloc _appsBloc =
@@ -32,30 +34,68 @@ class _GamesListViewState extends State<GamesListView> {
         AsyncSnapshot<GrooveGridAppsState> snapshot,
       ) {
         GrooveGridAppsState state = snapshot.data;
+        int itemCount;
+        if (appType == GrooveGridGame) {
+          itemCount = state.games.length;
+        } else if (appType == GrooveGridAnimation) {
+          itemCount = state.animations.length;
+        }
+
+        if (endWhiteSpace != null) {
+          ++itemCount;
+        }
+
         return ListView.builder(
-          itemCount: state.games.length,
+          controller: controller,
+          itemCount: itemCount,
           itemBuilder: (context, index) {
-            var game = state.games[index];
-            return GridAppListItem(
-              title: game.title,
-              onPressed: () {
-                game.start().then((_) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      if (game.controls is SwipeControls) {
-                        return ControlsViewBuilder(game);
-                      }
-                    }),
-                  );
-                });
-              },
-              subtitle: game.subtitle,
-              icon: game.iconData ?? Icons.videogame_asset,
-              progress: game.progress,
-              highlight:
-                  game == GrooveGridApp.runningApplication ? true : false,
-            );
+            var app;
+
+            if (appType == GrooveGridAnimation) {
+
+
+              if (index < state.animations.length) {
+                app = state.animations[index];
+                return GridAppListItem(
+                  title: app.title,
+                  onPressed: app.start,
+                  icon: app.iconData ?? Icons.bubble_chart,
+                  highlight: app == state.runningApplication,
+                );
+              } else {
+                return Container(
+                  height: endWhiteSpace,
+                );
+              }
+            } else if (appType == GrooveGridGame) {
+              if (index < state.games.length) {
+                app = state.games[index];
+
+                return GridAppListItem(
+                  title: app.title,
+                  onPressed: () {
+                    app.start().then((_) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          if (app.controls is SwipeControls) {
+                            return ControlsViewBuilder(app);
+                          }
+                        }),
+                      );
+                    });
+                  },
+                  subtitle: app.subtitle,
+                  icon: app.iconData ?? Icons.videogame_asset,
+                  progress: app.progress,
+                  highlight: app == state.runningApplication,
+                );
+              } else {
+                return Container(
+                  height: endWhiteSpace,
+                );
+              }
+            }
           },
         );
       },

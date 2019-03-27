@@ -1,8 +1,43 @@
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
+import 'dart:math';
 
 class GrooveGridAppsState {
   //GrooveGridApp get runningApplication => GrooveGridApp.runningApplication;
+
+//  static List<GrooveGridGame> uiTestGamesList = () {
+//    List<GrooveGridGame> gamesList = [];
+//    int numberOfGamesToBeAdded = 50;
+//    for (int i = 0; i < numberOfGamesToBeAdded; ++numberOfGamesToBeAdded) {
+//      gamesList.add(GrooveGridGame(
+//        title: "2048-$i",
+//        subtitle: "Can math really be fun?",
+//        progress: Random().nextDouble(),
+//      ));
+//    }
+//    print("uiTestGamesList length: ${gamesList.length}");
+//
+//    return [
+//      GrooveGridGame(
+//        title: "2048",
+//        subtitle: "Can math really be fun?",
+//        progress: 0.3,
+//        startCommand: () async {
+//          if (await FlutterBluetoothSerial.instance.isConnected) {
+//            FlutterBluetoothSerial.instance.write('1');
+//          }
+//        },
+//        stopCommand: () async {
+//          if (await FlutterBluetoothSerial.instance.isConnected) {
+//            FlutterBluetoothSerial.instance.write('q');
+//          }
+//        },
+//      ),
+//    ];
+//  }();
+
+  //static List<GrooveGridGame> uiTestGamesList = [];
+
   GrooveGridApp runningApplication;
 
   List<GrooveGridAnimation> animations;
