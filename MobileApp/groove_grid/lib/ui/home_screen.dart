@@ -15,6 +15,7 @@ import 'package:groove_grid/ui/diamond_border.dart';
 import 'package:groove_grid/ui/games_list_view.dart';
 import 'package:groove_grid/ui/grid_box_border.dart';
 import 'package:groove_grid/ui/grid_fab.dart';
+import 'package:groove_grid/ui/grid_list_view.dart';
 import 'package:groove_grid/ui/grid_navigation_bar.dart';
 import 'package:groove_grid/ui/grid_theme.dart';
 
@@ -74,8 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
         BlocProvider.of<GlobalBloc>(context).grooveGridAppsBloc;
 
     List tabs = [
-      AnimationsListView(
-        animations: _appsBloc.state.animations,
+      AppsListView(
+        apps: _appsBloc.state.animations,
+        appType: GrooveGridAnimation,
       ),
       //Center(child: Text(_tab1LabelText, style: Theme.of(context).textTheme.subhead,)),
       GamesListView(
