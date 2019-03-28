@@ -1,13 +1,14 @@
 /*
- * GameState.h
+ * Game_2048.h
  *
- *  Created on: 05.01.2019
- *      Author: Chris
+ *  Created on: 11.01.2019
+ *      Author: pmale
  */
-#ifndef GameState_h
-#define GameState_h
-#include "Arduino.h"
-#include "LED.h"
+
+#ifndef GAME_2048_H_
+#define GAME_2048_H_
+
+#include "../PLATFORM.h"
 
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX
@@ -18,6 +19,22 @@ enum direction_t{
 	DOWN,
 	RIGHT,
 	UP
+};
+
+class Game_2048
+{
+public:
+	Game_2048();
+	~Game_2048();
+	void Start();
+	void Reset();
+	uint8_t Loop();
+	void SyncTask();
+private:
+
+	void move(direction_t dir);
+	void DrawBoard(uint16_t arr[YMAX][XMAX]);
+	void DrawTile(uint16_t x, uint16_t y, uint16_t number);
 };
 
 class GameState_2048 {
@@ -41,4 +58,4 @@ public:
 		void removeInBetweenZeros(direction_t direction);
 };
 
-#endif
+#endif /* GAME_2048_H_ */
