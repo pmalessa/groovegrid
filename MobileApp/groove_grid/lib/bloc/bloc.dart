@@ -44,11 +44,12 @@ abstract class Bloc<Event, State> {
     }
   }
 
-  /// Receives an [Event] and modifies the [State] object
+  /// Receives an [Event] and modifies the [State] object or creates a new one
   /// according to the data contained in the [Event].
-  /// Returns a [Set] of [Sink]s that should be triggered with the new [State].
-  /// If the [State] did not change, null or an empty [List] may be returned
-  /// which causes no sinks to be triggered.
+  /// Returns the new [State] that should be assigned to [this.state]
+  /// and added to the standard output sink.
+  /// If the [State] did not change, null may be returned
+  /// which causes no sinks to be triggered and [this.state] stays the same.
   Future<State> mapEventToState(Event event);
 
   /// Closes the [Event] and [State] [Stream]s.

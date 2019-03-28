@@ -4,11 +4,17 @@ import 'package:groove_grid/services/bluetooth_service.dart';
 class MessageBloc extends Bloc<GridMessageEvent, GridMessageState> {
   @override
   // TODO: implement initialState
-  GridMessageState get initialState => GridMessageState();
+  GridMessageState get initialState => GridMessageState(lastReceivedMessage: "");
 
   @override
   Future<GridMessageState> mapEventToState(GridMessageEvent event) async {
     // TODO: implement mapEventToState
+
+    if (event is MessageReceived) {
+      GridMessageState newState = GridMessageState(lastReceivedMessage: event.message);
+      return newState;
+    }
+
     return state;
   }
 
@@ -47,5 +53,14 @@ enum SwipeDirection {
 class GridMessageEvent {
 }
 
+class MessageReceived extends GridMessageEvent {
+  String message;
+
+  MessageReceived(this.message): super();
+}
+
 class GridMessageState {
+  String lastReceivedMessage;
+
+  GridMessageState({this.lastReceivedMessage});
 }
