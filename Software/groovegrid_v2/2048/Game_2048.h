@@ -22,19 +22,21 @@ enum direction_t{
 	UP
 };
 
-class Game_2048 : public Groovegrid_App
+class Game_2048 : public GroovegridApp
 {
 public:
 	Game_2048();
 	~Game_2048();
 	void start();
+	void pause();
 	void stop();
 	void reset();
 	void run();
-
-	bool isRunning();	//removed later, glue code
+	uint8_t getProgress();
+	char* exportAppState();
+	void importAppState(char *json);
+	void onInput(char *data);
 private:
-	void SyncTask();
 	void move(direction_t dir);
 	void DrawBoard(uint16_t arr[YMAX][XMAX]);
 	void DrawTile(uint16_t x, uint16_t y, uint16_t number);

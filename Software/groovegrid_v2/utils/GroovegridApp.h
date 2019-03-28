@@ -10,28 +10,19 @@
 
 #include "../PLATFORM.h"
 #include "Task.h"
+#include "InputListener.h"
 
-class Groovegrid_App_State
+class GroovegridApp : public Task,public InputListener
 {
 public:
-	Groovegrid_App_State();
-	virtual char* exportJSON() = 0;
-	virtual void importJSON(char *json) = 0;
-	virtual uint16_t getProgress() = 0;	//return Progress 0..100
-private:
-};
-
-class Groovegrid_App : public Task
-{
-public:
-	Groovegrid_App();
-	void run();			//has to be overridden by AppLoop
-	void start();		//starts App by attaching to TaskScheduler
-	void pause();		//pauses App by detaching to TaskScheduler
-	void stop();		//stops App by attaching to TaskScheduler and (maybe) saving GameState
-	void reset(); 		//reset App to initial state by recreating AppState
-protected:
-	Groovegrid_App_State* state;
+	virtual void run() = 0;					//has to be overridden by AppLoop
+	virtual void start() = 0;				//starts App
+	virtual void pause() = 0;				//pauses App
+	virtual void stop() = 0;				//stops App
+	virtual void reset() = 0; 				//reset App to initial state
+	virtual char* exportAppState() = 0;
+	virtual void importAppState(char *input) = 0;
+	virtual uint8_t getProgress() = 0;	//return Progress 0..100
 private:
 };
 

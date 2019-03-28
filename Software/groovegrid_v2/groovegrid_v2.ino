@@ -13,6 +13,16 @@
 uint8_t programstate = 0;
 Game_2048 game_2048 = Game_2048();
 uint32_t prevCounter = 0;
+uint8_t input = 0;
+
+class MainListener : public InputListener
+{
+	void onInput(char *data)
+	{
+		input = *data;
+	}
+};
+
 
 void timer()
 {
@@ -36,6 +46,10 @@ void timer()
 
 void setup()
 {
+	static COMM& comm = COMM::getInstance();
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	static MainListener mainlistener;
+
 	BUTTON_vInit();
 #if defined(__AVR__)
 	srand(eeprom_read_word((uint16_t *)0x23));
@@ -43,6 +57,8 @@ void setup()
 #endif
 	ANIMATION_vBoot();
 	Timer::start();
+	tsched.Attach(&comm);
+	comm.Attach(&mainlistener, COMM::MAIN);
 }
 
 // The loop function is called in an endless loop
@@ -55,20 +71,31 @@ void loop()
 
 	switch (programstate) {
 		case 0:	//ANIMATION
-			if(BUTTON_bIsPressed(BUTTON_UP) || comm.read() == '1')
+			if(input == '1')
 			{
+				input = 0;
 				programstate = 1;
 				ANIMATION_vBoot();
-				game_2048.reset();
 				game_2048.start();
+				comm.Attach(&game_2048, COMM::APP);	//attach input to app
 				tsched.Attach(&game_2048);
 			}
 			break;
 		case 1:
-			if(!game_2048.isRunning())
+			if(input == 'q')
 			{
+				input = 0;
 				tsched.Detach(&game_2048);
+				comm.Detach(&game_2048, COMM::APP);	//detach input to app
 				programstate = 0;//quit
+			}
+			if(input == 'x')
+			{
+				input = 0;
+				ANIMATION_vBoot();
+				game_2048.stop();
+				game_2048.reset();
+				game_2048.start();
 			}
 			break;
 		default:

@@ -6,8 +6,6 @@
  */
 #include "Game_2048.h"
 
-#include "../driver/BUTTON.h"
-#include "HardwareSerial.h"
 #include "../driver/COMM.h"
 #include "../driver/Grid.h"
 #include "../driver/Timer.h"
@@ -34,30 +32,39 @@ void Game_2048::start()
 	DrawBoard(game.board);
 }
 
+void Game_2048::pause()
+{
+
+}
+
+void Game_2048::stop()
+{
+
+}
+
 void Game_2048::reset()
 {
-
+	game = GameState_2048();
+	game.initializeBoard();
 }
 
-bool Game_2048::isRunning()
+uint8_t Game_2048::getProgress()
 {
-	return running;
+	return 0;	//for now
 }
 
-void Game_2048::move(direction_t dir) {
-	if(movdir == NONE)
-	{
-		movdir = dir;
-	}
-}
-
-void Game_2048::run()
+char* Game_2048::exportAppState()
 {
-	static COMM& comm = COMM::getInstance();
-	int b = comm.read();
-	switch (b) {
-		case -1:
-			break;
+	return 0;	//for now
+}
+void Game_2048::importAppState(char *json)
+{
+
+}
+
+void Game_2048::onInput(char *data)
+{
+	switch (*data) {
 		case 'u':
 			move(UP);
 			break;
@@ -70,22 +77,20 @@ void Game_2048::run()
 		case 'l':
 			move(LEFT);
 			break;
-		case 'q':
-			running = false;
-			break;
 		default:
 			break;
 	}
+}
 
-	if(BUTTON_bIsPressed(BUTTON_UP))
-		move(UP);
-	if(BUTTON_bIsPressed(BUTTON_DOWN))
-		move(DOWN);
-	if(BUTTON_bIsPressed(BUTTON_LEFT))
-		move(LEFT);
-	if(BUTTON_bIsPressed(BUTTON_RIGHT))
-		move(RIGHT);
+void Game_2048::move(direction_t dir) {
+	if(movdir == NONE)
+	{
+		movdir = dir;
+	}
+}
 
+void Game_2048::run()
+{
 	static uint8_t move_possible = 0;
 	if((Timer::getMillis()-previousMillisCounter) >= GAME_SPEED)
 	{
