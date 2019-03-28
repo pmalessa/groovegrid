@@ -2,6 +2,18 @@ import 'package:groove_grid/bloc/bloc.dart';
 import 'package:groove_grid/services/bluetooth_service.dart';
 
 class MessageBloc extends Bloc<GridMessageEvent, GridMessageState> {
+
+  BluetoothService bluetooth = BluetoothService();
+
+  MessageBloc():super() {
+    setupListeners();
+  }
+
+  void setupListeners() {
+    bluetooth.read
+        .listen((String message) => dispatch(MessageReceived(message)));
+  }
+
   @override
   // TODO: implement initialState
   GridMessageState get initialState => GridMessageState(lastReceivedMessage: "");
