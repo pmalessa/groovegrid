@@ -32,19 +32,19 @@ class _SwipeControlsViewState extends State<SwipeControlsView> {
                 // return object of type Dialog
                 return AlertDialog(
                   backgroundColor: Theme.of(context).primaryColor,
-                  title: new Text("Restart"),
-                  content: new Text("Do you really want to restart? "
-                      "\nAll progress will be lost."),
+                  title: new Text("Restart Game"),
+                  content: new Text("Restarting will reset the game to its initial state. "
+                      "All progress will be lost."),
                   actions: <Widget>[
                     // usually buttons at the bottom of the dialog
                     new FlatButton(
-                      child: new Text("Cancel"),
+                      child: new Text("Cancel".toUpperCase()),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                     new FlatButton(
-                      child: new Text("Restart"),
+                      child: new Text("Restart".toUpperCase()),
                       onPressed: () {
                         print("Restarting Groovegrid App");
                         FlutterBluetoothSerial.instance.write('x');
