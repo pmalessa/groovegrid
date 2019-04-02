@@ -11,6 +11,7 @@
 #include "../PLATFORM.h"
 #include "Task.h"
 #include "InputListener.h"
+#include "../driver/GridTile.h"
 
 class GroovegridApp : public Task,public InputListener
 {
@@ -22,8 +23,9 @@ public:
 	virtual void reset() = 0; 				//reset App to initial state
 	virtual char* exportAppState() = 0;
 	virtual void importAppState(char *input) = 0;
-	virtual uint8_t getProgress() = 0;	//return Progress 0..100
-private:
+	virtual uint8_t getProgress() = 0;		//return Progress 0..100
+protected:
+	GridTile* tile;							//has to be initialized
 };
 
 

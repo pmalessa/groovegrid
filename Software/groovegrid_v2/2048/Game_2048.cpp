@@ -94,6 +94,7 @@ void Game_2048::run()
 	static uint8_t move_possible = 0;
 	if((Timer::getMillis()-previousMillisCounter) >= GAME_SPEED)
 	{
+		previousMillisCounter = Timer::getMillis();
 		if (movdir != NONE)	//moving
 		{
 			if(game.canStep(movdir) || game.canMerge(movdir))	//if move possible

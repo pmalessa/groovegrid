@@ -6,7 +6,6 @@
  */
 #include "Grid.h"
 
-#include <Adafruit_GFX.h>
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
 
@@ -14,7 +13,7 @@
 Adafruit_NeoMatrix Grid::matrix = Adafruit_NeoMatrix(XMAX, YMAX, DATA_PIN,
 		  NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
 		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
-		  NEO_GRB            + NEO_KHZ800);;
+		  NEO_GRB            + NEO_KHZ800);
 
 Grid& Grid::getInstance()
 {
@@ -23,7 +22,7 @@ Grid& Grid::getInstance()
 }
 
 Grid::~Grid(){}
-Grid::Grid():Adafruit_GFX(XMAX, YMAX)
+Grid::Grid()
 {
 	matrix.begin();
 }

@@ -9,7 +9,6 @@
 #define GRID_H_
 
 #include "../PLATFORM.h"
-#include "Adafruit_GFX.h"
 #include "Adafruit_NeoMatrix.h"
 
 typedef enum{
@@ -29,7 +28,7 @@ typedef enum{
 	COLOR_WHITE = 0xFFFFFF
 }color_t;
 
-class Grid : public Adafruit_GFX {
+class Grid {
  public:
 	static Grid& getInstance();
 	~Grid(void);
@@ -38,7 +37,6 @@ class Grid : public Adafruit_GFX {
 	void         clearDisplay(void);
 	void 		 writePixel(int16_t x, int16_t y, uint16_t color);
 	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
-	boolean      getPixel(int16_t x, int16_t y);
 	void 		 endWrite(void);
 
 uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
