@@ -8,7 +8,6 @@
 
 GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1):Adafruit_GFX(x1-x0, y1-y0)
 {
-	static Grid& grid = Grid::getInstance();
 	GridTile::x0 = x0;
 	GridTile::y0 = y0;
 	GridTile::x1 = x1;

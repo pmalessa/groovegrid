@@ -32,34 +32,10 @@ void Game_2048::start()
 	DrawBoard(game.board);
 }
 
-void Game_2048::pause()
-{
-
-}
-
-void Game_2048::stop()
-{
-
-}
-
 void Game_2048::reset()
 {
 	game = GameState_2048();
 	game.initializeBoard();
-}
-
-uint8_t Game_2048::getProgress()
-{
-	return 0;	//for now
-}
-
-char* Game_2048::exportAppState()
-{
-	return 0;	//for now
-}
-void Game_2048::importAppState(char *json)
-{
-
 }
 
 void Game_2048::onInput(char *data)

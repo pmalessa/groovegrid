@@ -16,16 +16,7 @@ class Animation : public GroovegridApp
 	//An Animation does not need to implement all functions of a GroovegridApp
 public:
 	virtual void run() = 0;					//has to be overridden by Animation loop
-
-	//added empty function for following functions:
-	void start(){};				//starts Animation
-	void stop(){};				//stops Animation
-	void reset(){}; 				//reset Animation to initial state
-	void pause(){stop();}					//pauses Animation, defaults to stop
-	char* exportAppState(){return 0;}
-	void importAppState(char *input){}
-	uint8_t getProgress(){return 0;}
-	void onInput(char *data){}
+	void onInput(char *data){UNUSED(data);};
 };
 
 

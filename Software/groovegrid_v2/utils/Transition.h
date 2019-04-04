@@ -18,7 +18,6 @@ public:
 	bool isRunning(){return running;};	//returns if Transition is still running
 	void start(){running = true;}
 	void stop(){running = false;}
-	void reset(){}//maybe add something later, for now just create a new Object
 protected:
 	bool running = false;
 };

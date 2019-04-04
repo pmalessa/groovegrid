@@ -62,6 +62,7 @@ void loop()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static COMM& comm = COMM::getInstance();
+	UNUSED(comm);
 
 	tsched.handleTasks();
 /*

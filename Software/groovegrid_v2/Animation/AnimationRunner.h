@@ -25,9 +25,9 @@ public:
 	void stop(){};				//stops App
 	void reset(){}; 				//reset App to initial state
 	char* exportAppState(){return 0;};
-	void importAppState(char *input){};
+	void importAppState(char *input){UNUSED(input);};
 	uint8_t getProgress(){return 0;};		//return Progress 0..100
-	void onInput(char *data){};
+	void onInput(char *data){UNUSED(data);};
 private:
 	uint32_t animationStartTime;
 	uint8_t selectedAnimation;

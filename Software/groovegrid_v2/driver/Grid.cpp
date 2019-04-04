@@ -59,6 +59,7 @@ uint16_t Grid::RGB(uint32_t rgb)
 
 uint16_t Grid::HSV(uint8_t h, uint8_t s, uint8_t v)
 {
+	UNUSED(h+s+v);
 	//TODO
 	return 0;
 }

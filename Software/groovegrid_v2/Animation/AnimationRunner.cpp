@@ -15,6 +15,7 @@
 AnimationRunner::AnimationRunner(GridTile* gridTile)
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	UNUSED(tsched);
 	tile = gridTile;
 	animationStartTime = 0;
 	selectedAnimation = 0;
