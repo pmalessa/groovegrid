@@ -21,16 +21,17 @@ AnimationRunner::AnimationRunner(GridTile* gridTile)
 
 
 	//currentAnimation = &RandomPixelAnimation(tile);
-	RandomPixelAnimation ani = RandomPixelAnimation(tile);
-	tsched.Attach(&ani);
+	ani = RandomRectsAnimation(gridTile);
+	ani.run();
 }
 void AnimationRunner::run()
 {
-	/*
+	ani.run();
+
 	tile->drawPixel(1, 2, tile->RGB(50, 122, 255));
 	tile->drawPixel(2, 2, tile->RGB(50, 122, 255));
 	tile->drawPixel(3, 2, tile->RGB(50, 122, 255));
-
+	/*
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	if(Timer::getMillis()-animationStartTime > 30000)
 	{

@@ -11,6 +11,8 @@
 #include "../PLATFORM.h"
 #include "../utils/GroovegridApp.h"
 #include "../utils/Animation.h"
+#include "RandomRectsAnimation.h"
+
 
 class AnimationRunner: public GroovegridApp
 {
@@ -30,6 +32,7 @@ private:
 	uint32_t animationStartTime;
 	uint8_t selectedAnimation;
 	Animation* currentAnimation;
+	RandomRectsAnimation& ani;
 };
 
 

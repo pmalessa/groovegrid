@@ -8,16 +8,12 @@
 #include "driver/GridTile.h"
 #include "driver/Timer.h"
 #include "TicTacToe/Game_TicTacToe.h"
-//#include "Animation/AnimationRunner.h"
-#include "Animation/RandomRectsAnimation.h"
+#include "Animation/AnimationRunner.h"
 
 uint8_t programstate = 0;
 Game_2048 game_2048 = Game_2048();
 uint32_t prevCounter = 0;
 uint8_t input = 0;
-GridTile gridTile = GridTile(0, 0, 3, 3);
-//AnimationRunner animationRunner = AnimationRunner(&gridTile);
-RandomRectsAnimation ani = RandomRectsAnimation(&gridTile);
 
 class MainListener : public InputListener
 {
@@ -52,11 +48,13 @@ void setup()
 	eeprom_update_word((uint16_t *)0x23, (uint16_t)rand());
 #endif
 
+	GridTile gridTile = GridTile(0, 0, 3, 3);
+	AnimationRunner animationRunner = AnimationRunner(&gridTile);
+
 	Timer::start();
 	tsched.Attach(&comm);
 	comm.Attach(&mainlistener, COMM::MAIN);
-	//tsched.Attach(&animationRunner);
-	tsched.Attach(&ani);
+	tsched.Attach(&animationRunner);
 }
 
 // The loop function is called in an endless loop
