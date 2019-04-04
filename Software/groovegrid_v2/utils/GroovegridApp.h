@@ -16,6 +16,7 @@
 class GroovegridApp : public Task,public InputListener
 {
 public:
+	virtual ~GroovegridApp(){};
 	virtual void run() = 0;					//has to be overridden by AppLoop
 	char* exportAppState(){return 0;};
 	void importAppState(char *input){UNUSED(input);};

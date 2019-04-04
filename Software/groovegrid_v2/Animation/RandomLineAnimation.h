@@ -10,6 +10,7 @@ class RandomLineAnimation: public Animation
 {
 public:
 	RandomLineAnimation(GridTile* gridTile);
+	~RandomLineAnimation();
 	void run();
 };
 

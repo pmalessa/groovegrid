@@ -9,6 +9,7 @@ class RandomRectsAnimation: public Animation
 {
 public:
 	RandomRectsAnimation(GridTile* gridTile);
+	~RandomRectsAnimation();
 	void run();
 };
 

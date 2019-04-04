@@ -11,6 +11,12 @@ RandomLineAnimation::RandomLineAnimation(GridTile* gridTile)
 {
 	tile = gridTile;
 }
+
+RandomLineAnimation::~RandomLineAnimation()
+{
+
+}
+
 void RandomLineAnimation::run()
 {
 	static uint32_t wait = 0;

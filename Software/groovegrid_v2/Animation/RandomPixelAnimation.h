@@ -15,6 +15,7 @@ class RandomPixelAnimation: public Animation
 {
 public:
 	RandomPixelAnimation(GridTile* gridTile);
+	~RandomPixelAnimation();
 	void run();
 };
 

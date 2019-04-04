@@ -11,6 +11,12 @@ RandomPixelAnimation::RandomPixelAnimation(GridTile* gridTile)
 {
 	tile = gridTile;
 }
+
+RandomPixelAnimation::~RandomPixelAnimation()
+{
+
+}
+
 void RandomPixelAnimation::run()
 {
 	static uint32_t wait = 0;

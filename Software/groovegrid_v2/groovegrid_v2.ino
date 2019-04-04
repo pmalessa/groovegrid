@@ -1,13 +1,13 @@
 
-#include "2048/Game_2048.h"
 #include "PLATFORM.h"
+
 #include "driver/BUTTON.h"
 #include "driver/COMM.h"
-#include "utils/TaskScheduler.h"
-
 #include "driver/GridTile.h"
 #include "driver/Timer.h"
-#include "TicTacToe/Game_TicTacToe.h"
+#include "utils/TaskScheduler.h"
+
+#include "2048/Game_2048.h"
 #include "Animation/AnimationRunner.h"
 
 uint8_t programstate = 0;
@@ -23,18 +23,6 @@ class MainListener : public InputListener
 	}
 };
 
-
-void timer()
-{
-	static uint16_t button_cnt = 0;
-	button_cnt++;
-	if(button_cnt > 10)	//every 100ms
-	{
-		button_cnt = 0;
-		BUTTON_vRead();		//read Buttons
-	}
-}
-
 void setup()
 {
 
@@ -42,7 +30,6 @@ void setup()
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static MainListener mainlistener;
 
-	BUTTON_vInit();
 #if defined(__AVR__)
 	srand(eeprom_read_word((uint16_t *)0x23));
 	eeprom_update_word((uint16_t *)0x23, (uint16_t)rand());
@@ -99,11 +86,6 @@ void loop()
 			break;
 		default:
 			break;
-	}
-	if((Timer::getMillis() - prevCounter)>10)	//if 10ms passed
-	{
-		prevCounter = Timer::getMillis();
-		timer();	//call Timer functions
 	}
 */
 }

@@ -12,6 +12,8 @@
 #include "RandomLineAnimation.h"
 #include "RandomRectsAnimation.h"
 
+#define ANIMATION_RUNTIME_MS 10000
+
 AnimationRunner::AnimationRunner(GridTile* gridTile)
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
@@ -20,39 +22,44 @@ AnimationRunner::AnimationRunner(GridTile* gridTile)
 	animationStartTime = 0;
 	selectedAnimation = 0;
 
+	currentAnimation = new RandomRectsAnimation(gridTile);
 
-	//currentAnimation = &RandomPixelAnimation(tile);
-	ani = RandomRectsAnimation(gridTile);
-	ani.run();
 }
+
+AnimationRunner::~AnimationRunner()
+{
+
+}
+
 void AnimationRunner::run()
 {
-	ani.run();
-
-	tile->drawPixel(1, 2, tile->RGB(50, 122, 255));
-	tile->drawPixel(2, 2, tile->RGB(50, 122, 255));
-	tile->drawPixel(3, 2, tile->RGB(50, 122, 255));
-	/*
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	if(Timer::getMillis()-animationStartTime > 30000)
+	if(Timer::getMillis()-animationStartTime > ANIMATION_RUNTIME_MS)
 	{
 		animationStartTime = Timer::getMillis();
-		selectedAnimation++;
 		switch (selectedAnimation) {
+			case 3:
+				selectedAnimation = 0;
+				//nobreak
 			case 0:
-				*currentAnimation = RandomPixelAnimation(tile);
+				tsched.Detach(currentAnimation);
+				delete currentAnimation;
+				currentAnimation = new RandomPixelAnimation(tile);
 				tsched.Attach(currentAnimation);
 				break;
 			case 1:
-				//*currentAnimation = RandomLineAnimation(tile);
+				tsched.Detach(currentAnimation);
+				delete currentAnimation;
+				currentAnimation = new RandomLineAnimation(tile);
+				tsched.Attach(currentAnimation);
 				break;
 			case 2:
-				//*currentAnimation = RandomRectsAnimation(tile);
-				break;
-			default:
-				selectedAnimation = 0;
+				tsched.Detach(currentAnimation);
+				delete currentAnimation;
+				currentAnimation = new RandomRectsAnimation(tile);
+				tsched.Attach(currentAnimation);
 				break;
 		}
+		selectedAnimation++;
 	}
-	*/
 }

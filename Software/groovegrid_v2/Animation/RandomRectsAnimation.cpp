@@ -11,6 +11,11 @@ RandomRectsAnimation::RandomRectsAnimation(GridTile* gridTile)
 {
 	tile = gridTile;
 }
+
+RandomRectsAnimation::~RandomRectsAnimation()
+{
+}
+
 void RandomRectsAnimation::run()
 {
 	static uint8_t init = 0, up = 1;
