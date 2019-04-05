@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * GeneralUtils.cpp
  *
@@ -542,3 +543,4 @@ std::string GeneralUtils::trim(const std::string& str) {
 	size_t last = str.find_last_not_of(' ');
 	return str.substr(first, (last - first + 1));
 } // trim
+#endif

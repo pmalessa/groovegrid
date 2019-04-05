@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLESecurity.h
  *
@@ -73,3 +74,4 @@ public:
 
 //Added by Sloeber 
 #pragma once
+#endif

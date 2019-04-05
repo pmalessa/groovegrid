@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLECharacteristicMap.cpp
  *
@@ -131,3 +132,4 @@ std::string BLECharacteristicMap::toString() {
 
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

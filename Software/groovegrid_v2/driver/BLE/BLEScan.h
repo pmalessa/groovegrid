@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEScan.h
  *
@@ -84,3 +85,4 @@ private:
 
 //Added by Sloeber 
 #pragma once
+#endif

@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEServer.cpp
  *
@@ -422,3 +423,4 @@ void BLEServer::updateConnParams(esp_bd_addr_t remote_bda, uint16_t minInterval,
 	esp_ble_gap_update_conn_params(&conn_params); 
 }
 #endif // CONFIG_BT_ENABLED
+#endif

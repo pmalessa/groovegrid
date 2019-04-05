@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLERemoteDescriptor.h
  *
@@ -56,3 +57,4 @@ private:
 
 //Added by Sloeber 
 #pragma once
+#endif

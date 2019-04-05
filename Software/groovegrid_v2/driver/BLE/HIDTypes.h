@@ -1,3 +1,4 @@
+#ifndef AVR
 /* Copyright (c) 2010-2011 mbed.org, MIT License
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -97,3 +98,4 @@ typedef struct {
 
 //Added by Sloeber 
 #pragma once
+#endif

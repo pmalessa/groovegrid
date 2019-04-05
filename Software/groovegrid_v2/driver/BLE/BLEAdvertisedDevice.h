@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEAdvertisedDevice.h
  *
@@ -124,3 +125,4 @@ public:
 
 //Added by Sloeber 
 #pragma once
+#endif

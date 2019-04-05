@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEServer.h
  *
@@ -141,3 +142,4 @@ public:
 
 //Added by Sloeber 
 #pragma once
+#endif

@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEEddystoneTLM.cpp
  *
@@ -52,3 +53,4 @@ private:
 
 //Added by Sloeber 
 #pragma once
+#endif

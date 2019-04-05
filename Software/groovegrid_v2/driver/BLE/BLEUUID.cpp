@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEUUID.cpp
  *
@@ -405,3 +406,4 @@ std::string BLEUUID::toString() {
 } // toString
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

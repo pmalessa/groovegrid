@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * FreeRTOS.h
  *
@@ -72,3 +73,4 @@ private:
 
 //Added by Sloeber 
 #pragma once
+#endif

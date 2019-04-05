@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEEddystoneURL.cpp
  *
@@ -145,4 +146,5 @@ void BLEEddystoneURL::setURL(std::string url) {
 } // setURL
 
 
+#endif
 #endif

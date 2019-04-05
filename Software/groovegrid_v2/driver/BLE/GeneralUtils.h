@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * GeneralUtils.h
  *
@@ -36,3 +37,4 @@ public:
 
 //Added by Sloeber 
 #pragma once
+#endif

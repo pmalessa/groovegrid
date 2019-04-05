@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEAddress.cpp
  *
@@ -92,4 +93,5 @@ std::string BLEAddress::toString() {
 	stream << std::setfill('0') << std::setw(2) << std::hex << (int) ((uint8_t*) (m_address))[5];
 	return stream.str();
 } // toString
+#endif
 #endif

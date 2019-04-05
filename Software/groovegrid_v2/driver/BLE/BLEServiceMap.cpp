@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEServiceMap.cpp
  *
@@ -132,3 +133,4 @@ int BLEServiceMap::getRegisteredServiceCount(){
 }
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

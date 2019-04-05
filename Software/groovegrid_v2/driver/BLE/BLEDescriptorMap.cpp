@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEDescriptorMap.cpp
  *
@@ -145,3 +146,4 @@ BLEDescriptor* BLEDescriptorMap::getNext() {
 	return pRet;
 } // getNext
 #endif /* CONFIG_BT_ENABLED */
+#endif

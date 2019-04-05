@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLECharacteristic.cpp
  *
@@ -758,3 +759,4 @@ void BLECharacteristicCallbacks::onWrite(BLECharacteristic* pCharacteristic) {
 } // onWrite
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

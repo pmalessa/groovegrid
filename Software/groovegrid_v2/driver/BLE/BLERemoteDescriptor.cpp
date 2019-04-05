@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLERemoteDescriptor.cpp
  *
@@ -179,3 +180,4 @@ void BLERemoteDescriptor::writeValue(uint8_t newValue, bool response) {
 
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

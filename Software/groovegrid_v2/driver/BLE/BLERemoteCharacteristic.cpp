@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLERemoteCharacteristic.cpp
  *
@@ -586,3 +587,4 @@ uint8_t* BLERemoteCharacteristic::readRawData() {
 }
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

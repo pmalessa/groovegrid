@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEValue.h
  *
@@ -40,3 +41,4 @@ private:
 
 //Added by Sloeber 
 #pragma once
+#endif

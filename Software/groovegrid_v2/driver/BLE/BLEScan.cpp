@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEScan.cpp
  *
@@ -329,3 +330,4 @@ void BLEScan::clearResults() {
 }
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

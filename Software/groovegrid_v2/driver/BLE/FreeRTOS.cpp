@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * FreeRTOS.cpp
  *
@@ -272,3 +273,4 @@ bool Ringbuffer::send(void* data, size_t length, TickType_t wait) {
 } // send
 
 
+#endif

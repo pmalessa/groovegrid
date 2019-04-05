@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEEddystoneTLM.cpp
  *
@@ -147,4 +148,5 @@ void BLEEddystoneTLM::setTime(uint32_t tmil) {
 	m_eddystoneData.tmil = tmil;
 } // setTime
 
+#endif
 #endif

@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLESecurity.cpp
  *
@@ -102,3 +103,4 @@ char* BLESecurity::esp_key_type_to_str(esp_ble_key_type_t key_type) {
 	return key_str;
 } // esp_key_type_to_str
 #endif // CONFIG_BT_ENABLED
+#endif

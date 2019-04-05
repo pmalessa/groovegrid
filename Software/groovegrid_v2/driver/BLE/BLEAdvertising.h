@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEAdvertising.h
  *
@@ -78,3 +79,4 @@ private:
 #endif /* COMPONENTS_CPP_UTILS_BLEADVERTISING_H_ */
 //Added by Sloeber 
 #pragma once
+#endif

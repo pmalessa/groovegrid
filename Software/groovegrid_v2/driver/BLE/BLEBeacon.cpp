@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEBeacon.cpp
  *
@@ -86,4 +87,5 @@ void BLEBeacon::setSignalPower(int8_t signalPower) {
 } // setSignalPower
 
 
+#endif
 #endif

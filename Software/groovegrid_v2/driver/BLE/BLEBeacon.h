@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEBeacon2.h
  *
@@ -44,3 +45,4 @@ public:
 
 //Added by Sloeber 
 #pragma once
+#endif

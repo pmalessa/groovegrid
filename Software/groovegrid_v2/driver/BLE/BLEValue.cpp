@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEValue.cpp
  *
@@ -137,3 +138,4 @@ void BLEValue::setValue(uint8_t* pData, size_t length) {
 
 
 #endif // CONFIG_BT_ENABLED
+#endif

@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEEddystoneURL.cpp
  *
@@ -44,3 +45,4 @@ private:
 
 //Added by Sloeber 
 #pragma once
+#endif

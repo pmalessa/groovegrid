@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLE.cpp
  *
@@ -644,3 +645,4 @@ void BLEDevice::setCustomGattsHandler(gatts_event_handler handler) {
 }
 
 #endif // CONFIG_BT_ENABLED
+#endif

@@ -1,3 +1,4 @@
+#ifndef AVR
 /* Copyright (c) 2015 mbed.org, MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -403,3 +404,4 @@ const KEYMAP keymap[KEYMAP_SIZE] = {
 
 //Added by Sloeber 
 #pragma once
+#endif

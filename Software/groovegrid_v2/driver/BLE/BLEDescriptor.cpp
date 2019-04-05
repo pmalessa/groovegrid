@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEDescriptor.cpp
  *
@@ -294,3 +295,4 @@ void BLEDescriptorCallbacks::onWrite(BLEDescriptor* pDescriptor) {
 
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

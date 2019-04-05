@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEAdvertisedDevice.cpp
  *
@@ -527,3 +528,4 @@ size_t BLEAdvertisedDevice::getPayloadLength() {
 
 #endif /* CONFIG_BT_ENABLED */
 
+#endif

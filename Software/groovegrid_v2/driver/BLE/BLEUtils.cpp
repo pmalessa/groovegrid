@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEUtils.cpp
  *
@@ -2031,3 +2032,4 @@ const char* BLEUtils::searchEventTypeToString(esp_gap_search_evt_t searchEvt) {
 } // searchEventTypeToString
 
 #endif // CONFIG_BT_ENABLED
+#endif

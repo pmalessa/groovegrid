@@ -39,10 +39,12 @@ class COMM {
 	COMM();
 	COMM(const COMM&);
 	COMM & operator = (const COMM &);
+#ifdef ESP32
 	BLEServer *BluetoothServer;
 	BLEService *BluetoothService;
 	BLECharacteristic *BluetoothCharacteristic;
 	BLEAdvertising *BluetoothAdvertiser;
+#endif
 };
 
 

@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEHIDDevice.cpp
  *
@@ -241,3 +242,4 @@ BLEService* BLEHIDDevice::batteryService() {
 
 #endif // CONFIG_BT_ENABLED
 
+#endif

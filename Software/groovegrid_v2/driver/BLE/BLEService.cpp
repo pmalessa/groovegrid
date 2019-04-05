@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEService.cpp
  *
@@ -416,3 +417,4 @@ BLEServer* BLEService::getServer() {
 } // getServer
 
 #endif // CONFIG_BT_ENABLED
+#endif

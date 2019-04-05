@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLERemoteService.h
  *
@@ -86,3 +87,4 @@ private:
 
 //Added by Sloeber 
 #pragma once
+#endif

@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLE2904.cpp
  *
@@ -71,4 +72,5 @@ void BLE2904::setUnit(uint16_t unit) {
 	setValue((uint8_t*) &m_data, sizeof(m_data));
 } // setUnit
 
+#endif
 #endif

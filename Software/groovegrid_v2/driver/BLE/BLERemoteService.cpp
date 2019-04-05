@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLERemoteService.cpp
  *
@@ -338,3 +339,4 @@ std::string BLERemoteService::toString() {
 
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

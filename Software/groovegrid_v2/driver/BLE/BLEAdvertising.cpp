@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEAdvertising.cpp
  *
@@ -503,3 +504,4 @@ void BLEAdvertising::handleGAPEvent(
 
 
 #endif /* CONFIG_BT_ENABLED */
+#endif

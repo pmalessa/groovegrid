@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLExceptions.cpp
  *
@@ -7,3 +8,4 @@
 
 #include "BLEExceptions.h"
 
+#endif

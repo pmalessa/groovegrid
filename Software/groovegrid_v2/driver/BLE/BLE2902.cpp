@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLE2902.cpp
  *
@@ -59,4 +60,5 @@ void BLE2902::setNotifications(bool flag) {
 	else pValue[0] &= ~(1 << 0);
 } // setNotifications
 
+#endif
 #endif

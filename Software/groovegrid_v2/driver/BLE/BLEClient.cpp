@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLEDevice.cpp
  *
@@ -534,3 +535,4 @@ std::string BLEClient::toString() {
 
 
 #endif // CONFIG_BT_ENABLED
+#endif

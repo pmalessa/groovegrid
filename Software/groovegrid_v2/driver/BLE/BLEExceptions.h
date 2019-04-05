@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLExceptions.h
  *
@@ -32,3 +33,4 @@ class BLEUuidNotFoundException : public std::exception {
 
 //Added by Sloeber 
 #pragma once
+#endif

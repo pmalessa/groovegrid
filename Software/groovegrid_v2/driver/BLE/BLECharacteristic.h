@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLECharacteristic.h
  *
@@ -138,3 +139,4 @@ public:
 
 //Added by Sloeber 
 #pragma once
+#endif

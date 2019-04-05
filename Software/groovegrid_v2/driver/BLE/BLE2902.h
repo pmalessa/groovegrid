@@ -1,3 +1,4 @@
+#ifndef AVR
 /*
  * BLE2902.h
  *
@@ -35,3 +36,4 @@ public:
 
 //Added by Sloeber 
 #pragma once
+#endif
