@@ -20,7 +20,8 @@ public:
 	AnimationRunner(GridTile* gridTile);
 	~AnimationRunner();
 	void run();
-
+	void start();
+	void stop();
 	void onInput(char *data){UNUSED(data);};
 private:
 	uint32_t animationStartTime;

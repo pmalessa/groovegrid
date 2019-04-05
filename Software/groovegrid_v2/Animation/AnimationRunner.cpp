@@ -11,6 +11,7 @@
 #include "RandomPixelAnimation.h"
 #include "RandomLineAnimation.h"
 #include "RandomRectAnimation.h"
+#include "BootTransition.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 
@@ -21,14 +22,26 @@ AnimationRunner::AnimationRunner(GridTile* gridTile)
 	tile = gridTile;
 	animationStartTime = 0;
 	selectedAnimation = 0;
+	currentAnimation = new RandomRectAnimation(tile);
 
-	currentAnimation = new RandomRectAnimation(gridTile);
 
 }
 
 AnimationRunner::~AnimationRunner()
 {
 
+}
+
+void AnimationRunner::start()
+{
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	tsched.Attach(currentAnimation);
+}
+
+void AnimationRunner::stop()
+{
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	tsched.Detach(currentAnimation);
 }
 
 void AnimationRunner::run()

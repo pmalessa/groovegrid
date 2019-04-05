@@ -12,6 +12,9 @@ public:
 	RandomLineAnimation(GridTile* gridTile);
 	~RandomLineAnimation();
 	void run();
+private:
+	uint32_t animationStartTime;
+	uint32_t animationSpeed;
 };
 
 

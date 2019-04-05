@@ -6,10 +6,13 @@
  */
 
 #include "RandomPixelAnimation.h"
+#include "../driver/Timer.h"
 
 RandomPixelAnimation::RandomPixelAnimation(GridTile* gridTile)
 {
 	tile = gridTile;
+	animationStartTime = 0;
+	animationSpeed = 5;
 }
 
 RandomPixelAnimation::~RandomPixelAnimation()
@@ -20,22 +23,25 @@ RandomPixelAnimation::~RandomPixelAnimation()
 void RandomPixelAnimation::run()
 {
 	static uint32_t wait = 0;
-
-	if(wait == 0)
+	if(Timer::getMillis()-animationStartTime > animationSpeed)
 	{
-		if(rand()%2)	//clear or draw
+		animationStartTime = Timer::getMillis();
+		if(wait == 0)
 		{
-			tile->drawPixel(rand()%XMAX, rand()%YMAX, tile->RGB(rand()%256, rand()%256, rand()%256));
+			if(rand()%2)	//clear or draw
+			{
+				tile->drawPixel(rand()%XMAX, rand()%YMAX, tile->RGB(rand()%256, rand()%256, rand()%256));
+			}
+			else
+			{
+				tile->drawPixel(rand()%XMAX, rand()%YMAX, tile->RGB(0, 0, 0));
+			}
+
+			wait = rand()%30;
 		}
 		else
 		{
-			tile->drawPixel(rand()%XMAX, rand()%YMAX, tile->RGB(0, 0, 0));
+			wait--;
 		}
-
-		wait = rand()%30;
-	}
-	else
-	{
-		wait--;
 	}
 }
