@@ -7,7 +7,7 @@
 
 #include "Arduino.h"
 
-#include "../driver/GRID.h"
+#include "../driver/Grid.h"
 #include "Game_TicTacToe.h"
 
 

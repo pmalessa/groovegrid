@@ -24,5 +24,6 @@
 #define DATA_PIN 32
 #endif
 
+#define UNUSED(x) (void)(x)
 
 #endif /* PLATFORM_H_ */

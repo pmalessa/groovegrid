@@ -7,24 +7,26 @@
 
 #if not defined(AVR)
 #include "EventManager.h"
+#include <algorithm>
 
-void EventManager::addListener( Listener *l )
+void EventManager::Attach(Listener *listener)
 {
-	mListeners.push_back(l);
+    list.push_back(listener);
+}
+void EventManager::Detach(Listener *listener)
+{
+    list.erase(std::remove(list.begin(), list.end(), listener), list.end());
 }
 
-void EventManager::removeListener( Listener *l )
+void EventManager::onEvent()
 {
-	mListeners.erase( std::remove( mListeners.begin(), mListeners.end(), l ), mListeners.end() );
-	//having toruble with the rmove function...
-}
-
-void EventManager::dispatchEvent()
-{
-	for( std::vector<Listener*>::iterator listener = mListeners.begin(); listener != mListeners.end(); ++listener  )
-	{
-		(*listener)->handleEvent();
-	}
+    for(std::vector<Listener*>::const_iterator iter = list.begin(); iter != list.end(); ++iter)
+    {
+        if(*iter != 0)
+        {
+            (*iter)->Update();
+        }
+    }
 }
 
 #endif
