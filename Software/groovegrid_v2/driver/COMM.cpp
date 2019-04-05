@@ -6,13 +6,6 @@
  */
 #include "COMM.h"
 
-
-#if defined(__AVR__)
-#include "HardwareSerial.h"
-#elif defined(ESP32)
-#include "HardwareSerial.h"
-#endif
-
 COMM& COMM::getInstance()
 {
 	static COMM _instance;
@@ -25,7 +18,18 @@ COMM::COMM()
 #if defined(__AVR__)
 	Serial.begin(9600);
 #elif defined(ESP32)
-
+	BLEDevice::init("GrooveGrid");
+	BluetoothServer = BLEDevice::createServer();
+	BluetoothService = BluetoothServer->createService(SERVICE_UUID);
+	BluetoothCharacteristic = BluetoothService->createCharacteristic(CHARACTERISTIC_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_WRITE);
+	BluetoothCharacteristic->setValue("Let´s Groove!");
+	BluetoothService->start();
+	BluetoothAdvertiser = BLEDevice::getAdvertising();
+	BluetoothAdvertiser->addServiceUUID(SERVICE_UUID);
+	BluetoothAdvertiser->setScanResponse(true);
+	BluetoothAdvertiser->setMinPreferred(0x06);  // functions that help with iPhone connections issue
+	BluetoothAdvertiser->setMinPreferred(0x12);
+	BLEDevice::startAdvertising();
 #endif
 }
 
