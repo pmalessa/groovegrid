@@ -13,6 +13,7 @@
 class InputListener
 {
 public:
+	virtual ~InputListener(){};
 	virtual void onInput(char *data) = 0;
 };
 

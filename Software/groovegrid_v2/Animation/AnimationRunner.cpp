@@ -10,7 +10,7 @@
 #include "../utils/TaskScheduler.h"
 #include "RandomPixelAnimation.h"
 #include "RandomLineAnimation.h"
-#include "RandomRectsAnimation.h"
+#include "RandomRectAnimation.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 
@@ -22,7 +22,7 @@ AnimationRunner::AnimationRunner(GridTile* gridTile)
 	animationStartTime = 0;
 	selectedAnimation = 0;
 
-	currentAnimation = new RandomRectsAnimation(gridTile);
+	currentAnimation = new RandomRectAnimation(gridTile);
 
 }
 
@@ -56,7 +56,7 @@ void AnimationRunner::run()
 			case 2:
 				tsched.Detach(currentAnimation);
 				delete currentAnimation;
-				currentAnimation = new RandomRectsAnimation(tile);
+				currentAnimation = new RandomRectAnimation(tile);
 				tsched.Attach(currentAnimation);
 				break;
 		}

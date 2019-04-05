@@ -11,7 +11,7 @@
 #include "../PLATFORM.h"
 #include "../utils/GroovegridApp.h"
 #include "../utils/Animation.h"
-#include "RandomRectsAnimation.h"
+#include "RandomRectAnimation.h"
 
 
 class AnimationRunner: public GroovegridApp

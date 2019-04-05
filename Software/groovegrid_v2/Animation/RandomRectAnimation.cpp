@@ -5,18 +5,18 @@
  *      Author: pmale
  */
 
-#include "RandomRectsAnimation.h"
+#include "RandomRectAnimation.h"
 
-RandomRectsAnimation::RandomRectsAnimation(GridTile* gridTile)
+RandomRectAnimation::RandomRectAnimation(GridTile* gridTile)
 {
 	tile = gridTile;
 }
 
-RandomRectsAnimation::~RandomRectsAnimation()
+RandomRectAnimation::~RandomRectAnimation()
 {
 }
 
-void RandomRectsAnimation::run()
+void RandomRectAnimation::run()
 {
 	static uint8_t init = 0, up = 1;
 	static uint8_t r,g,b,x,y,w,h, r_cur, g_cur, b_cur, speed;
