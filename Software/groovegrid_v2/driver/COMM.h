@@ -9,31 +9,34 @@
 #define COMM_H_
 
 #include "../PLATFORM.h"
+#include "../utils/Task.h"
+#include "../utils/Vector.h"
+#include "../utils/InputListener.h"
 
+#define MAX_LISTENER_NUM 10
 #if defined(__AVR__)
 #include "HardwareSerial.h"
 #elif defined(ESP32)
 #include "BLE/BLEDevice.h"
 #endif
 
-class COMM {
+class COMM : public Task{
 
 //randomly generated
 #define SERVICE_UUID        "66c93897-a5f9-4a03-9d77-de1404d39270"	// See the following for generating UUIDs:
 #define CHARACTERISTIC_UUID "9e21d8fd-8837-482f-93ac-d9d81db00f33"	// https://www.uuidgenerator.net/
 
  public:
-	enum Event{
-		SWIPEDIRECTION,
-		GAMESTATE,
-		SERIALINPUT
+	enum InputType{
+		MAIN,
+		APP
 	};
 
 	static COMM& getInstance();
 	~COMM(void);
-	int 		 read();
-	void         setCallback(void *functionPointer, COMM::Event eventType);
-	void         removeCallback(void *functionPointer);
+	void         Attach(InputListener *obj, COMM::InputType inputType);
+	void         Detach(InputListener *obj, COMM::InputType inputType);
+	void run();
 
  private:
 	COMM();
@@ -45,6 +48,14 @@ class COMM {
 	BLECharacteristic *BluetoothCharacteristic;
 	BLEAdvertising *BluetoothAdvertiser;
 #endif
+
+	void app_send(char byte);
+	void main_send(char byte);
+
+    Vector<InputListener*> mainlist;
+    InputListener* mainstorage[MAX_LISTENER_NUM];
+    Vector<InputListener*> applist;
+    InputListener* appstorage[MAX_LISTENER_NUM];
 };
 
 

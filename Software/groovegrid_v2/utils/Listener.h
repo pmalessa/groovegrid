@@ -9,13 +9,13 @@
 #define UTILS_LISTENER_H_
 
 #if not defined(AVR)
+
 class Listener
 {
 public:
-	virtual void handleEvent(){}
-	virtual void handleEvent( int ID ){}
+	virtual void Update() = 0;
 };
+
+
 #endif
-
-
 #endif /* UTILS_LISTENER_H_ */

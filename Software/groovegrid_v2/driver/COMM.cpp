@@ -5,7 +5,6 @@
  *      Author: pmale
  */
 #include "COMM.h"
-
 COMM& COMM::getInstance()
 {
 	static COMM _instance;
@@ -31,20 +30,88 @@ COMM::COMM()
 	BluetoothAdvertiser->setMinPreferred(0x12);
 	BLEDevice::startAdvertising();
 #endif
+	mainlist.setStorage(mainstorage, MAX_LISTENER_NUM, 0);
+	applist.setStorage(appstorage, MAX_LISTENER_NUM, 0);
 }
 
-void  setCallback(void *functionPointer, COMM::Event eventType)
+void COMM::Attach(InputListener *functionPointer, COMM::InputType inputType)
 {
-
+	switch (inputType) {
+		case APP:
+			applist.push_back(functionPointer);
+			break;
+		case MAIN:
+			mainlist.push_back(functionPointer);
+			break;
+	}
 }
 
-void  removeCallback(void *functionPointer)
+void COMM::Detach(InputListener *functionPointer, COMM::InputType inputType)
 {
-
+	switch (inputType) {
+		case APP:
+			for (uint16_t i=0; i < applist.size(); i++) {
+				if(applist.at(i) == functionPointer)
+				{
+					applist.remove(i);
+				}
+			}
+			break;
+		case MAIN:
+			for (uint16_t i=0; i < mainlist.size(); i++) {
+				if(mainlist.at(i) == functionPointer)
+				{
+					mainlist.remove(i);
+				}
+			}
+	}
 }
 
-//Call repeatedly in loop to process input
-int COMM::read()
+void COMM::run()
 {
-	return Serial.read();
+	/*
+	if(BUTTON_bIsPressed(BUTTON_UP))
+		//send u
+	if(BUTTON_bIsPressed(BUTTON_DOWN))
+		//send d
+	if(BUTTON_bIsPressed(BUTTON_LEFT))
+		//send l
+	if(BUTTON_bIsPressed(BUTTON_RIGHT))
+		//send r
+	 */
+	char byte = Serial.read();
+	switch (byte) {
+		case -1:
+			break;
+		case '1':
+		case 'q':
+		case 'x':
+			main_send(byte);	//change to main
+			break;
+		default:
+			app_send(byte);
+			break;
+	}
+}
+
+void COMM::main_send(char byte)
+{
+	if(!mainlist.empty())
+	{
+		for(uint16_t i=0; i<mainlist.size();i++)
+		{
+			mainlist.at(i)->onInput(&byte);
+		}
+	}
+}
+
+void COMM::app_send(char byte)
+{
+	if(!applist.empty())
+	{
+		for(uint16_t i=0; i<applist.size();i++)
+		{
+			applist.at(i)->onInput(&byte);
+		}
+	}
 }
