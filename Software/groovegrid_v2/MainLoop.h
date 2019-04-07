@@ -35,6 +35,7 @@ private:
 	uint8_t programState;
 	Game_2048* game_2048;	//change to general Game* later
 	AnimationRunner* animationRunner;
+	GridTile* mainTile;
 };
 
 

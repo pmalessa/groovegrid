@@ -22,8 +22,8 @@ MainLoop::MainLoop()
 	Timer::start();
 
 	game_2048 = new Game_2048();
-	GridTile gridTile = GridTile(0, 0, 3, 3);
-	animationRunner = new AnimationRunner(&gridTile);
+	mainTile = new GridTile(0, 0, XMAX, YMAX);
+	animationRunner = new AnimationRunner(mainTile);
 
 	static COMM& comm = COMM::getInstance();
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
