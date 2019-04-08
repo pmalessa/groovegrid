@@ -7,9 +7,12 @@
 
 #include "DisguiseGame.h"
 
-	DisguiseGame::DisguiseGame()
+	DisguiseGame::DisguiseGame(GridTile *tile)
 	{
-
+		gameState = 0;
+		lastTime = 0;
+		flashTime = 0;
+		this->tile = tile;
 	}
 	DisguiseGame::~DisguiseGame()
 	{
@@ -17,17 +20,40 @@
 	}
 	void DisguiseGame::reset()
 	{
-
+		gameState = 0;
+		lastTime = 0;
+		flashTime = 0;
+		fadePosition = 0;
 	}
 	void DisguiseGame::run()
 	{
+		uint16_t xPos, yPos;
 		switch (gameState) {
 			case 0:	//fade in
-
+				if(Timer::getMillis()-lastTime > fadeDelay)
+				{
+					lastTime = Timer::getMillis();
+					tile->drawLine(0, fadePosition, XMAX-1, fadePosition, tile->RGB(255, 0, 0));	//draw red line
+					fadePosition++;
+					if(fadePosition == YMAX)
+					{
+						flashTime = genFlashInterval();
+						gameState = 1;
+					}
+				}
 
 				break;
 			case 1:	//flash sometimes
-
+				if(Timer::getMillis()-lastTime > flashTime)
+				{
+					lastTime = Timer::getMillis();
+					xPos = rand()%XMAX;
+					yPos = rand()%YMAX;
+					tile->drawPixel(xPos,yPos, tile->RGB(rand()%256, rand()%256, rand()%256));
+					delay(flashDuration);
+					tile->drawPixel(xPos,yPos, tile->RGB(255, 0, 0));
+					flashTime = genFlashInterval();
+				}
 				break;
 			default:
 				break;
@@ -40,5 +66,9 @@
 
 	uint32_t DisguiseGame::genFlashInterval()
 	{
-		uint32_t tmp = rand()%maxFlashInterval;
+		uint32_t tmp;
+		do{
+			tmp = rand()%maxFlashInterval;
+		}while(tmp < minFlashInterval);	//generate random number between min and max
+		return tmp*1000;	//in milliseconds
 	}

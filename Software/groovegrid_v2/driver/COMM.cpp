@@ -81,6 +81,7 @@ void COMM::run()
 		case -1:
 			break;
 		case '1':
+		case '2':
 		case 'q':
 		case 'x':
 			main_send(byte);	//change to main

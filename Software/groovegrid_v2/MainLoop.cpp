@@ -24,6 +24,7 @@ MainLoop::MainLoop()
 	game_2048 = new Game_2048();
 	mainTile = new GridTile(0, 0, XMAX, YMAX);
 	animationRunner = new AnimationRunner(mainTile);
+	disguiseGame = new DisguiseGame(mainTile);
 
 	static COMM& comm = COMM::getInstance();
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
@@ -60,6 +61,15 @@ void MainLoop::loop()
 				comm.Attach(game_2048, COMM::APP);	//attach input to app
 				tsched.Attach(game_2048);
 			}
+			if(input == '2')
+			{
+				animationRunner->stop();
+				tsched.Detach(animationRunner);
+				input = 0;
+				programState = 2;
+				comm.Attach(disguiseGame, COMM::APP);	//attach input to app
+				tsched.Attach(disguiseGame);
+			}
 			break;
 		case 1:
 			if(input == 'q')
@@ -77,6 +87,23 @@ void MainLoop::loop()
 				//ANIMATION_vBoot();
 				game_2048->reset();
 				game_2048->start();
+			}
+			break;
+		case 2:
+			if(input == 'q')
+			{
+				input = 0;
+				tsched.Detach(disguiseGame);
+				comm.Detach(disguiseGame, COMM::APP);	//detach input to app
+				tsched.Attach(animationRunner);
+				animationRunner->start();
+				programState = 0;//quit
+			}
+			if(input == 'x')
+			{
+				input = 0;
+				//ANIMATION_vBoot();
+				disguiseGame->reset();
 			}
 			break;
 		default:

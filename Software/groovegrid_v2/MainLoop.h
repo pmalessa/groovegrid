@@ -17,6 +17,7 @@
 
 #include "2048/Game_2048.h"
 #include "Animation/AnimationRunner.h"
+#include "Game/DisguiseGame.h"
 
 class MainLoop : public InputListener
 {
@@ -34,6 +35,7 @@ private:
 	char input;
 	uint8_t programState;
 	Game_2048* game_2048;	//change to general Game* later
+	DisguiseGame* disguiseGame;
 	AnimationRunner* animationRunner;
 	GridTile* mainTile;
 };
