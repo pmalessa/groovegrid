@@ -110,6 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // than having to individually change instances of widgets.
     return Stack(
       children: <Widget>[
+        Container(
+          color: Theme.of(context).canvasColor,
+        ),
         Column(children: <Widget>[
           Container(
             height: widget.topAppBarHeight,
