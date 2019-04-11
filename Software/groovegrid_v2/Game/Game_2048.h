@@ -25,7 +25,7 @@ enum direction_t{
 class Game_2048 : public GrooveGame
 {
 public:
-	Game_2048();
+	Game_2048(GridTile *tile);
 	~Game_2048();
 	void start();
 	void pause();

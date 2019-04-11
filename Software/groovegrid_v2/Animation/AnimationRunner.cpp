@@ -15,11 +15,10 @@
 
 #define ANIMATION_RUNTIME_MS 10000
 
-AnimationRunner::AnimationRunner(GridTile* gridTile)
+AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	UNUSED(tsched);
-	tile = gridTile;
 	animationStartTime = 0;
 	selectedAnimation = 0;
 	currentAnimation = new RandomRectAnimation(tile);

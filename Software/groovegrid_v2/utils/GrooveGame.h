@@ -13,6 +13,7 @@
 class GrooveGame : public GrooveApp
 {
 public:
+	GrooveGame(GridTile *tile):GrooveApp(tile){}
 	virtual char* exportAppState() = 0;
 	virtual void importAppState(char *json) = 0;
 	virtual uint8_t getProgress() = 0;				//return Progress 0..100

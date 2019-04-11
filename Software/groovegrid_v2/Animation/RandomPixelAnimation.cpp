@@ -8,9 +8,8 @@
 #include "../driver/Timer.h"
 #include "RandomPixelGrooveAnimation.h"
 
-RandomPixelAnimation::RandomPixelAnimation(GridTile* gridTile)
+RandomPixelAnimation::RandomPixelAnimation(GridTile* gridTile):GrooveAnimation(gridTile)
 {
-	tile = gridTile;
 	animationStartTime = 0;
 	animationSpeed = 5;
 }

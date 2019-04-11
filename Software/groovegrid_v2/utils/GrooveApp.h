@@ -11,6 +11,7 @@
 class GrooveApp : public Task,public InputListener
 {
 public:
+	GrooveApp(GridTile* tile){this->tile = tile;};
 	virtual ~GrooveApp(){};
 	virtual void run() = 0;					//has to be overridden by AppLoop
 protected:

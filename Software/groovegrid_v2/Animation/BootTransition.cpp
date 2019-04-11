@@ -6,9 +6,8 @@
  */
 #include "BootTransition.h"
 
-BootTransition::BootTransition(GridTile* gridTile)
+BootTransition::BootTransition(GridTile* gridTile):GrooveTransition(gridTile)
 {
-	tile = gridTile;
 	running = false;
 }
 void BootTransition::run()

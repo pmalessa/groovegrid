@@ -15,6 +15,7 @@ class GrooveAnimation : public GrooveApp
 {
 	//An Animation does not need to implement all functions of a GroovegridApp
 public:
+	GrooveAnimation(GridTile *tile):GrooveApp(tile){};
 	virtual ~GrooveAnimation(){};
 	virtual void run() = 0;					//has to be overridden by Animation loop
 	void onInput(char *data){UNUSED(data);};

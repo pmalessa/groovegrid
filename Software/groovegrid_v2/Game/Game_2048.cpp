@@ -17,7 +17,7 @@ direction_t movdir = NONE;
 bool running = false;
 uint32_t previousMillisCounter = 0;
 
-Game_2048::Game_2048()
+Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 {
 	game.initializeBoard();
 }

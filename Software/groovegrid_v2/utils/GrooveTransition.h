@@ -15,6 +15,7 @@
 class GrooveTransition : public GrooveAnimation
 {
 public:
+	GrooveTransition(GridTile *tile):GrooveAnimation(tile){};
 	bool isRunning(){return running;};	//returns if Transition is still running
 	void start(){running = true;}
 	void stop(){running = false;}

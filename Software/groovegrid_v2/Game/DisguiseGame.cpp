@@ -7,12 +7,11 @@
 
 #include "DisguiseGame.h"
 
-	DisguiseGame::DisguiseGame(GridTile *tile)
+	DisguiseGame::DisguiseGame(GridTile *tile):GrooveGame(tile)
 	{
 		gameState = 0;
 		lastTime = 0;
 		flashTime = 0;
-		this->tile = tile;
 	}
 	DisguiseGame::~DisguiseGame()
 	{

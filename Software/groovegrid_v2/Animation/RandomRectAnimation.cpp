@@ -7,9 +7,8 @@
 
 #include "RandomRectGrooveAnimation.h"
 
-RandomRectAnimation::RandomRectAnimation(GridTile* gridTile)
+RandomRectAnimation::RandomRectAnimation(GridTile* gridTile):GrooveAnimation(gridTile)
 {
-	tile = gridTile;
 }
 
 RandomRectAnimation::~RandomRectAnimation()
