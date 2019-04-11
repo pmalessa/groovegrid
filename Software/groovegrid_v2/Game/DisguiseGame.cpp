@@ -61,7 +61,7 @@
 	}
 	void DisguiseGame::onInput(char *data)
 	{
-		//No Input necessary
+		UNUSED(data);//No Input necessary
 	}
 
 	uint32_t DisguiseGame::genFlashInterval()

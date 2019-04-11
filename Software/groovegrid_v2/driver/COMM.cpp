@@ -76,7 +76,7 @@ void COMM::run()
 	if(BUTTON_bIsPressed(BUTTON_RIGHT))
 		//send r
 	 */
-	char byte = Serial.read();
+	int byte = Serial.read();
 	switch (byte) {
 		case -1:
 			break;
