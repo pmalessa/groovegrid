@@ -58,6 +58,29 @@ void Game_2048::onInput(char *data)
 	}
 }
 
+char* Game_2048::exportAppState()
+{
+	return 0;	//not yet
+}
+
+void Game_2048::importAppState(char* json)
+{
+	UNUSED(json); //not yet
+}
+
+//for now: highest reached tile in percent, with 0=0% and 2048=100%
+uint8_t Game_2048::getProgress()
+{
+	uint16_t tileValue = game.highestTile;
+	uint8_t powerOfTwo = 0;
+	do{
+		tileValue = tileValue >> 1;	//div2
+		powerOfTwo++;
+	}while(tileValue > 0);
+	return (uint8_t)(powerOfTwo/11)*100;	//2^11 is 2048
+}
+
+
 void Game_2048::move(direction_t dir) {
 	if(movdir == NONE)
 	{
@@ -144,6 +167,10 @@ void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 			break;
 	}
 	grid.writePixel(x, y, col);
+	if(number > game.highestTile)	//update game progress
+	{
+		game.highestTile = number;
+	}
 }
 
 GameState_2048::GameState_2048()

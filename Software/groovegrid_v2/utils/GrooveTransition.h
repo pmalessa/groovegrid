@@ -5,14 +5,14 @@
  *      Author: pmale
  */
 
-#ifndef UTILS_TRANSITION_H_
-#define UTILS_TRANSITION_H_
+#ifndef UTILS_GROOVETRANSITION_H_
+#define UTILS_GROOVETRANSITION_H_
 
 #include "../PLATFORM.h"
-#include "Animation.h"
+#include "GrooveAnimation.h"
 
 //A Transition is an Animation, that is not endless
-class Transition : public Animation
+class GrooveTransition : public GrooveAnimation
 {
 public:
 	bool isRunning(){return running;};	//returns if Transition is still running
@@ -25,4 +25,4 @@ protected:
 
 
 
-#endif /* UTILS_TRANSITION_H_ */
+#endif /* UTILS_GROOVETRANSITION_H_ */

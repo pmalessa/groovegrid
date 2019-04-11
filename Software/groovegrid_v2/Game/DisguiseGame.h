@@ -1,14 +1,17 @@
 
 #include "../PLATFORM.h"
 
-#include "../utils/GroovegridApp.h"
 #include "../driver/Timer.h"
+#include "../utils/GrooveGame.h"
 
-class DisguiseGame: public GroovegridApp{
+class DisguiseGame: public GrooveGame{
 public:
 	DisguiseGame(GridTile *tile);
 	~DisguiseGame();
 	void reset();
+	char* exportAppState();
+	void importAppState(char *json);
+	uint8_t getProgress();
 	void run();
 	void onInput(char *data);
 private:

@@ -9,7 +9,7 @@
 #define GAME_2048_H_
 
 #include "../PLATFORM.h"
-#include "../utils/GroovegridApp.h"
+#include "../utils/GrooveGame.h"
 
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX
@@ -22,7 +22,7 @@ enum direction_t{
 	UP
 };
 
-class Game_2048 : public GroovegridApp
+class Game_2048 : public GrooveGame
 {
 public:
 	Game_2048();
@@ -56,6 +56,7 @@ public:
 	bool canStep(direction_t direction);
 	bool canMerge(direction_t direction);
 	uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
+	uint16_t highestTile;
 
 	private:
 		void merge(direction_t direction);

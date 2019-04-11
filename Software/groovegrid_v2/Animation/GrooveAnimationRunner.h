@@ -5,16 +5,16 @@
  *      Author: pmale
  */
 
-#ifndef ANIMATION_ANIMATIONRUNNER_H_
-#define ANIMATION_ANIMATIONRUNNER_H_
+#ifndef ANIMATION_GROOVEANIMATIONRUNNER_H_
+#define ANIMATION_GROOVEANIMATIONRUNNER_H_
 
 #include "../PLATFORM.h"
-#include "../utils/GroovegridApp.h"
-#include "../utils/Animation.h"
-#include "RandomRectAnimation.h"
+#include "../utils/GrooveAnimation.h"
+#include "../utils/GrooveApp.h"
+#include "RandomRectGrooveAnimation.h"
 
 
-class AnimationRunner: public GroovegridApp
+class AnimationRunner: public GrooveApp
 {
 public:
 	AnimationRunner(GridTile* gridTile);
@@ -26,9 +26,9 @@ public:
 private:
 	uint32_t animationStartTime;
 	uint8_t selectedAnimation;
-	Animation* currentAnimation;
+	GrooveAnimation* currentAnimation;
 };
 
 
 
-#endif /* ANIMATION_ANIMATIONRUNNER_H_ */
+#endif /* ANIMATION_GROOVEANIMATIONRUNNER_H_ */

@@ -5,13 +5,13 @@
  *      Author: pmale
  */
 
-#ifndef ANIMATION_RANDOMPIXELANIMATION_H_
-#define ANIMATION_RANDOMPIXELANIMATION_H_
+#ifndef ANIMATION_RANDOMPIXELGROOVEANIMATION_H_
+#define ANIMATION_RANDOMPIXELGROOVEANIMATION_H_
 
 #include "../PLATFORM.h"
-#include "../utils/Animation.h"
+#include "../utils/GrooveAnimation.h"
 
-class RandomPixelAnimation: public Animation
+class RandomPixelAnimation: public GrooveAnimation
 {
 public:
 	RandomPixelAnimation(GridTile* gridTile);
@@ -24,4 +24,4 @@ private:
 
 
 
-#endif /* ANIMATION_RANDOMPIXELANIMATION_H_ */
+#endif /* ANIMATION_RANDOMPIXELGROOVEANIMATION_H_ */

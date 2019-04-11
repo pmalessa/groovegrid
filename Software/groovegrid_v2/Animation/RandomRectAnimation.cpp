@@ -5,7 +5,7 @@
  *      Author: pmale
  */
 
-#include "RandomRectAnimation.h"
+#include "RandomRectGrooveAnimation.h"
 
 RandomRectAnimation::RandomRectAnimation(GridTile* gridTile)
 {

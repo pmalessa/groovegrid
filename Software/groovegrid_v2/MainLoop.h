@@ -15,8 +15,8 @@
 #include "driver/Timer.h"
 #include "utils/TaskScheduler.h"
 
-#include "2048/Game_2048.h"
-#include "Animation/AnimationRunner.h"
+#include "Game/Game_2048.h"
+#include "Animation/GrooveAnimationRunner.h"
 #include "Game/DisguiseGame.h"
 
 class MainLoop : public InputListener
