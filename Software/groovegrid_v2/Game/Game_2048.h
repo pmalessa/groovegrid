@@ -10,6 +10,9 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveGame.h"
+#include "../driver/COMM.h"
+#include "../driver/Timer.h"
+#include "../driver/GridTile.h"
 
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX
@@ -21,6 +24,23 @@ enum direction_t{
 	RIGHT,
 	UP
 };
+
+typedef enum{
+	COLOR_RED = 0xFF0000,
+	COLOR_ORANGE = 0xFF8000,
+	COLOR_YELLOW = 0xFFFF00,
+	COLOR_LIGHTGREEN = 0x80FF00,
+	COLOR_GREEN = 0x00FF00,
+	COLOR_BLUEGREEN = 0x00FF80,
+	COLOR_CYAN = 0x00FFFF,
+	COLOR_LIGHTBLUE = 0x0080FF,
+	COLOR_BLUE = 0x0000FF,
+	COLOR_VIOLET = 0x8000FF,
+	COLOR_PINK = 0xFF00FF,
+	COLOR_PINKRED = 0xFF0080,
+	COLOR_BLACK = 0x000000,
+	COLOR_WHITE = 0xFFFFFF
+}color_t;
 
 class Game_2048 : public GrooveGame
 {
