@@ -5,8 +5,9 @@
  *      Author: pmale
  */
 
+#include "RandomLineAnimation.h"
+
 #include "../driver/Timer.h"
-#include "RandomLineGrooveAnimation.h"
 
 RandomLineAnimation::RandomLineAnimation(GridTile* gridTile):GrooveAnimation(gridTile)
 {

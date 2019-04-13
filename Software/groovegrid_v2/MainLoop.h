@@ -8,6 +8,7 @@
 #ifndef MAINLOOP_H_
 #define MAINLOOP_H_
 
+#include "Animation/AnimationRunner.h"
 #include "PLATFORM.h"
 #include "utils/InputListener.h"
 #include "driver/COMM.h"
@@ -16,7 +17,6 @@
 #include "utils/TaskScheduler.h"
 
 #include "Game/Game_2048.h"
-#include "Animation/GrooveAnimationRunner.h"
 #include "Game/DisguiseGame.h"
 
 class MainLoop : public InputListener

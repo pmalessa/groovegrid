@@ -5,13 +5,13 @@
  *      Author: pmale
  */
 
-#ifndef ANIMATION_GROOVEANIMATIONRUNNER_H_
-#define ANIMATION_GROOVEANIMATIONRUNNER_H_
+#ifndef ANIMATION_ANIMATIONRUNNER_H_
+#define ANIMATION_ANIMATIONRUNNER_H_
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveAnimation.h"
 #include "../utils/GrooveApp.h"
-#include "RandomRectGrooveAnimation.h"
+#include "RandomRectAnimation.h"
 
 
 class AnimationRunner: public GrooveApp
@@ -31,4 +31,4 @@ private:
 
 
 
-#endif /* ANIMATION_GROOVEANIMATIONRUNNER_H_ */
+#endif /* ANIMATION_ANIMATIONRUNNER_H_ */

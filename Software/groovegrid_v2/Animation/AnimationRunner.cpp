@@ -5,13 +5,14 @@
  *      Author: pmale
  */
 
+#include "AnimationRunner.h"
+
 #include "../driver/Timer.h"
 #include "../utils/TaskScheduler.h"
 #include "BootTransition.h"
-#include "GrooveAnimationRunner.h"
-#include "RandomLineGrooveAnimation.h"
-#include "RandomPixelGrooveAnimation.h"
-#include "RandomRectGrooveAnimation.h"
+#include "RandomLineAnimation.h"
+#include "RandomPixelAnimation.h"
+#include "RandomRectAnimation.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 

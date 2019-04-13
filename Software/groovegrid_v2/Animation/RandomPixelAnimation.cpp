@@ -5,8 +5,9 @@
  *      Author: pmale
  */
 
+#include "RandomPixelAnimation.h"
+
 #include "../driver/Timer.h"
-#include "RandomPixelGrooveAnimation.h"
 
 RandomPixelAnimation::RandomPixelAnimation(GridTile* gridTile):GrooveAnimation(gridTile)
 {
