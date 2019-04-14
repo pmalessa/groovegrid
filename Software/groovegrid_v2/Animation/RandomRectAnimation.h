@@ -4,7 +4,6 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveAnimation.h"
-#include "../driver/Timer.h"
 
 class RandomRectAnimation: public GrooveAnimation
 {
@@ -19,8 +18,7 @@ private:
 	uint8_t currentRed, currentGreen, currentBlue;
 	uint8_t desiredRed, desiredGreen, desiredBlue;
 	uint16_t x,y,w,h;
-	uint16_t animationSpeed, stepSize;
-	uint32_t animationStartTime;
+	uint16_t stepSize;
 };
 
 

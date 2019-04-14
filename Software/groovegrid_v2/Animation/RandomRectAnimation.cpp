@@ -9,11 +9,9 @@
 
 RandomRectAnimation::RandomRectAnimation(GridTile* gridTile):GrooveAnimation(gridTile)
 {
-	animationStartTime = 0;
 	currentRed = 0;
 	currentGreen = 0;
 	currentRed = 0;
-	animationSpeed = 33;	//33ms -> around 30fps
 	stepSize = 10;			//10 brightness steps per frame
 
 	generateNewRect();
@@ -25,9 +23,8 @@ RandomRectAnimation::~RandomRectAnimation()
 
 void RandomRectAnimation::run()
 {
-	if(Timer::getMillis()-animationStartTime > animationSpeed)
+	if(frameTimer.isTimeUp())
 	{
-		animationStartTime = Timer::getMillis();
 		if(fadeIn == true)	//clear or draw
 		{
 			tile->fillRect(x, y, w, h, tile->RGB(currentRed, currentGreen, currentBlue));

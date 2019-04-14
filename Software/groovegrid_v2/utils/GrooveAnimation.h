@@ -20,7 +20,7 @@ public:
 	virtual ~GrooveAnimation(){};
 	virtual void run() = 0;					//has to be overridden by Animation loop
 	void onInput(char *data){UNUSED(data);};
-private:
+protected:
 	DeltaTimer frameTimer;
 };
 

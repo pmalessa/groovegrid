@@ -24,9 +24,9 @@ public:
 	void stop();
 	void onInput(char *data){UNUSED(data);};
 private:
-	uint32_t animationStartTime;
 	uint8_t selectedAnimation;
 	GrooveAnimation* currentAnimation;
+	DeltaTimer animationTimer;
 };
 
 
