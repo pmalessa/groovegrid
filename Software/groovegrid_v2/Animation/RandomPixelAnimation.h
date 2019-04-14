@@ -9,16 +9,15 @@
 #define ANIMATION_RANDOMPIXELANIMATION_H_
 
 #include "../PLATFORM.h"
-#include "../utils/Animation.h"
+#include "../utils/GrooveAnimation.h"
 
-class RandomPixelAnimation: public Animation
+class RandomPixelAnimation: public GrooveAnimation
 {
 public:
 	RandomPixelAnimation(GridTile* gridTile);
 	~RandomPixelAnimation();
 	void run();
 private:
-	uint32_t animationStartTime;
 	uint32_t animationSpeed;
 };
 

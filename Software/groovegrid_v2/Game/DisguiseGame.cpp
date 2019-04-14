@@ -7,12 +7,11 @@
 
 #include "DisguiseGame.h"
 
-	DisguiseGame::DisguiseGame(GridTile *tile)
+	DisguiseGame::DisguiseGame(GridTile *tile):GrooveGame(tile)
 	{
 		gameState = 0;
 		lastTime = 0;
 		flashTime = 0;
-		this->tile = tile;
 	}
 	DisguiseGame::~DisguiseGame()
 	{
@@ -62,6 +61,24 @@
 	void DisguiseGame::onInput(char *data)
 	{
 		UNUSED(data);//No Input necessary
+	}
+
+	char* DisguiseGame::exportAppState()
+	{
+		return 0;	//not yet
+	}
+
+	void DisguiseGame::importAppState(char* json)
+	{
+		UNUSED(json); //not yet
+	}
+
+	//return percentage of counter expired
+	uint8_t DisguiseGame::getProgress()
+	{
+		uint32_t currentCounter = Timer::getMillis()-lastTime;
+		float fraction = currentCounter/flashTime;
+		return (uint8_t) fraction*100;	//return percentage converted to integer
 	}
 
 	uint32_t DisguiseGame::genFlashInterval()

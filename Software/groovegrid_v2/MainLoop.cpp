@@ -21,8 +21,8 @@ MainLoop::MainLoop()
 
 	Timer::start();
 
-	game_2048 = new Game_2048();
 	mainTile = new GridTile(0, 0, XMAX, YMAX);
+	game_2048 = new Game_2048(mainTile);
 	animationRunner = new AnimationRunner(mainTile);
 	disguiseGame = new DisguiseGame(mainTile);
 

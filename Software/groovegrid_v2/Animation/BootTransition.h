@@ -5,14 +5,14 @@
  *      Author: pmale
  */
 
-#ifndef ANIMATION_BOOTTRANSITION_H_
+#ifndef ANIMATION_BOOTGROOVETRANSITION_H_
 #define ANIMATION_BOOTTRANSITION_H_
 
 #include "../PLATFORM.h"
-#include "../utils/Transition.h"
+#include "../utils/GrooveTransition.h"
 
 
-class BootTransition: public Transition
+class BootTransition: public GrooveTransition
 {
 public:
 	BootTransition(GridTile* gridTile);
@@ -21,4 +21,4 @@ public:
 
 
 
-#endif /* ANIMATION_BOOTTRANSITION_H_ */
+#endif /* ANIMATION_BOOTGROOVETRANSITION_H_ */

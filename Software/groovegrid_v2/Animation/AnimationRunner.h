@@ -9,12 +9,12 @@
 #define ANIMATION_ANIMATIONRUNNER_H_
 
 #include "../PLATFORM.h"
-#include "../utils/GroovegridApp.h"
-#include "../utils/Animation.h"
+#include "../utils/GrooveAnimation.h"
+#include "../utils/GrooveApp.h"
 #include "RandomRectAnimation.h"
 
 
-class AnimationRunner: public GroovegridApp
+class AnimationRunner: public GrooveApp
 {
 public:
 	AnimationRunner(GridTile* gridTile);
@@ -24,9 +24,9 @@ public:
 	void stop();
 	void onInput(char *data){UNUSED(data);};
 private:
-	uint32_t animationStartTime;
 	uint8_t selectedAnimation;
-	Animation* currentAnimation;
+	GrooveAnimation* currentAnimation;
+	DeltaTimer animationTimer;
 };
 
 

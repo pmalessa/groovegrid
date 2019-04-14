@@ -43,12 +43,12 @@ uint16_t GridTile::RGB(uint8_t r, uint8_t g, uint8_t b)
 	static Grid& grid = Grid::getInstance();
 	return grid.RGB(r,g,b);
 }
-uint16_t RGB(uint32_t rgb)
+uint16_t GridTile::RGB(uint32_t rgb)
 {
 	static Grid& grid = Grid::getInstance();
 	return grid.RGB(rgb);
 }
-uint16_t HSV(uint8_t h, uint8_t s, uint8_t v)
+uint16_t GridTile::HSV(uint8_t h, uint8_t s, uint8_t v)
 {
 	static Grid& grid = Grid::getInstance();
 	return grid.HSV(h, s, v);
