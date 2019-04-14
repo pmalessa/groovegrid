@@ -17,13 +17,17 @@
 #define TABLE
 
 #if defined(DOOR16)
-#define XMAX 4
-#define YMAX 4
-#define DATA_PIN 6
+	#define XMAX 4
+	#define YMAX 4
 #elif defined(TABLE)
-#define XMAX 4
-#define YMAX 4
-#define DATA_PIN 32
+	#define XMAX 42
+	#define YMAX 14
+#endif
+
+#ifdef AVR
+	#define DATA_PIN 6
+#else
+	#define DATA_PIN 32
 #endif
 
 #define UNUSED(x) (void)(x)
