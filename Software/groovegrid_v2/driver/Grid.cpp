@@ -6,14 +6,12 @@
  */
 #include "Grid.h"
 
-#include <Adafruit_NeoMatrix.h>
-#include <Adafruit_NeoPixel.h>
+CRGB matrixleds[XMAX*YMAX];
 
 //4x4 display, starting at top left and going down zigzag
-Adafruit_NeoMatrix Grid::matrix = Adafruit_NeoMatrix(XMAX, YMAX, DATA_PIN,
+FastLED_NeoMatrix Grid::matrix = FastLED_NeoMatrix(matrixleds,XMAX,YMAX,
 		  NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
-		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
-		  NEO_GRB            + NEO_KHZ800);
+		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG);
 
 Grid& Grid::getInstance()
 {
@@ -24,6 +22,7 @@ Grid& Grid::getInstance()
 Grid::~Grid(){}
 Grid::Grid()
 {
+	FastLED.addLeds<NEOPIXEL,GRID_DATA_PIN>(matrixleds, XMAX*YMAX);
 	matrix.begin();
 }
 

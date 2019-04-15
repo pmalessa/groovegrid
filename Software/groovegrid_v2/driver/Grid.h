@@ -9,7 +9,7 @@
 #define GRID_H_
 
 #include "../PLATFORM.h"
-#include "Adafruit_NeoMatrix.h"
+#include "FastLED_NeoMatrix/FastLED_NeoMatrix.h"
 
 class Grid {
  public:
@@ -30,6 +30,6 @@ uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
 	Grid();
 	Grid(const Grid&);
 	Grid & operator = (const Grid &);
-	static Adafruit_NeoMatrix matrix;
+	static FastLED_NeoMatrix matrix;
 };
 #endif /* GRID_H_ */
