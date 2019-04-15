@@ -33,7 +33,7 @@ class COMM : public Task{
 	};
 
 	static COMM& getInstance();
-	~COMM(void);
+	virtual ~COMM(void);
 	void         Attach(InputListener *obj, COMM::InputType inputType);
 	void         Detach(InputListener *obj, COMM::InputType inputType);
 	void run();

@@ -9,7 +9,10 @@
 #define GAME_2048_H_
 
 #include "../PLATFORM.h"
-#include "../utils/GroovegridApp.h"
+#include "../utils/GrooveGame.h"
+#include "../driver/COMM.h"
+#include "../driver/Timer.h"
+#include "../driver/GridTile.h"
 
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX
@@ -22,10 +25,27 @@ enum direction_t{
 	UP
 };
 
-class Game_2048 : public GroovegridApp
+typedef enum{
+	COLOR_RED = 0xFF0000,
+	COLOR_ORANGE = 0xFF8000,
+	COLOR_YELLOW = 0xFFFF00,
+	COLOR_LIGHTGREEN = 0x80FF00,
+	COLOR_GREEN = 0x00FF00,
+	COLOR_BLUEGREEN = 0x00FF80,
+	COLOR_CYAN = 0x00FFFF,
+	COLOR_LIGHTBLUE = 0x0080FF,
+	COLOR_BLUE = 0x0000FF,
+	COLOR_VIOLET = 0x8000FF,
+	COLOR_PINK = 0xFF00FF,
+	COLOR_PINKRED = 0xFF0080,
+	COLOR_BLACK = 0x000000,
+	COLOR_WHITE = 0xFFFFFF
+}color_t;
+
+class Game_2048 : public GrooveGame
 {
 public:
-	Game_2048();
+	Game_2048(GridTile *tile);
 	~Game_2048();
 	void start();
 	void pause();
@@ -56,6 +76,7 @@ public:
 	bool canStep(direction_t direction);
 	bool canMerge(direction_t direction);
 	uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
+	uint16_t highestTile;
 
 	private:
 		void merge(direction_t direction);

@@ -6,10 +6,6 @@
  */
 #include "Game_2048.h"
 
-#include "../driver/COMM.h"
-#include "../driver/Grid.h"
-#include "../driver/Timer.h"
-
 #define GAME_SPEED 200	//lower is faster
 
 GameState_2048 game = GameState_2048();
@@ -17,7 +13,7 @@ direction_t movdir = NONE;
 bool running = false;
 uint32_t previousMillisCounter = 0;
 
-Game_2048::Game_2048()
+Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 {
 	game.initializeBoard();
 }
@@ -57,6 +53,29 @@ void Game_2048::onInput(char *data)
 			break;
 	}
 }
+
+char* Game_2048::exportAppState()
+{
+	return 0;	//not yet
+}
+
+void Game_2048::importAppState(char* json)
+{
+	UNUSED(json); //not yet
+}
+
+//for now: highest reached tile in percent, with 0=0% and 2048=100%
+uint8_t Game_2048::getProgress()
+{
+	uint16_t tileValue = game.highestTile;
+	uint8_t powerOfTwo = 0;
+	do{
+		tileValue = tileValue >> 1;	//div2
+		powerOfTwo++;
+	}while(tileValue > 0);
+	return (uint8_t)(powerOfTwo/11)*100;	//2^11 is 2048
+}
+
 
 void Game_2048::move(direction_t dir) {
 	if(movdir == NONE)
@@ -104,50 +123,55 @@ void Game_2048::DrawBoard(uint16_t arr[YMAX][XMAX])
 
 void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 {
-	static Grid& grid = Grid::getInstance();
 	uint16_t col = 0;
 	switch (number) {
 		case 2:
-			 col = grid.RGB(COLOR_RED);
+			 col = tile->RGB(COLOR_RED);
 			break;
 		case 4:
-			col = grid.RGB(COLOR_GREEN);
+			col = tile->RGB(COLOR_GREEN);
 			break;
 		case 8:
-			col = grid.RGB(COLOR_BLUE);
+			col = tile->RGB(COLOR_BLUE);
 			break;
 		case 16:
-			col = grid.RGB(COLOR_WHITE);
+			col = tile->RGB(COLOR_WHITE);
 			break;
 		case 32:
-			col = grid.RGB(COLOR_YELLOW);
+			col = tile->RGB(COLOR_YELLOW);
 			break;
 		case 64:
-			col = grid.RGB(COLOR_VIOLET);
+			col = tile->RGB(COLOR_VIOLET);
 			break;
 		case 128:
-			col = grid.RGB(COLOR_CYAN);
+			col = tile->RGB(COLOR_CYAN);
 			break;
 		case 256:
-			col = grid.RGB(COLOR_PINK);
+			col = tile->RGB(COLOR_PINK);
 			break;
 		case 512:
-			col = grid.RGB(COLOR_ORANGE);
+			col = tile->RGB(COLOR_ORANGE);
 			break;
 		case 1024:
-			col = grid.RGB(COLOR_LIGHTGREEN);
+			col = tile->RGB(COLOR_LIGHTGREEN);
 			break;
 		case 2048:
-			col = grid.RGB(COLOR_PINKRED);
+			col = tile->RGB(COLOR_PINKRED);
 			break;
 		default:
 			break;
 	}
-	grid.writePixel(x, y, col);
+	tile->writePixel(x, y, col);
+
+	if(number > game.highestTile)	//update game progress
+	{
+		game.highestTile = number;
+	}
 }
 
 GameState_2048::GameState_2048()
 {
+	//highestTile = 0;
 }
 
 void GameState_2048::fillBoard(uint16_t value) {

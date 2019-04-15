@@ -6,25 +6,21 @@
  */
 
 #include "AnimationRunner.h"
+
 #include "../driver/Timer.h"
 #include "../utils/TaskScheduler.h"
-#include "RandomPixelAnimation.h"
-#include "RandomLineAnimation.h"
-#include "RandomRectAnimation.h"
 #include "BootTransition.h"
+#include "RandomLineAnimation.h"
+#include "RandomPixelAnimation.h"
+#include "RandomRectAnimation.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 
-AnimationRunner::AnimationRunner(GridTile* gridTile)
+AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	UNUSED(tsched);
-	tile = gridTile;
-	animationStartTime = 0;
 	selectedAnimation = 0;
 	currentAnimation = new RandomRectAnimation(tile);
-
-
+	animationTimer.setTimeStep(ANIMATION_RUNTIME_MS);
 }
 
 AnimationRunner::~AnimationRunner()
@@ -47,9 +43,8 @@ void AnimationRunner::stop()
 void AnimationRunner::run()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	if(Timer::getMillis()-animationStartTime > ANIMATION_RUNTIME_MS)
+	if(animationTimer.isTimeUp())
 	{
-		animationStartTime = Timer::getMillis();
 		switch (selectedAnimation) {
 			case 3:
 				selectedAnimation = 0;

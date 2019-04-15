@@ -79,11 +79,12 @@ void COMM::run()
 	if(BUTTON_bIsPressed(BUTTON_RIGHT))
 		//send r
 	 */
-	char byte = Serial.read();
+	int byte = Serial.read();
 	switch (byte) {
 		case -1:
 			break;
 		case '1':
+		case '2':
 		case 'q':
 		case 'x':
 			main_send(byte);	//change to main
