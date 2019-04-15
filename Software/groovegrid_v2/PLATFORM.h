@@ -25,9 +25,9 @@
 #endif
 
 #ifdef AVR
-	#define DATA_PIN 6
+	#define GRID_DATA_PIN 6
 #else
-	#define DATA_PIN 32
+	#define GRID_DATA_PIN 0
 #endif
 
 #define UNUSED(x) (void)(x)
