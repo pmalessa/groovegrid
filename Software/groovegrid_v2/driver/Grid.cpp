@@ -62,3 +62,8 @@ uint16_t Grid::HSV(uint8_t h, uint8_t s, uint8_t v)
 	//TODO
 	return 0;
 }
+
+void Grid::setBrightness(uint8_t brightness)
+{
+	matrix.setBrightness(brightness);
+}
