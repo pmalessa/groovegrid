@@ -25,7 +25,8 @@ COMM::COMM()
 #if defined(__AVR__)
 	Serial.begin(9600);
 #elif defined(ESP32)
-
+	Serial.begin(115200);
+	Serial.print("Hey!\n");
 #endif
 	mainlist.setStorage(mainstorage, MAX_LISTENER_NUM, 0);
 	applist.setStorage(appstorage, MAX_LISTENER_NUM, 0);
