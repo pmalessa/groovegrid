@@ -17,6 +17,7 @@ COMM::COMM()
 #if defined(__AVR__)
 	Serial.begin(9600);
 #elif defined(ESP32)
+	Serial.begin(115200);
 	BLEDevice::init("GrooveGrid");
 	BluetoothServer = BLEDevice::createServer();
 	BluetoothService = BluetoothServer->createService(SERVICE_UUID);

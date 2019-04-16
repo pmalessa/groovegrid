@@ -26,8 +26,8 @@ MainLoop::MainLoop()
 	animationRunner = new AnimationRunner(mainTile);
 	disguiseGame = new DisguiseGame(mainTile);
 
-	static COMM& comm = COMM::getInstance();
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	static COMM& comm = COMM::getInstance();
 
 	tsched.Attach(&comm);
 	comm.Attach(this, COMM::MAIN);
