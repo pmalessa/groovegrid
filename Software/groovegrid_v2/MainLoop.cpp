@@ -19,15 +19,15 @@ MainLoop::MainLoop()
 	input = 0;
 	programState = 0;
 
-	Timer::start();
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	static COMM& comm = COMM::getInstance();
 
 	mainTile = new GridTile(0, 0, XMAX, YMAX);
 	game_2048 = new Game_2048(mainTile);
 	animationRunner = new AnimationRunner(mainTile);
 	disguiseGame = new DisguiseGame(mainTile);
 
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	static COMM& comm = COMM::getInstance();
+	Timer::start();
 
 	tsched.Attach(&comm);
 	comm.Attach(this, COMM::MAIN);
