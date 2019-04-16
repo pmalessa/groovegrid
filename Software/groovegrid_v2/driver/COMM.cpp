@@ -5,6 +5,43 @@
  *      Author: pmale
  */
 #include "COMM.h"
+uint8_t deviceConnected;
+
+class MyServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+      deviceConnected = true;
+    };
+
+    void onDisconnect(BLEServer* pServer) {
+      deviceConnected = false;
+    }
+};
+
+class FromGridCallback: public BLECharacteristicCallbacks {
+    void onRead(BLECharacteristic *pCharacteristic) {
+    }
+};
+
+class ToGridCallback: public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pCharacteristic) {
+    	static COMM& comm = COMM::getInstance();
+    	std::string rxValue = pCharacteristic->getValue();
+    	switch (rxValue[0]) {
+    		case -1:
+    			break;
+    		case '1':
+    		case '2':
+    		case 'q':
+    		case 'x':
+    			comm.main_send(rxValue[0]);	//change to main
+    			break;
+    		default:
+    			comm.app_send(rxValue[0]);
+    			break;
+    	}
+    }
+};
+
 COMM& COMM::getInstance()
 {
 	static COMM _instance;
@@ -20,9 +57,14 @@ COMM::COMM()
 	Serial.begin(115200);
 	BLEDevice::init("GrooveGrid");
 	BluetoothServer = BLEDevice::createServer();
+	BluetoothServer->setCallbacks(new MyServerCallbacks());
 	BluetoothService = BluetoothServer->createService(SERVICE_UUID);
-	BluetoothCharacteristic = BluetoothService->createCharacteristic(CHARACTERISTIC_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_WRITE);
-	BluetoothCharacteristic->setValue("Let´s Groove!");
+	fromGridCharacteristic = BluetoothService->createCharacteristic(CHAR_FROMGRID_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
+	fromGridCharacteristic->setValue("Read Data here");
+	fromGridCharacteristic->setCallbacks(new FromGridCallback());
+	toGridCharacteristic = BluetoothService->createCharacteristic(CHAR_TOGRID_UUID,BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
+	toGridCharacteristic->setValue("Write Data here");
+	toGridCharacteristic->setCallbacks(new ToGridCallback());
 	BluetoothService->start();
 	BluetoothAdvertiser = BLEDevice::getAdvertising();
 	BluetoothAdvertiser->addServiceUUID(SERVICE_UUID);
