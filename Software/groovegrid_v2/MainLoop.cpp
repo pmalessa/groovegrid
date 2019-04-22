@@ -30,7 +30,7 @@ MainLoop::MainLoop()
 	Timer::start();
 
 	tsched.Attach(&comm);
-	comm.Attach(this, COMM::MAIN);
+	comm.Attach(this, COMM::CONTROL);
 	tsched.Attach(animationRunner);
 	animationRunner->start();
 }

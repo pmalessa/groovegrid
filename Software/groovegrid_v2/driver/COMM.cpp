@@ -5,42 +5,37 @@
  *      Author: pmale
  */
 #include "COMM.h"
-uint8_t deviceConnected;
 
-class MyServerCallbacks: public BLEServerCallbacks {
-    void onConnect(BLEServer* pServer) {
-      deviceConnected = true;
-    };
+bool COMM::isConnected()
+{
+	return connected;
+}
 
-    void onDisconnect(BLEServer* pServer) {
-      deviceConnected = false;
-    }
-};
+void COMM::onConnect()
+{
+	connected = true;
+}
 
-class FromGridCallback: public BLECharacteristicCallbacks {
-    void onRead(BLECharacteristic *pCharacteristic) {
-    }
-};
+void COMM::onDisconnect()
+{
+	connected = false;
+}
 
-class ToGridCallback: public BLECharacteristicCallbacks {
-    void onWrite(BLECharacteristic *pCharacteristic) {
-    	static COMM& comm = COMM::getInstance();
-    	std::string rxValue = pCharacteristic->getValue();
-    	switch (rxValue[0]) {
-    		case -1:
-    			break;
-    		case '1':
-    		case '2':
-    		case 'q':
-    		case 'x':
-    			comm.main_send(rxValue[0]);	//change to main
-    			break;
-    		default:
-    			comm.app_send(rxValue[0]);
-    			break;
-    	}
-    }
-};
+void COMM::onRead(InputType inputType, BLECharacteristic *pCharacteristic)
+{
+
+}
+void COMM::onWrite(InputType inputType, BLECharacteristic *pCharacteristic)
+{
+	switch (inputType) {
+		case CONTROL:
+			main_send(pCharacteristic->getValue()[0]);
+			break;
+		case APP:
+			app_send(pCharacteristic->getValue()[0]);
+			break;
+	}
+}
 
 COMM& COMM::getInstance()
 {
@@ -56,16 +51,20 @@ COMM::COMM()
 #elif defined(ESP32)
 	Serial.begin(115200);
 	Serial.print("Hey!\n");
+
 	BLEDevice::init("GrooveGrid");
 	BluetoothServer = BLEDevice::createServer();
-	BluetoothServer->setCallbacks(new MyServerCallbacks());
+	BluetoothServer->setCallbacks(new CommServerCallback);
 	BluetoothService = BluetoothServer->createService(SERVICE_UUID);
-	fromGridCharacteristic = BluetoothService->createCharacteristic(CHAR_FROMGRID_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
-	fromGridCharacteristic->setValue("Read Data here");
-	fromGridCharacteristic->setCallbacks(new FromGridCallback());
-	toGridCharacteristic = BluetoothService->createCharacteristic(CHAR_TOGRID_UUID,BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
-	toGridCharacteristic->setValue("Write Data here");
-	toGridCharacteristic->setCallbacks(new ToGridCallback());
+	controlRxCharacteristic = BluetoothService->createCharacteristic(CONTROL_RX_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
+	controlRxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, CONTROL));
+	controlTxCharacteristic = BluetoothService->createCharacteristic(CONTROL_TX_UUID,BLECharacteristic::PROPERTY_WRITE);
+	controlTxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, CONTROL));
+	appRxCharacteristic = BluetoothService->createCharacteristic(APP_RX_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
+	appRxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, CONTROL));
+	appTxCharacteristic = BluetoothService->createCharacteristic(APP_TX_UUID,BLECharacteristic::PROPERTY_WRITE);
+	appTxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, CONTROL));
+
 	BluetoothService->start();
 	BluetoothAdvertiser = BLEDevice::getAdvertising();
 	BluetoothAdvertiser->addServiceUUID(SERVICE_UUID);
@@ -84,7 +83,7 @@ void COMM::Attach(InputListener *functionPointer, COMM::InputType inputType)
 		case APP:
 			applist.push_back(functionPointer);
 			break;
-		case MAIN:
+		case CONTROL:
 			mainlist.push_back(functionPointer);
 			break;
 	}
@@ -101,7 +100,7 @@ void COMM::Detach(InputListener *functionPointer, COMM::InputType inputType)
 				}
 			}
 			break;
-		case MAIN:
+		case CONTROL:
 			for (uint16_t i=0; i < mainlist.size(); i++) {
 				if(mainlist.at(i) == functionPointer)
 				{
