@@ -8,6 +8,15 @@
 #ifndef COMM_H_
 #define COMM_H_
 
+/*Todo:
+ * restructure the COMM Class:
+ *  - The BLE Communication is split into separate services, one control service, one game service and maybe multiple user input services.
+ *  - Each App/Game implements a function to return a structure containing multiple keywords, combined with function pointers and Read/Write property
+ *  which will then be passed to COMM to create characteristics inside this service. This way the Apps have no direct connection to the hardware,
+ *  they just expect those functions to be called once a read or write request is issued by the mobile app
+ *
+ */
+
 #include "../PLATFORM.h"
 #include "../utils/Task.h"
 #include "../utils/Vector.h"
@@ -46,8 +55,6 @@ class COMM : public Task{
 	COMM();
 	COMM(const COMM&);
 	COMM & operator = (const COMM &);
-	void app_send(char byte);
-	void main_send(char byte);
 #ifdef ESP32
 	void onRead(InputType inputType, BLECharacteristic *pCharacteristic);
 	void onWrite(InputType inputType, BLECharacteristic *pCharacteristic);
@@ -77,17 +84,18 @@ class COMM : public Task{
 	class CommServerCallback : public BLEServerCallbacks
 	{
 	public:
-		CommServerCallback(COMM *commPtr){this->commPtr = commPtr;}
+		CommServerCallback(COMM *commPtr){		this->commPtr = commPtr;}
 		void onConnect(BLEServer* pServer){		commPtr->onConnect();}			//pass call to COMM
 		void onDisconnect(BLEServer* pServer){	commPtr->onDisconnect();}		//pass call to COMM
 	private:
 		COMM *commPtr;
 	};
 #endif
-    Vector<InputListener*> mainlist;
+    Vector<InputListener*> controlList;
     InputListener* mainstorage[MAX_LISTENER_NUM];
-    Vector<InputListener*> applist;
+    Vector<InputListener*> appList;
     InputListener* appstorage[MAX_LISTENER_NUM];
+
 };
 
 
