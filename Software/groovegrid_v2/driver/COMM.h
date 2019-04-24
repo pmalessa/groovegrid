@@ -13,7 +13,10 @@
  *  - The BLE Communication is split into separate services, one control service, one game service and maybe multiple user input services.
  *  - Each App/Game implements a function to return a structure containing multiple keywords, combined with function pointers and Read/Write property
  *  which will then be passed to COMM to create characteristics inside this service. This way the Apps have no direct connection to the hardware,
- *  they just expect those functions to be called once a read or write request is issued by the mobile app
+ *  they just expect those functions to be called once a read or write request is issued by the mobile app.
+ *
+ *  Move the registration of callback functions based on keywords into each game, easier than passing a structure.
+ *  Once the game gets destroyed, the service and therefore the created characteristics get destroyed as well. Therefore no loss of control.
  *
  */
 
@@ -22,12 +25,55 @@
 #include "../utils/Vector.h"
 #include "../utils/InputListener.h"
 
-#define MAX_LISTENER_NUM 10
+#define MAX_CALLBACK_NUM 10
 #if defined(__AVR__)
 #include "HardwareSerial.h"
 #elif defined(ESP32)
 #include "BLE/BLEDevice.h"
 #endif
+
+class CommListener : public BLECharacteristicCallbacks
+{
+	enum InputType{
+		CONTROL,
+		APP
+	};
+public:
+	CommListener(BLEUUID uuid, std::string keyword, InputType inputType)
+	{
+		this->uuid = uuid;
+		this->keyword = keyword;
+		this->inputType = inputType;
+	}
+    virtual std::string onRead() = 0;
+    virtual void onWrite(std::string data) = 0;
+private:
+    BLEUUID uuid;
+    std::string keyword;
+    InputType inputType;
+};
+
+/*
+ * This CommCallback class gets attached to the specific characteristic.
+ * it calls the onRead and onWrite functions of its commListener and passes the values along.
+ */
+class CommCallback : public BLECharacteristicCallbacks
+{
+public:
+	CommCallback(CommListener *commListener){this->commListener = commListener;};
+    void onRead(BLECharacteristic* pCharacteristic)
+    {
+    	std::string res = commListener->onRead();
+    	pCharacteristic->setValue(res);
+    }
+    void onWrite(BLECharacteristic* pCharacteristic)
+    {
+    	std::string res = pCharacteristic->getValue();
+    	commListener->onWrite(res);
+    }
+private:
+    CommListener *commListener;
+};
 
 class COMM : public Task{
 
@@ -39,48 +85,26 @@ class COMM : public Task{
 #define APP_TX_UUID 		"9e21d8fd-8837-482f-93ac-d9d81db00f36"
 
  public:
-	enum InputType{
-		CONTROL,
-		APP
-	};
-
 	static COMM& getInstance();
 	virtual ~COMM(void);
-	void         Attach(InputListener *obj, COMM::InputType inputType);
-	void         Detach(InputListener *obj, COMM::InputType inputType);
+	void Attach(CommListener *callback);
+	void Detach(CommListener *callback);
 	bool isConnected();
 	void run();
 
  private:
 	COMM();
 	COMM(const COMM&);
-	COMM & operator = (const COMM &);
+	COMM& operator = (const COMM&);
 #ifdef ESP32
-	void onRead(InputType inputType, BLECharacteristic *pCharacteristic);
-	void onWrite(InputType inputType, BLECharacteristic *pCharacteristic);
 	void onConnect();
 	void onDisconnect();
 
 	bool connected = false;
 	BLEServer *BluetoothServer;
-	BLEService *BluetoothService;
-	BLECharacteristic *controlRxCharacteristic, *controlTxCharacteristic, *appRxCharacteristic, *appTxCharacteristic;
+	BLEService *BluetoothAppService, *BluetoothGameService;
 	BLEAdvertising *BluetoothAdvertiser;
 
-	class CommCharacteristicCallback : public BLECharacteristicCallbacks
-	{
-	public:
-		CommCharacteristicCallback(COMM *commPtr, InputType inputType)
-		{
-			this->commPtr = commPtr;
-			this->inputType = inputType;
-		}
-	    void onRead(BLECharacteristic *pCharacteristic){	commPtr->onRead(inputType, pCharacteristic);}	//pass call to COMM
-	    void onWrite(BLECharacteristic *pCharacteristic){	commPtr->onWrite(inputType, pCharacteristic);}	//pass call to COMM
-	private:
-	    COMM *commPtr;
-	    InputType inputType;
-	};
 	class CommServerCallback : public BLEServerCallbacks
 	{
 	public:
@@ -91,12 +115,10 @@ class COMM : public Task{
 		COMM *commPtr;
 	};
 #endif
-    Vector<InputListener*> controlList;
-    InputListener* mainstorage[MAX_LISTENER_NUM];
-    Vector<InputListener*> appList;
-    InputListener* appstorage[MAX_LISTENER_NUM];
+	//Todo: replace with standard c++ vector implementation once AVR is eliminated
+    Vector<CommListener*> callbackList;
+    CommListener* callbackstorage[MAX_CALLBACK_NUM];
 
 };
-
 
 #endif /* COMM_H_ */
