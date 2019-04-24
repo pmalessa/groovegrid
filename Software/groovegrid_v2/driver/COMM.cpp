@@ -27,12 +27,28 @@ void COMM::onRead(InputType inputType, BLECharacteristic *pCharacteristic)
 }
 void COMM::onWrite(InputType inputType, BLECharacteristic *pCharacteristic)
 {
+	Serial.println(inputType);
+
 	switch (inputType) {
 		case CONTROL:
-			main_send(pCharacteristic->getValue()[0]);
+			if(!controlList.empty())
+			{
+				for(uint16_t i=0; i<controlList.size();i++)
+				{
+					//controlList.at(i)->onInput((char *)pCharacteristic->getValue()[0]);
+					//Serial.println((char *)pCharacteristic->getValue()[0]);
+				}
+			}
 			break;
 		case APP:
-			app_send(pCharacteristic->getValue()[0]);
+			if(!appList.empty())
+			{
+				for(uint16_t i=0; i<appList.size();i++)
+				{
+					//appList.at(i)->onInput((char *)pCharacteristic->getValue()[0]);
+					//Serial.println((char *)pCharacteristic->getValue()[0]);
+				}
+			}
 			break;
 	}
 }
@@ -54,16 +70,16 @@ COMM::COMM()
 
 	BLEDevice::init("GrooveGrid");
 	BluetoothServer = BLEDevice::createServer();
-	BluetoothServer->setCallbacks(new CommServerCallback);
+	BluetoothServer->setCallbacks(new CommServerCallback(this));
 	BluetoothService = BluetoothServer->createService(SERVICE_UUID);
 	controlRxCharacteristic = BluetoothService->createCharacteristic(CONTROL_RX_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
 	controlRxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, CONTROL));
 	controlTxCharacteristic = BluetoothService->createCharacteristic(CONTROL_TX_UUID,BLECharacteristic::PROPERTY_WRITE);
 	controlTxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, CONTROL));
 	appRxCharacteristic = BluetoothService->createCharacteristic(APP_RX_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
-	appRxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, CONTROL));
+	appRxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, APP));
 	appTxCharacteristic = BluetoothService->createCharacteristic(APP_TX_UUID,BLECharacteristic::PROPERTY_WRITE);
-	appTxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, CONTROL));
+	appTxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, APP));
 
 	BluetoothService->start();
 	BluetoothAdvertiser = BLEDevice::getAdvertising();
@@ -73,18 +89,18 @@ COMM::COMM()
 	BluetoothAdvertiser->setMinPreferred(0x12);
 	BLEDevice::startAdvertising();
 #endif
-	mainlist.setStorage(mainstorage, MAX_LISTENER_NUM, 0);
-	applist.setStorage(appstorage, MAX_LISTENER_NUM, 0);
+	controlList.setStorage(mainstorage, MAX_LISTENER_NUM, 0);
+	appList.setStorage(appstorage, MAX_LISTENER_NUM, 0);
 }
 
 void COMM::Attach(InputListener *functionPointer, COMM::InputType inputType)
 {
 	switch (inputType) {
 		case APP:
-			applist.push_back(functionPointer);
+			appList.push_back(functionPointer);
 			break;
 		case CONTROL:
-			mainlist.push_back(functionPointer);
+			controlList.push_back(functionPointer);
 			break;
 	}
 }
@@ -93,18 +109,18 @@ void COMM::Detach(InputListener *functionPointer, COMM::InputType inputType)
 {
 	switch (inputType) {
 		case APP:
-			for (uint16_t i=0; i < applist.size(); i++) {
-				if(applist.at(i) == functionPointer)
+			for (uint16_t i=0; i < appList.size(); i++) {
+				if(appList.at(i) == functionPointer)
 				{
-					applist.remove(i);
+					appList.remove(i);
 				}
 			}
 			break;
 		case CONTROL:
-			for (uint16_t i=0; i < mainlist.size(); i++) {
-				if(mainlist.at(i) == functionPointer)
+			for (uint16_t i=0; i < controlList.size(); i++) {
+				if(controlList.at(i) == functionPointer)
 				{
-					mainlist.remove(i);
+					controlList.remove(i);
 				}
 			}
 	}
@@ -122,40 +138,4 @@ void COMM::run()
 	if(BUTTON_bIsPressed(BUTTON_RIGHT))
 		//send r
 	 */
-	int byte = Serial.read();
-	switch (byte) {
-		case -1:
-			break;
-		case '1':
-		case '2':
-		case 'q':
-		case 'x':
-			main_send(byte);	//change to main
-			break;
-		default:
-			app_send(byte);
-			break;
-	}
-}
-
-void COMM::main_send(char byte)
-{
-	if(!mainlist.empty())
-	{
-		for(uint16_t i=0; i<mainlist.size();i++)
-		{
-			mainlist.at(i)->onInput(&byte);
-		}
-	}
-}
-
-void COMM::app_send(char byte)
-{
-	if(!applist.empty())
-	{
-		for(uint16_t i=0; i<applist.size();i++)
-		{
-			applist.at(i)->onInput(&byte);
-		}
-	}
 }
