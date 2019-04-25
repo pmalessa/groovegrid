@@ -13,6 +13,18 @@ MainLoop& MainLoop::getInstance()
 	return _instance;
 }
 
+std::string MainLoop::onUserRead(uint8_t channelID)
+{
+	UNUSED(channelID);
+	return "bar";
+}
+void MainLoop::onUserWrite(std::string data, uint8_t channelID)
+{
+	UNUSED(data);
+	UNUSED(channelID);
+	input = data[0];
+}
+
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
@@ -30,14 +42,9 @@ MainLoop::MainLoop()
 	Timer::start();
 
 	tsched.Attach(&comm);
-	comm.Attach(this, COMM::CONTROL);
+	comm.Attach(this, CHANNEL_CONTROL);
 	tsched.Attach(animationRunner);
 	animationRunner->start();
-}
-
-void MainLoop::onInput(char* data)
-{
-	input = *data;
 }
 
 void MainLoop::loop()
@@ -58,7 +65,7 @@ void MainLoop::loop()
 				programState = 1;
 				//ANIMATION_vBoot();
 				game_2048->start();
-				comm.Attach(game_2048, COMM::APP);	//attach input to app
+				comm.Attach(game_2048, CHANNEL_USER1);	//attach input to app
 				tsched.Attach(game_2048);
 			}
 			if(input == '2')
@@ -67,7 +74,7 @@ void MainLoop::loop()
 				tsched.Detach(animationRunner);
 				input = 0;
 				programState = 2;
-				comm.Attach(disguiseGame, COMM::APP);	//attach input to app
+				comm.Attach(disguiseGame, CHANNEL_USER1);	//attach input to app
 				tsched.Attach(disguiseGame);
 			}
 			break;
@@ -76,7 +83,6 @@ void MainLoop::loop()
 			{
 				input = 0;
 				tsched.Detach(game_2048);
-				comm.Detach(game_2048, COMM::APP);	//detach input to app
 				tsched.Attach(animationRunner);
 				animationRunner->start();
 				programState = 0;//quit
@@ -85,7 +91,7 @@ void MainLoop::loop()
 			{
 				input = 0;
 				//ANIMATION_vBoot();
-				game_2048->reset();
+				//game_2048->reset(); change to destroying
 				game_2048->start();
 			}
 			break;
@@ -94,7 +100,6 @@ void MainLoop::loop()
 			{
 				input = 0;
 				tsched.Detach(disguiseGame);
-				comm.Detach(disguiseGame, COMM::APP);	//detach input to app
 				tsched.Attach(animationRunner);
 				animationRunner->start();
 				programState = 0;//quit
@@ -103,7 +108,7 @@ void MainLoop::loop()
 			{
 				input = 0;
 				//ANIMATION_vBoot();
-				disguiseGame->reset();
+				//disguiseGame->reset(); change to destroying
 			}
 			break;
 		default:

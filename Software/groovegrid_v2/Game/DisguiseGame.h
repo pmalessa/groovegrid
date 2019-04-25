@@ -8,12 +8,9 @@ class DisguiseGame: public GrooveGame{
 public:
 	DisguiseGame(GridTile *tile);
 	~DisguiseGame();
-	void reset();
-	char* exportAppState();
-	void importAppState(char *json);
-	uint8_t getProgress();
 	void run();
-	void onInput(char *data);
+    std::string onUserRead(uint8_t channelID);
+    void onUserWrite(std::string data, uint8_t channelID);
 private:
 	uint32_t genFlashInterval();
 

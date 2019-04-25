@@ -19,7 +19,6 @@ public:
 	GrooveAnimation(GridTile *tile):GrooveApp(tile){frameTimer.setTimeStep(FRAMERATE_MS);};
 	virtual ~GrooveAnimation(){};
 	virtual void run() = 0;					//has to be overridden by Animation loop
-	void onInput(char *data){UNUSED(data);};
 protected:
 	DeltaTimer frameTimer;
 };

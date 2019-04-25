@@ -23,72 +23,58 @@
 #include "../PLATFORM.h"
 #include "../utils/Task.h"
 #include "../utils/Vector.h"
-#include "../utils/InputListener.h"
+#include "CommInterface.h"
 
-#define MAX_CALLBACK_NUM 10
+#define MAX_CHANNEL_NUM 10
 #if defined(__AVR__)
 #include "HardwareSerial.h"
 #elif defined(ESP32)
 #include "BLE/BLEDevice.h"
+#include "BLE/BLE2902.h"
 #endif
 
-class CommListener : public BLECharacteristicCallbacks
-{
-	enum InputType{
-		CONTROL,
-		APP
-	};
-public:
-	CommListener(BLEUUID uuid, std::string keyword, InputType inputType)
-	{
-		this->uuid = uuid;
-		this->keyword = keyword;
-		this->inputType = inputType;
-	}
-    virtual std::string onRead() = 0;
-    virtual void onWrite(std::string data) = 0;
-private:
-    BLEUUID uuid;
-    std::string keyword;
-    InputType inputType;
+typedef struct{
+	std::string channelName;
+	uint8_t channelID;
+	BLEUUID *serviceUUID, *rxUUID, *txUUID;
+	CommInterface *commInterface;
+	BLECharacteristic *rxCharacteristic, *txCharacteristic;
+	BLEService *attachedService;
+}CommChannel;
+
+enum ChannelID{
+	CHANNEL_CONTROL,
+	CHANNEL_USER1,
+	CHANNEL_USER2,
+	CHANNEL_USER3,
+	CHANNEL_USER4
 };
 
 /*
  * This CommCallback class gets attached to the specific characteristic.
- * it calls the onRead and onWrite functions of its commListener and passes the values along.
+ * it passes the values up.
  */
-class CommCallback : public BLECharacteristicCallbacks
-{
-public:
-	CommCallback(CommListener *commListener){this->commListener = commListener;};
-    void onRead(BLECharacteristic* pCharacteristic)
-    {
-    	std::string res = commListener->onRead();
-    	pCharacteristic->setValue(res);
-    }
-    void onWrite(BLECharacteristic* pCharacteristic)
-    {
-    	std::string res = pCharacteristic->getValue();
-    	commListener->onWrite(res);
-    }
-private:
-    CommListener *commListener;
-};
+
 
 class COMM : public Task{
 
 //randomly generated
-#define SERVICE_UUID        "66c93897-a5f9-4a03-9d77-de1404d39270"	// See the following for generating UUIDs:
-#define CONTROL_RX_UUID 	"9e21d8fd-8837-482f-93ac-d9d81db00f33"	// https://www.uuidgenerator.net/
-#define CONTROL_TX_UUID 	"9e21d8fd-8837-482f-93ac-d9d81db00f34"
-#define APP_RX_UUID 		"9e21d8fd-8837-482f-93ac-d9d81db00f35"
-#define APP_TX_UUID 		"9e21d8fd-8837-482f-93ac-d9d81db00f36"
+// https://www.uuidgenerator.net/
+#define SERVICE_CONTROL_UUID        "66c93897-a5f9-4a03-9d77-de1404d39270"
+#define SERVICE_USER1_UUID        	"66c93897-a5f9-4a03-9d77-de1404d39271"
+#define SERVICE_USER2_UUID        	"66c93897-a5f9-4a03-9d77-de1404d39272"
+#define CONTROL_RX_UUID 			"9e21d8fd-8837-482f-93ac-d9d81db00f33"
+#define CONTROL_TX_UUID 			"9e21d8fd-8837-482f-93ac-d9d81db00f34"
+#define USER1_RX_UUID 				"9e21d8fd-8837-482f-93ac-d9d81db00f35"
+#define USER1_TX_UUID 				"9e21d8fd-8837-482f-93ac-d9d81db00f36"
+#define USER2_RX_UUID 				"9e21d8fd-8837-482f-93ac-d9d81db00f37"
+#define USER2_TX_UUID 				"9e21d8fd-8837-482f-93ac-d9d81db00f38"
 
  public:
 	static COMM& getInstance();
 	virtual ~COMM(void);
-	void Attach(CommListener *callback);
-	void Detach(CommListener *callback);
+	void Attach(CommInterface *callback, ChannelID channel);
+	void Detach(CommInterface *callback);
 	bool isConnected();
 	void run();
 
@@ -99,10 +85,11 @@ class COMM : public Task{
 #ifdef ESP32
 	void onConnect();
 	void onDisconnect();
+	std::string onRead(uint8_t channelID);
+	void onWrite(std::string data, uint8_t channelID);
 
 	bool connected = false;
 	BLEServer *BluetoothServer;
-	BLEService *BluetoothAppService, *BluetoothGameService;
 	BLEAdvertising *BluetoothAdvertiser;
 
 	class CommServerCallback : public BLEServerCallbacks
@@ -114,10 +101,28 @@ class COMM : public Task{
 	private:
 		COMM *commPtr;
 	};
+	class CommCharacteristicCallback : public BLECharacteristicCallbacks
+	{
+	public:
+		CommCharacteristicCallback(COMM *commPtr, uint8_t channelID){this->commPtr = commPtr; this->channelID = channelID;};
+	    void onRead(BLECharacteristic* pCharacteristic)
+	    {
+	    	std::string res = commPtr->onRead(channelID); //call COMM passUp function here
+	    	pCharacteristic->setValue(res);
+	    }
+	    void onWrite(BLECharacteristic* pCharacteristic)
+	    {
+	    	std::string res = pCharacteristic->getValue();
+	    	commPtr->onWrite(res, channelID);//call COMM passUp function here
+	    }
+	private:
+	    COMM *commPtr;
+	    uint8_t channelID;
+	};
 #endif
 	//Todo: replace with standard c++ vector implementation once AVR is eliminated
-    Vector<CommListener*> callbackList;
-    CommListener* callbackstorage[MAX_CALLBACK_NUM];
+    Vector<CommChannel*> channelList;
+    CommChannel* channelstorage[MAX_CHANNEL_NUM];
 
 };
 

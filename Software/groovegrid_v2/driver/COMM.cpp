@@ -30,41 +30,117 @@ COMM& COMM::getInstance()
 COMM::~COMM(){}
 COMM::COMM()
 {
-#if defined(__AVR__)
-	Serial.begin(9600);
-#elif defined(ESP32)
+	CommChannel *ch;
 	Serial.begin(115200);
 	Serial.print("Hey!\n");
 
+	channelList.setStorage(channelstorage, MAX_CHANNEL_NUM, 0);
+
+	/*SERVER*/
 	BLEDevice::init("GrooveGrid");
 	BluetoothServer = BLEDevice::createServer();
 	BluetoothServer->setCallbacks(new CommServerCallback(this));
-	BluetoothAppService = BluetoothServer->createService(SERVICE_UUID);
-
-	BluetoothAppService->start();
 	BluetoothAdvertiser = BLEDevice::getAdvertising();
-	BluetoothAdvertiser->addServiceUUID(SERVICE_UUID);
+
+	/*CONTROL*/
+	ch = new CommChannel;
+	ch->channelID = CHANNEL_CONTROL;
+	ch->channelName = "Control";
+	ch->serviceUUID = new BLEUUID(SERVICE_CONTROL_UUID);
+	ch->rxUUID = new BLEUUID(CONTROL_RX_UUID);
+	ch->txUUID = new BLEUUID(CONTROL_TX_UUID);
+	channelList.push_back(ch);
+
+	/*USER1*/
+	ch = new CommChannel;
+	ch->channelID = CHANNEL_USER1;
+	ch->channelName = "User1";
+	ch->serviceUUID = new BLEUUID(SERVICE_USER1_UUID);
+	ch->rxUUID = new BLEUUID(USER1_RX_UUID);
+	ch->txUUID = new BLEUUID(USER1_TX_UUID);
+	channelList.push_back(ch);
+
+	/*USER2*/
+	ch = new CommChannel;
+	ch->channelID = CHANNEL_USER2;
+	ch->channelName = "User2";
+	ch->serviceUUID = new BLEUUID(SERVICE_USER2_UUID);
+	ch->rxUUID = new BLEUUID(USER2_RX_UUID);
+	ch->txUUID = new BLEUUID(USER2_TX_UUID);
+	channelList.push_back(ch);
+
+	//Init all Channels at BLE
+	for (uint16_t i=0; i < channelList.size(); i++) {
+		ch = channelList.at(i);
+		ch->attachedService = BluetoothServer->createService(*ch->serviceUUID);
+		ch->rxCharacteristic = ch->attachedService->createCharacteristic(*ch->rxUUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
+		ch->txCharacteristic = ch->attachedService->createCharacteristic(*ch->txUUID,BLECharacteristic::PROPERTY_WRITE);
+		ch->rxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
+		ch->txCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
+		ch->attachedService->start();
+		ch->commInterface = (CommInterface *)nullptr;
+		BluetoothAdvertiser->addServiceUUID(*ch->serviceUUID);
+	}
+
 	BluetoothAdvertiser->setScanResponse(true);
 	BluetoothAdvertiser->setMinPreferred(0x06);  // functions that help with iPhone connections issue
 	BluetoothAdvertiser->setMinPreferred(0x12);
 	BLEDevice::startAdvertising();
-#endif
-	callbackList.setStorage(callbackstorage, MAX_CALLBACK_NUM, 0);
 }
 
-void COMM::Attach(CommListener *callbackPointer)
+void COMM::Attach(CommInterface *callbackPointer, ChannelID channel)
 {
-	controlRxCharacteristic = BluetoothAppService->createCharacteristic(CONTROL_RX_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
-	controlRxCharacteristic->setCallbacks(new CommListener(this, CONTROL));
-	callbackList.push_back(callbackPointer);
-}
-
-void COMM::Detach(CommListener *callbackPointer)
-{
-	for (uint16_t i=0; i < appList.size(); i++) {
-		if(appList.at(i) == functionPointer)
+	for (uint16_t i=0; i < channelList.size(); i++) {
+		if(channelList.at(i)->channelID == channel)
 		{
-			appList.remove(i);
+			channelList.at(i)->commInterface = callbackPointer;
+		}
+	}
+}
+
+void COMM::Detach(CommInterface *callbackPointer)
+{
+	for (uint16_t i=0; i < channelList.size(); i++) {
+		if(channelList.at(i)->commInterface == callbackPointer)
+		{
+			//channelList.at(i)->commListener = (void *)0;	No detach necessary, attach does overwrite previous attach
+		}
+	}
+}
+
+std::string COMM::onRead(uint8_t channelID)
+{
+	Serial.print("Read on Channel ");
+	Serial.println(channelID);
+
+	for (uint16_t i=0; i < channelList.size(); i++)
+	{
+		if(channelList.at(i)->channelID == channelID)
+		{
+			if(channelList.at(i)->commInterface != nullptr)
+			{
+				return channelList.at(i)->commInterface->onUserRead(channelID); //call CommListeners
+			}
+		}
+	}
+
+	return "0";
+}
+void COMM::onWrite(std::string data, uint8_t channelID)
+{
+	Serial.print("Write on Channel ");//call CommListeners
+	Serial.print(channelID);
+	Serial.print(": ");
+	Serial.println(data.c_str());
+
+	for (uint16_t i=0; i < channelList.size(); i++)
+	{
+		if(channelList.at(i)->channelID == channelID)
+		{
+			if(channelList.at(i)->commInterface != nullptr)
+			{
+				channelList.at(i)->commInterface->onUserWrite(data, channelID); //call CommListeners
+			}
 		}
 	}
 }
