@@ -6,15 +6,52 @@ import 'package:groove_grid/bloc/groove_grid_app_event.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 import 'package:groove_grid/data/groove_grid_apps_state.dart';
 import 'package:groove_grid/global_variables.dart';
+import 'package:groove_grid/services/bluetooth_service.dart';
 
 class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
+
+  BluetoothService bluetooth = BluetoothService();
+
   @override
   GrooveGridAppsState get initialState => GlobalVariables.uiTest
-      ? GrooveGridAppsState(games: uiTestGamesList)
-      : GrooveGridAppsState();
+      ? GrooveGridAppsState(games: uiTestGamesList, animations: uiTestAnimations)
+      : GrooveGridAppsState(games: games, animations: animations);
 
-//  @override
-//  GrooveGridAppsState get initialState => GrooveGridAppsState();
+  List<GrooveGridAnimation> animations = [
+  GrooveGridAnimation(title: "Standard Animation"),
+//    GrooveGridAnimation(title: "New Animation"),
+//    GrooveGridAnimation(title: "Another New Animation"),
+  ];
+
+  List<GrooveGridGame> games = [
+    GrooveGridGame(
+      title: "2048",
+      subtitle: "Can math really be fun?",
+      progress: 0.3,
+      startCommand: () async {
+        if (await BluetoothService().isConnected) {
+          BluetoothService().write('1');
+        }
+      },
+      stopCommand: () async {
+        if (await BluetoothService().isConnected) {
+          BluetoothService().write('q');
+        }
+      },
+    ),
+//    GrooveGridGame(
+//      title: "Invisible",
+//      subtitle: "Sneak yourself to victory",
+//      progress: 0.8,
+//      startCommand: () {
+//        print("Start command called on Invisible Game");
+//      },
+//    ),
+//    GrooveGridGame(
+//        title: "Whack-A-Mole",
+//        subtitle: "Can you whack 'em all?",
+//        progress: 0.5),
+  ];
 
   List<GrooveGridGame> uiTestGamesList;
   List<GrooveGridAnimation> uiTestAnimations;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:groove_grid/bloc/bloc_provider.dart';
+import 'package:groove_grid/bloc/global_bloc.dart';
+import 'package:groove_grid/bloc/message_bloc.dart';
 
 class SwipeControlsView extends StatefulWidget {
   SwipeControlsView({Key key, @required this.title}) : super(key: key);
@@ -21,6 +23,9 @@ class _SwipeControlsViewState extends State<SwipeControlsView> {
 
   @override
   Widget build(BuildContext context) {
+
+    MessageBloc messageBloc = BlocProvider.of<GlobalBloc>(context).messageBloc;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -47,7 +52,7 @@ class _SwipeControlsViewState extends State<SwipeControlsView> {
                       child: new Text("Restart".toUpperCase()),
                       onPressed: () {
                         print("Restarting Groovegrid App");
-                        FlutterBluetoothSerial.instance.write('x');
+                        messageBloc.sendRestartCommand();
                         Navigator.of(context).pop();
                       },
                     ),
@@ -70,10 +75,10 @@ class _SwipeControlsViewState extends State<SwipeControlsView> {
           print("Horitiontal Gesture recognized with speed $velocity");
           if (velocity < -2) {
             _setLabel("Left swipe detected!");
-            FlutterBluetoothSerial.instance.write('l');
+            messageBloc.sendSwipe(SwipeDirection.left);
           } else if (velocity > 2) {
             _setLabel("Right swipe detected!");
-            FlutterBluetoothSerial.instance.write('r');
+            messageBloc.sendSwipe(SwipeDirection.right);
           } else {
             _setLabel("Horizontal swipe detected!");
           }
@@ -84,10 +89,10 @@ class _SwipeControlsViewState extends State<SwipeControlsView> {
           print("Vertical Gesture recognized with speed $velocity");
           if (velocity < -2) {
             _setLabel("Up swipe detected!");
-            FlutterBluetoothSerial.instance.write('u');
+            messageBloc.sendSwipe(SwipeDirection.up);
           } else if (velocity > 2) {
             _setLabel("Down swipe detected!");
-            FlutterBluetoothSerial.instance.write('d');
+            messageBloc.sendSwipe(SwipeDirection.down);
           } else {
             _setLabel("Vertical swipe detected!");
           }
