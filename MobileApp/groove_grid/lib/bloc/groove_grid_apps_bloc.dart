@@ -10,7 +10,7 @@ import 'package:groove_grid/services/bluetooth_service.dart';
 
 class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
 
-  BluetoothService bluetooth = BluetoothService();
+  GrooveBluetoothService bluetooth = GrooveBluetoothService();
 
   @override
   GrooveGridAppsState get initialState => GlobalVariables.uiTest
@@ -29,13 +29,13 @@ class GrooveGridAppsBloc extends Bloc<GrooveGridAppEvent, GrooveGridAppsState> {
       subtitle: "Can math really be fun?",
       progress: 0.3,
       startCommand: () async {
-        if (await BluetoothService().isConnected) {
-          BluetoothService().write('1');
+        if (await GrooveBluetoothService().isConnected) {
+          GrooveBluetoothService().write('1');
         }
       },
       stopCommand: () async {
-        if (await BluetoothService().isConnected) {
-          BluetoothService().write('q');
+        if (await GrooveBluetoothService().isConnected) {
+          GrooveBluetoothService().write('q');
         }
       },
     ),

@@ -31,17 +31,17 @@ CONNECTED,
 DISCONNECTED,
 }
 
-class BluetoothService implements ConnectionService {
+class GrooveBluetoothService implements ConnectionService {
 
-  static final BluetoothService _singleton = BluetoothService._internal();
+  static final GrooveBluetoothService _singleton = GrooveBluetoothService._internal();
 
   FlutterBluetoothSerial _bluetoothSerial = FlutterBluetoothSerial.instance;
 
-  factory BluetoothService() {
+  factory GrooveBluetoothService() {
     return _singleton;
   }
 
-  BluetoothService._internal() {
+  GrooveBluetoothService._internal() {
     _bluetoothSerial.onStateChanged().listen((int serialState) {
       BluetoothState state;
       switch(serialState) {

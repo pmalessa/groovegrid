@@ -3,7 +3,7 @@ import 'package:groove_grid/services/bluetooth_service.dart';
 
 class MessageBloc extends Bloc<GridMessageEvent, GridMessageState> {
 
-  BluetoothService bluetooth = BluetoothService();
+  GrooveBluetoothService bluetooth = GrooveBluetoothService();
 
   MessageBloc():super() {
     setupListeners();
@@ -46,11 +46,11 @@ class MessageBloc extends Bloc<GridMessageEvent, GridMessageState> {
         directionMessage = "r";
         break;
     }
-    return BluetoothService().write(directionMessage);
+    return GrooveBluetoothService().write(directionMessage);
   }
 
   Future<dynamic> sendRestartCommand() {
-    return BluetoothService().write("x");
+    return GrooveBluetoothService().write("x");
   }
 
 }

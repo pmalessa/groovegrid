@@ -22,7 +22,7 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   ConnectionBloc _connectionBloc;
   MessageBloc _messageBloc;
 
-  BluetoothService bluetooth = BluetoothService();
+  GrooveBluetoothService bluetooth = GrooveBluetoothService();
 
   List<BluetoothDevice> _devices = [];
   BluetoothDevice _deviceInternal;
