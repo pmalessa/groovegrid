@@ -63,12 +63,8 @@ class COMM : public Task{
 #define SERVICE_CONTROL_UUID        "66c93897-a5f9-4a03-9d77-de1404d39270"
 #define SERVICE_USER1_UUID        	"66c93897-a5f9-4a03-9d77-de1404d39271"
 #define SERVICE_USER2_UUID        	"66c93897-a5f9-4a03-9d77-de1404d39272"
-#define CONTROL_RX_UUID 			"9e21d8fd-8837-482f-93ac-d9d81db00f33"
-#define CONTROL_TX_UUID 			"9e21d8fd-8837-482f-93ac-d9d81db00f34"
-#define USER1_RX_UUID 				"9e21d8fd-8837-482f-93ac-d9d81db00f35"
-#define USER1_TX_UUID 				"9e21d8fd-8837-482f-93ac-d9d81db00f36"
-#define USER2_RX_UUID 				"9e21d8fd-8837-482f-93ac-d9d81db00f37"
-#define USER2_TX_UUID 				"9e21d8fd-8837-482f-93ac-d9d81db00f38"
+#define RX_UUID 			        "9e21d8fd-8837-482f-93ac-d9d81db00f33"
+#define TX_UUID 			        "9e21d8fd-8837-482f-93ac-d9d81db00f34"
 
  public:
 	static COMM& getInstance();

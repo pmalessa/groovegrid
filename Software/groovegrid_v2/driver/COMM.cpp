@@ -47,8 +47,8 @@ COMM::COMM()
 	ch->channelID = CHANNEL_CONTROL;
 	ch->channelName = "Control";
 	ch->serviceUUID = new BLEUUID(SERVICE_CONTROL_UUID);
-	ch->rxUUID = new BLEUUID(CONTROL_RX_UUID);
-	ch->txUUID = new BLEUUID(CONTROL_TX_UUID);
+	ch->rxUUID = new BLEUUID(RX_UUID);
+	ch->txUUID = new BLEUUID(TX_UUID);
 	channelList.push_back(ch);
 
 	/*USER1*/
@@ -56,8 +56,8 @@ COMM::COMM()
 	ch->channelID = CHANNEL_USER1;
 	ch->channelName = "User1";
 	ch->serviceUUID = new BLEUUID(SERVICE_USER1_UUID);
-	ch->rxUUID = new BLEUUID(USER1_RX_UUID);
-	ch->txUUID = new BLEUUID(USER1_TX_UUID);
+	ch->rxUUID = new BLEUUID(RX_UUID);
+	ch->txUUID = new BLEUUID(TX_UUID);
 	channelList.push_back(ch);
 
 	/*USER2*/
@@ -65,8 +65,8 @@ COMM::COMM()
 	ch->channelID = CHANNEL_USER2;
 	ch->channelName = "User2";
 	ch->serviceUUID = new BLEUUID(SERVICE_USER2_UUID);
-	ch->rxUUID = new BLEUUID(USER2_RX_UUID);
-	ch->txUUID = new BLEUUID(USER2_TX_UUID);
+	ch->rxUUID = new BLEUUID(RX_UUID);
+	ch->txUUID = new BLEUUID(TX_UUID);
 	channelList.push_back(ch);
 
 	//Init all Channels at BLE
