@@ -5,31 +5,19 @@
  *      Author: pmale
  */
 #include "Timer.h"
-
-#if defined(__AVR__)
-#include "TimerOne/TimerOne.h"
-#elif defined(ESP32)
 #include "esp32-hal-timer.h"
-#endif
 
 //in c++, static variables have to be declared in cpp file as well...
 volatile uint32_t Timer::millisCounter;
-#ifndef __AVR__
 hw_timer_t * Timer::hwtimer;
-#endif
 
 void Timer::start()
 {
 	millisCounter = 0;
-#if defined(__AVR__)
-	Timer1.initialize();
-	Timer1.attachInterrupt(isr, 1000);	//1ms
-#elif defined(ESP32)
-	  hwtimer = timerBegin(0, 80, true);
-	  timerAttachInterrupt(hwtimer, isr, true);	//call isr function
-	  timerAlarmWrite(hwtimer, 1000, true);		//1ms
-	  timerAlarmEnable(hwtimer);
-#endif
+	hwtimer = timerBegin(0, 80, true);
+	timerAttachInterrupt(hwtimer, isr, true);	//call isr function
+	timerAlarmWrite(hwtimer, 1000, true);		//1ms
+	timerAlarmEnable(hwtimer);
 }
 
 void Timer::isr()

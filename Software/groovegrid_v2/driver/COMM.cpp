@@ -147,14 +147,4 @@ void COMM::onWrite(std::string data, uint8_t channelID)
 
 void COMM::run()
 {
-	/*
-	if(BUTTON_bIsPressed(BUTTON_UP))
-		//send u
-	if(BUTTON_bIsPressed(BUTTON_DOWN))
-		//send d
-	if(BUTTON_bIsPressed(BUTTON_LEFT))
-		//send l
-	if(BUTTON_bIsPressed(BUTTON_RIGHT))
-		//send r
-	 */
 }

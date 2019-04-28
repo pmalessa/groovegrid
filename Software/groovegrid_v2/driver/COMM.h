@@ -26,12 +26,8 @@
 #include "CommInterface.h"
 
 #define MAX_CHANNEL_NUM 10
-#if defined(__AVR__)
-#include "HardwareSerial.h"
-#elif defined(ESP32)
-#include "BLE/BLEDevice.h"
-#include "BLE/BLE2902.h"
-#endif
+#include "BLEDevice.h"
+#include "BLE2902.h"
 
 typedef struct{
 	std::string channelName;
@@ -78,7 +74,6 @@ class COMM : public Task{
 	COMM();
 	COMM(const COMM&);
 	COMM& operator = (const COMM&);
-#ifdef ESP32
 	void onConnect();
 	void onDisconnect();
 	std::string onRead(uint8_t channelID);
@@ -115,7 +110,7 @@ class COMM : public Task{
 	    COMM *commPtr;
 	    uint8_t channelID;
 	};
-#endif
+
 	//Todo: replace with standard c++ vector implementation once AVR is eliminated
     Vector<CommChannel*> channelList;
     CommChannel* channelstorage[MAX_CHANNEL_NUM];

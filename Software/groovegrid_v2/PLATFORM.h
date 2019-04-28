@@ -24,11 +24,7 @@
 	#define YMAX 14
 #endif
 
-#ifdef AVR
-	#define GRID_DATA_PIN 6
-#else
-	#define GRID_DATA_PIN 0
-#endif
+#define GRID_DATA_PIN 0
 
 #define UNUSED(x) (void)(x)
 
