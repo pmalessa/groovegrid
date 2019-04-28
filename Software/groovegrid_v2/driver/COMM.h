@@ -22,7 +22,7 @@
 
 #include "../PLATFORM.h"
 #include "../utils/Task.h"
-#include "../utils/Vector.h"
+#include <vector>
 #include "CommInterface.h"
 
 #define MAX_CHANNEL_NUM 10
@@ -111,9 +111,7 @@ class COMM : public Task{
 	    uint8_t channelID;
 	};
 
-	//Todo: replace with standard c++ vector implementation once AVR is eliminated
-    Vector<CommChannel*> channelList;
-    CommChannel* channelstorage[MAX_CHANNEL_NUM];
+    std::vector<CommChannel*> channelList;
 
 };
 

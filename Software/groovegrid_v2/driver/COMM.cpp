@@ -34,8 +34,6 @@ COMM::COMM()
 	Serial.begin(115200);
 	Serial.print("Hey!\n");
 
-	channelList.setStorage(channelstorage, MAX_CHANNEL_NUM, 0);
-
 	/*SERVER*/
 	BLEDevice::init("GrooveGrid");
 	BluetoothServer = BLEDevice::createServer();

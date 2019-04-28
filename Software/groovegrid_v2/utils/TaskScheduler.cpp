@@ -9,7 +9,6 @@
 
 TaskScheduler::TaskScheduler()
 {
-	list.setStorage(storage, MAX_TASK_NUM, 0);
 }
 
 TaskScheduler::~TaskScheduler()
@@ -31,7 +30,7 @@ void TaskScheduler::Detach(Task *task)
 	for (uint16_t i=0; i < list.size(); i++) {
 		if(list.at(i) == task)
 		{
-			list.remove(i);
+			list.erase(list.begin()+i);
 		}
 	}
 }
