@@ -26,11 +26,11 @@ void RandomLineAnimation::run()
 		{
 			if(rand()%2)
 			{
-				tile->drawLine(rand()%XMAX, rand()%YMAX, rand()%XMAX, rand()%YMAX, tile->RGB(rand()%256, rand()%256, rand()%256));
+				tile->drawLine(rand()%GRID_WIDTH, rand()%GRID_HEIGHT, rand()%GRID_WIDTH, rand()%GRID_HEIGHT, tile->RGB(rand()%256, rand()%256, rand()%256));
 			}
 			else
 			{
-				tile->drawLine(rand()%XMAX, rand()%YMAX, rand()%XMAX, rand()%YMAX, tile->RGB(0, 0, 0));
+				tile->drawLine(rand()%GRID_WIDTH, rand()%GRID_HEIGHT, rand()%GRID_WIDTH, rand()%GRID_HEIGHT, tile->RGB(0, 0, 0));
 			}
 
 			wait = rand()%animationSpeed;

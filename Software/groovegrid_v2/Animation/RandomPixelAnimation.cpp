@@ -28,11 +28,11 @@ void RandomPixelAnimation::run()
 		{
 			if(rand()%2)	//clear or draw
 			{
-				tile->drawPixel(rand()%XMAX, rand()%YMAX, tile->RGB(rand()%256, rand()%256, rand()%256));
+				tile->drawPixel(rand()%GRID_WIDTH, rand()%GRID_HEIGHT, tile->RGB(rand()%256, rand()%256, rand()%256));
 			}
 			else
 			{
-				tile->drawPixel(rand()%XMAX, rand()%YMAX, tile->RGB(0, 0, 0));
+				tile->drawPixel(rand()%GRID_WIDTH, rand()%GRID_HEIGHT, tile->RGB(0, 0, 0));
 			}
 
 			wait = rand()%animationSpeed;

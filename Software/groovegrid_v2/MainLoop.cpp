@@ -36,7 +36,7 @@ MainLoop::MainLoop()
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static COMM& comm = COMM::getInstance();
 
-	mainTile = new GridTile(0, 0, XMAX, YMAX);
+	mainTile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
 
 	Timer::start();
 	tsched.Attach(&comm);
