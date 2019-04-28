@@ -14,9 +14,7 @@
 #include "../driver/Timer.h"
 #include "../driver/GridTile.h"
 
-#define BOARD_HEIGHT YMAX
-#define BOARD_WIDTH XMAX
-
+//coordinate origin in topleft corner
 enum direction_t{
 	NONE,
 	LEFT,
@@ -42,6 +40,31 @@ typedef enum{
 	COLOR_WHITE = 0xFFFFFF
 }color_t;
 
+class GameState_2048 {
+public:
+	GameState_2048(uint8_t boardsize);
+	~GameState_2048();
+
+	void fillBoard(uint16_t value);
+	uint16_t getFreeSpaces();
+	void fillRandomField();
+	void initializeBoard();
+	uint16_t getField(uint8_t x, uint8_t y, direction_t direction);
+	void setField(uint8_t x, uint8_t y, direction_t direction, uint16_t value);
+	bool move(direction_t direction);
+	bool canStep(direction_t direction);
+	bool canMerge(direction_t direction);
+
+	uint16_t **board;
+	uint16_t highestTile;
+
+	private:
+		uint8_t boardsize;
+		void merge(direction_t direction);
+		void step(direction_t direction);
+		void removeInBetweenZeros(direction_t direction);
+};
+
 class Game_2048 : public GrooveGame
 {
 public:
@@ -53,31 +76,14 @@ public:
     std::string onUserRead(uint8_t channelID);
     void onUserWrite(std::string data, uint8_t channelID);
 private:
+    GameState_2048 *gameState;
+    uint8_t boardsize;
+    uint16_t gameSpeed;
+    direction_t movdir = NONE;
+
 	void move(direction_t dir);
-	void DrawBoard(uint16_t arr[YMAX][XMAX]);
+	void DrawBoard(uint16_t **arr);
 	void DrawTile(uint16_t x, uint16_t y, uint16_t number);
-};
-
-class GameState_2048 {
-public:
-	GameState_2048();
-
-	void fillBoard(uint16_t value);
-	uint16_t getFreeSpaces();
-	void fillRandomField();
-	void initializeBoard();
-	uint16_t getField(uint8_t y, uint8_t x, direction_t direction);
-	void setField(uint8_t y, uint8_t x, direction_t direction, uint16_t value);
-	bool move(direction_t direction);
-	bool canStep(direction_t direction);
-	bool canMerge(direction_t direction);
-	uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
-	uint16_t highestTile;
-
-	private:
-		void merge(direction_t direction);
-		void step(direction_t direction);
-		void removeInBetweenZeros(direction_t direction);
 };
 
 #endif /* GAME_2048_H_ */

@@ -23,6 +23,10 @@ public:
 	void 		 writePixel(int16_t x, int16_t y, uint16_t color);
 	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
 	void 		 endWrite(void);
+	void 		 fillScreen(uint16_t color);
+
+	uint8_t getWidth();
+	uint8_t getHeight();
 
 	uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
 	uint16_t RGB(uint32_t rgb);
@@ -30,10 +34,8 @@ public:
 protected:
 
 	uint16_t pixelMultiplier;
-	uint16_t x0;
-	uint16_t y0;
-	uint16_t x1;
-	uint16_t y1;
+	uint16_t x0,y0,x1,y1;
+	uint8_t TileWidth, TileHeight;
 private:
 };
 

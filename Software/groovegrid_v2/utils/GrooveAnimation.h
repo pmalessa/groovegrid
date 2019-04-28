@@ -10,19 +10,17 @@
 
 #include "../PLATFORM.h"
 #include "GrooveApp.h"
-#include "../driver/DeltaTimer.h"
 
 class GrooveAnimation : public GrooveApp
 {
 	//An Animation does not need to implement all functions of a GroovegridApp
 public:
-	GrooveAnimation(GridTile *tile):GrooveApp(tile){frameTimer.setTimeStep(FRAMERATE_MS);};
+	GrooveAnimation(GridTile *tile):GrooveApp(tile){};
 	virtual ~GrooveAnimation(){};
 	void start(){};	//stub start
 	void stop(){};	//stub stop
 	virtual void run() = 0;					//has to be overridden by Animation loop
 protected:
-	DeltaTimer frameTimer;
 };
 
 
