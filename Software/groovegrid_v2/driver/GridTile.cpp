@@ -12,8 +12,8 @@ GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1):Adafruit_
 	this->y0 = y0;
 	this->x1 = x1;
 	this->y1 = y1;
-	this->TileHeight = y1-y0;
-	this->TileWidth = x1-x0;
+	this->TileHeight = (y1-y0)+1;
+	this->TileWidth = (x1-x0)+1;
 	this->pixelMultiplier = 1;
 }
 
@@ -42,6 +42,18 @@ void GridTile::drawPixel(int16_t x, int16_t y, uint16_t color)
 	{
 		grid.drawPixel(x, y, color);
 	}
+}
+
+void GridTile::fillScreen(uint16_t color)
+{
+	for(uint16_t x = x0; x <= x1; x++)
+	{
+		for(uint16_t y = y0; y <= y1; y++)
+		{
+			writePixel(x, y, color);
+		}
+	}
+	endWrite();
 }
 
 void GridTile::endWrite()
