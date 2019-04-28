@@ -14,10 +14,6 @@
 #include "../driver/Timer.h"
 #include "../driver/GridTile.h"
 
-#define BOARD_HEIGHT YMAX
-#define BOARD_WIDTH XMAX
-
-
 //coordinate origin in topleft corner
 enum direction_t{
 	NONE,
@@ -47,6 +43,7 @@ typedef enum{
 class GameState_2048 {
 public:
 	GameState_2048(uint8_t boardsize);
+	~GameState_2048();
 
 	void fillBoard(uint16_t value);
 	uint16_t getFreeSpaces();
@@ -57,8 +54,8 @@ public:
 	bool move(direction_t direction);
 	bool canStep(direction_t direction);
 	bool canMerge(direction_t direction);
-	uint16_t board[BOARD_WIDTH][BOARD_HEIGHT];
 
+	uint16_t **board;
 	uint16_t highestTile;
 
 	private:
@@ -79,10 +76,10 @@ public:
     std::string onUserRead(uint8_t channelID);
     void onUserWrite(std::string data, uint8_t channelID);
 private:
-    GameState_2048 *game;
+    GameState_2048 *gameState;
     uint8_t boardsize;
 	void move(direction_t dir);
-	void DrawBoard(uint16_t arr[BOARD_WIDTH][BOARD_HEIGHT]);
+	void DrawBoard(uint16_t **arr);
 	void DrawTile(uint16_t x, uint16_t y, uint16_t number);
 };
 

@@ -22,19 +22,19 @@ Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 	{
 		this->boardsize = tile->getHeight();
 	}
-	game = new GameState_2048(this->boardsize);
-	game->initializeBoard();
+	gameState = new GameState_2048(this->boardsize);
+	gameState->initializeBoard();
 }
 
 Game_2048::~Game_2048()
 {
-	delete game;
+	delete gameState;
 }
 
 void Game_2048::start()
 {
 	running = true;
-	DrawBoard(game->board);
+	DrawBoard(gameState->board);
 }
 
 void Game_2048::stop()
@@ -97,31 +97,31 @@ void Game_2048::run()
 		previousMillisCounter = Timer::getMillis();
 		if (movdir != NONE)	//moving
 		{
-			if(game->canStep(movdir) || game->canMerge(movdir))	//if move possible
+			if(gameState->canStep(movdir) || gameState->canMerge(movdir))	//if move possible
 			{
 				move_possible = 1;
 			}
-			if(game->move(movdir))	//if move finished
+			if(gameState->move(movdir))	//if move finished
 			{
 				movdir = NONE;
 
 				if(move_possible > 0)	//if it was moving, spawn new field
 				{
-					game->fillRandomField();
+					gameState->fillRandomField();
 				}
 				move_possible = 0;
 			}
-			DrawBoard(game->board);
+			DrawBoard(gameState->board);
 		}
 	}
 }
 
-void Game_2048::DrawBoard(uint16_t arr[BOARD_WIDTH][BOARD_HEIGHT])
+void Game_2048::DrawBoard(uint16_t **arr)
 {
 	static Grid& grid = Grid::getInstance();
 
-    for (uint8_t i = 0; i < BOARD_WIDTH; i++)
-      for (uint8_t j = 0; j < BOARD_HEIGHT; j++)
+    for (uint8_t i = 0; i < boardsize; i++)
+      for (uint8_t j = 0; j < boardsize; j++)
     	  DrawTile(i, j, arr[i][j]);
     grid.endWrite();
 }
@@ -168,9 +168,9 @@ void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 	}
 	tile->writePixel(x, y, col);
 
-	if(number > game->highestTile)	//update game progress
+	if(number > gameState->highestTile)	//update game progress
 	{
-		game->highestTile = number;
+		gameState->highestTile = number;
 	}
 }
 
@@ -178,11 +178,27 @@ GameState_2048::GameState_2048(uint8_t boardsize)
 {
 	this->boardsize = boardsize;
 	highestTile = 0;
+
+	board=new uint16_t*[boardsize];
+	for(int i=0;i<boardsize;i++)
+	{
+		board[i]=new uint16_t[boardsize];
+	}
+}
+
+GameState_2048::~GameState_2048()
+{
+	for(int i=0;i<boardsize;i++)	//delete board array
+	{
+		delete [] board[i];
+	}
+	delete [] board;
+
 }
 
 void GameState_2048::fillBoard(uint16_t value) {
-	for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
-		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+	for (uint8_t x = 0; x < boardsize; ++x) {
+		for (uint8_t y = 0; y < boardsize; ++y) {
 			board[x][y] = value;
 		}
 	}
@@ -190,8 +206,8 @@ void GameState_2048::fillBoard(uint16_t value) {
 
 uint16_t GameState_2048::getFreeSpaces(){
 	uint16_t cnt = 0;
-	for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
-		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+	for (uint8_t x = 0; x < boardsize; ++x) {
+		for (uint8_t y = 0; y < boardsize; ++y) {
 			if(board[x][y] == 0)
 			{
 				cnt++;
@@ -207,8 +223,8 @@ void GameState_2048::fillRandomField() {
 	if(getFreeSpaces()!= 0)
 	{
 		do{
-			x = rand() % BOARD_WIDTH;
-			y = rand() % BOARD_HEIGHT;
+			x = rand() % boardsize;
+			y = rand() % boardsize;
 		}while(board[x][y]!=0);
 		if((rand() % 10) > 0)	//90% of cases
 		{
@@ -235,13 +251,13 @@ uint16_t GameState_2048::getField(uint8_t x, uint8_t y, direction_t direction)
 			return board[x][y];
 			break;
 		case UP:
-			return board[BOARD_WIDTH-1-y][x];
+			return board[boardsize-1-y][x];
 			break;
 		case RIGHT:
-			return board[BOARD_WIDTH-1-x][BOARD_HEIGHT-1-y];
+			return board[boardsize-1-x][boardsize-1-y];
 			break;
 		case DOWN:
-			return board[y][BOARD_HEIGHT-1-x];
+			return board[y][boardsize-1-x];
 			break;
 		default:
 			return 0;
@@ -256,13 +272,13 @@ void GameState_2048::setField(uint8_t x, uint8_t y, direction_t direction, uint1
 			board[x][y] = value;
 			break;
 		case UP:
-			board[BOARD_WIDTH-1-y][x] = value;
+			board[boardsize-1-y][x] = value;
 			break;
 		case RIGHT:
-			board[BOARD_WIDTH-1-x][BOARD_HEIGHT-1-y] = value;
+			board[boardsize-1-x][boardsize-1-y] = value;
 			break;
 		case DOWN:
-			board[y][BOARD_HEIGHT-1-x] = value;
+			board[y][boardsize-1-x] = value;
 			break;
 		default:
 			break;
@@ -292,8 +308,8 @@ bool GameState_2048::move(direction_t direction)
 //default step is to the left
 void GameState_2048::step(direction_t direction) {
 	// For every line, start with the second tile from the left (the leftmost can't be pushed further)
-	for (uint8_t x = 1; x < BOARD_WIDTH; ++ x) {
-		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+	for (uint8_t x = 1; x < boardsize; ++ x) {
+		for (uint8_t y = 0; y < boardsize; ++y) {
 			// If tile to the left is zero, push tile left
 			if (getField(x-1, y, direction) == 0) {
 				setField(x-1, y, direction, getField(x, y, direction));
@@ -304,9 +320,9 @@ void GameState_2048::step(direction_t direction) {
 }
 
 bool GameState_2048::canStep(direction_t direction) {
-	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+	for (uint8_t y = 0; y < boardsize; ++y) {
 		bool zeroFound = false;
-		for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
+		for (uint8_t x = 0; x < boardsize; ++x) {
 			if (zeroFound && getField(x, y, direction) != 0)
 				return true;
 			if (getField(x, y, direction) == 0)
@@ -317,8 +333,8 @@ bool GameState_2048::canStep(direction_t direction) {
 }
 
 bool GameState_2048::canMerge(direction_t direction){
-	for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
-		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+	for (uint8_t x = 1; x < boardsize; ++x) {
+		for (uint8_t y = 0; y < boardsize; ++y) {
 			if (getField(x, y, direction) == getField(x-1, y, direction) && getField(x, y, direction) != 0) {
 				return true;
 			}
@@ -328,8 +344,8 @@ bool GameState_2048::canMerge(direction_t direction){
 }
 
 void GameState_2048::merge(direction_t direction) {
-	for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
-		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+	for (uint8_t x = 1; x < boardsize; ++x) {
+		for (uint8_t y = 0; y < boardsize; ++y) {
 			if (getField(x, y, direction) == getField(x-1, y, direction)) {
 				setField(x-1, y, direction, getField(x-1, y, direction) * 2);
 				setField(x, y, direction, 0);
