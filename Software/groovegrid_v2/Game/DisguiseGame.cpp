@@ -17,6 +17,17 @@
 	{
 
 	}
+
+	void DisguiseGame::start()
+	{
+
+	}
+
+	void DisguiseGame::stop()
+	{
+
+	}
+
 	void DisguiseGame::run()
 	{
 		uint16_t xPos, yPos;

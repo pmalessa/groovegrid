@@ -9,6 +9,8 @@ public:
 	DisguiseGame(GridTile *tile);
 	~DisguiseGame();
 	void run();
+	void start();
+	void stop();
     std::string onUserRead(uint8_t channelID);
     void onUserWrite(std::string data, uint8_t channelID);
 private:

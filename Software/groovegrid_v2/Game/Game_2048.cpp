@@ -28,6 +28,10 @@ void Game_2048::start()
 	DrawBoard(game.board);
 }
 
+void Game_2048::stop()
+{
+}
+
 std::string Game_2048::onUserRead(uint8_t channelID)
 {
 	UNUSED(channelID);

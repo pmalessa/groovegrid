@@ -34,9 +34,8 @@ private:
 
 	char input;
 	uint8_t programState;
-	Game_2048* game_2048;	//change to general Game* later
-	DisguiseGame* disguiseGame;
-	AnimationRunner* animationRunner;
+	GrooveGame *currentGame;
+	AnimationRunner *animationRunner;
 	GridTile* mainTile;
 };
 

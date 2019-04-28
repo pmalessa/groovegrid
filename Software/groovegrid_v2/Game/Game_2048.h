@@ -48,7 +48,6 @@ public:
 	Game_2048(GridTile *tile);
 	~Game_2048();
 	void start();
-	void pause();
 	void stop();
 	void run();
     std::string onUserRead(uint8_t channelID);
