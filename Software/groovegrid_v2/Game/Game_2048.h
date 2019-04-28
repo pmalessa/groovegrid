@@ -78,6 +78,9 @@ public:
 private:
     GameState_2048 *gameState;
     uint8_t boardsize;
+    uint16_t gameSpeed;
+    direction_t movdir = NONE;
+
 	void move(direction_t dir);
 	void DrawBoard(uint16_t **arr);
 	void DrawTile(uint16_t x, uint16_t y, uint16_t number);

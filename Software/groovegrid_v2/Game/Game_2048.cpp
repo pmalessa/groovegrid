@@ -6,14 +6,9 @@
  */
 #include "Game_2048.h"
 
-#define GAME_SPEED 200	//lower is faster
-
-direction_t movdir = NONE;
-bool running = false;
-uint32_t previousMillisCounter = 0;
-
 Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 {
+	gameSpeed = 5;
 	tile->fillScreen(tile->RGB(0, 0, 0));	//fill grid black
 	if(tile->getWidth() <= tile->getHeight())	//make board square
 	{
@@ -34,7 +29,6 @@ Game_2048::~Game_2048()
 
 void Game_2048::start()
 {
-	running = true;
 	DrawBoard(gameState->board);
 }
 
@@ -92,27 +86,35 @@ void Game_2048::move(direction_t dir) {
 
 void Game_2048::run()
 {
+	static uint16_t wait = 0;
 	static uint8_t move_possible = 0;
-	if((Timer::getMillis()-previousMillisCounter) >= GAME_SPEED)
+	if(frameTimer.isTimeUp())
 	{
-		previousMillisCounter = Timer::getMillis();
-		if (movdir != NONE)	//moving
+		if(wait == 0)
 		{
-			if(gameState->canStep(movdir) || gameState->canMerge(movdir))	//if move possible
+			wait = gameSpeed;
+			if (movdir != NONE)	//moving
 			{
-				move_possible = 1;
-			}
-			if(gameState->move(movdir))	//if move finished
-			{
-				movdir = NONE;
-
-				if(move_possible > 0)	//if it was moving, spawn new field
+				if(gameState->canStep(movdir) || gameState->canMerge(movdir))	//if move possible
 				{
-					gameState->fillRandomField();
+					move_possible = 1;
 				}
-				move_possible = 0;
+				if(gameState->move(movdir))	//if move finished
+				{
+					movdir = NONE;
+
+					if(move_possible > 0)	//if it was moving, spawn new field
+					{
+						gameState->fillRandomField();
+					}
+					move_possible = 0;
+				}
+				DrawBoard(gameState->board);
 			}
-			DrawBoard(gameState->board);
+		}
+		else
+		{
+			wait--;
 		}
 	}
 }
