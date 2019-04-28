@@ -17,6 +17,8 @@
 #define BOARD_HEIGHT YMAX
 #define BOARD_WIDTH XMAX
 
+
+//coordinate origin in topleft corner
 enum direction_t{
 	NONE,
 	LEFT,
@@ -54,7 +56,7 @@ public:
     void onUserWrite(std::string data, uint8_t channelID);
 private:
 	void move(direction_t dir);
-	void DrawBoard(uint16_t arr[YMAX][XMAX]);
+	void DrawBoard(uint16_t arr[BOARD_WIDTH][BOARD_HEIGHT]);
 	void DrawTile(uint16_t x, uint16_t y, uint16_t number);
 };
 
@@ -66,12 +68,12 @@ public:
 	uint16_t getFreeSpaces();
 	void fillRandomField();
 	void initializeBoard();
-	uint16_t getField(uint8_t y, uint8_t x, direction_t direction);
-	void setField(uint8_t y, uint8_t x, direction_t direction, uint16_t value);
+	uint16_t getField(uint8_t x, uint8_t y, direction_t direction);
+	void setField(uint8_t x, uint8_t y, direction_t direction, uint16_t value);
 	bool move(direction_t direction);
 	bool canStep(direction_t direction);
 	bool canMerge(direction_t direction);
-	uint16_t board[BOARD_HEIGHT][BOARD_WIDTH];
+	uint16_t board[BOARD_WIDTH][BOARD_HEIGHT];
 	uint16_t highestTile;
 
 	private:

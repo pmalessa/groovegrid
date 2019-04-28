@@ -107,13 +107,13 @@ void Game_2048::run()
 	}
 }
 
-void Game_2048::DrawBoard(uint16_t arr[YMAX][XMAX])
+void Game_2048::DrawBoard(uint16_t arr[BOARD_WIDTH][BOARD_HEIGHT])
 {
 	static Grid& grid = Grid::getInstance();
 
-    for (uint8_t i = 0; i < YMAX; i++)
-      for (uint8_t j = 0; j < XMAX; j++)
-    	  DrawTile(j, i, arr[i][j]);
+    for (uint8_t i = 0; i < BOARD_WIDTH; i++)
+      for (uint8_t j = 0; j < BOARD_HEIGHT; j++)
+    	  DrawTile(i, j, arr[i][j]);
     grid.endWrite();
 }
 
@@ -171,20 +171,18 @@ GameState_2048::GameState_2048()
 }
 
 void GameState_2048::fillBoard(uint16_t value) {
-	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
-		for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
-			board[y][x] = value;
+	for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
+		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+			board[x][y] = value;
 		}
 	}
 }
 
 uint16_t GameState_2048::getFreeSpaces(){
 	uint16_t cnt = 0;
-	for(int i=0;i<BOARD_HEIGHT;i++)
-	{
-		for(int j=0;j<BOARD_WIDTH;j++)
-		{
-			if(board[i][j] == 0)
+	for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
+		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+			if(board[x][y] == 0)
 			{
 				cnt++;
 			}
@@ -195,19 +193,20 @@ uint16_t GameState_2048::getFreeSpaces(){
 
 void GameState_2048::fillRandomField() {
 	uint8_t x,y;
+
 	if(getFreeSpaces()!= 0)
 	{
 		do{
 			x = rand() % BOARD_WIDTH;
 			y = rand() % BOARD_HEIGHT;
-		}while(board[y][x]!=0);
+		}while(board[x][y]!=0);
 		if((rand() % 10) > 0)	//90% of cases
 		{
-			board[y][x] = 2;
+			board[x][y] = 2;
 		}
 		else
 		{
-			board[y][x] = 4;	//10% of cases
+			board[x][y] = 4;	//10% of cases
 		}
 	}
 }
@@ -219,20 +218,20 @@ void GameState_2048::initializeBoard() {
 	fillRandomField();
 }
 
-uint16_t GameState_2048::getField(uint8_t y, uint8_t x, direction_t direction)
+uint16_t GameState_2048::getField(uint8_t x, uint8_t y, direction_t direction)
 {
 	switch (direction) {
 		case LEFT:
-			return board[y][x];
-			break;
-		case DOWN:
-			return board[BOARD_HEIGHT-1-x][y];
-			break;
-		case RIGHT:
-			return board[BOARD_HEIGHT-1-y][BOARD_WIDTH-1-x];
+			return board[x][y];
 			break;
 		case UP:
-			return board[x][BOARD_WIDTH-1-y];
+			return board[BOARD_WIDTH-1-y][x];
+			break;
+		case RIGHT:
+			return board[BOARD_WIDTH-1-x][BOARD_HEIGHT-1-y];
+			break;
+		case DOWN:
+			return board[y][BOARD_HEIGHT-1-x];
 			break;
 		default:
 			return 0;
@@ -240,20 +239,20 @@ uint16_t GameState_2048::getField(uint8_t y, uint8_t x, direction_t direction)
 	}
 }
 
-void GameState_2048::setField(uint8_t y, uint8_t x, direction_t direction, uint16_t value)
+void GameState_2048::setField(uint8_t x, uint8_t y, direction_t direction, uint16_t value)
 {
 	switch (direction) {
 		case LEFT:
-			board[y][x] = value;
-			break;
-		case DOWN:
-			board[BOARD_HEIGHT-1-x][y]= value;
-			break;
-		case RIGHT:
-			board[BOARD_HEIGHT-1-y][BOARD_WIDTH-1-x]= value;
+			board[x][y] = value;
 			break;
 		case UP:
-			board[x][BOARD_WIDTH-1-y]= value;
+			board[BOARD_WIDTH-1-y][x] = value;
+			break;
+		case RIGHT:
+			board[BOARD_WIDTH-1-x][BOARD_HEIGHT-1-y] = value;
+			break;
+		case DOWN:
+			board[y][BOARD_HEIGHT-1-x] = value;
 			break;
 		default:
 			break;
@@ -280,14 +279,15 @@ bool GameState_2048::move(direction_t direction)
 }
 
 
+//default step is to the left
 void GameState_2048::step(direction_t direction) {
-	for (uint8_t y = 0; y < BOARD_HEIGHT; ++ y) {
-		// For every line, start with the second tile from the left (the leftmost can't be pushed further)
-		for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
+	// For every line, start with the second tile from the left (the leftmost can't be pushed further)
+	for (uint8_t x = 1; x < BOARD_WIDTH; ++ x) {
+		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
 			// If tile to the left is zero, push tile left
-			if (getField(y, x-1, direction) == 0) {
-				setField(y, x-1, direction, getField(y, x, direction));
-				setField(y, x, direction, 0);
+			if (getField(x-1, y, direction) == 0) {
+				setField(x-1, y, direction, getField(x, y, direction));
+				setField(x, y, direction, 0);
 			}
 		}
 	}
@@ -297,9 +297,9 @@ bool GameState_2048::canStep(direction_t direction) {
 	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
 		bool zeroFound = false;
 		for (uint8_t x = 0; x < BOARD_WIDTH; ++x) {
-			if (zeroFound && getField(y, x, direction) != 0)
+			if (zeroFound && getField(x, y, direction) != 0)
 				return true;
-			if (getField(y, x, direction) == 0)
+			if (getField(x, y, direction) == 0)
 				zeroFound = true;
 		}
 	}
@@ -307,9 +307,9 @@ bool GameState_2048::canStep(direction_t direction) {
 }
 
 bool GameState_2048::canMerge(direction_t direction){
-	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
-		for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
-			if (getField(y, x, direction) == getField(y, x-1, direction) && getField(y, x, direction) != 0) {
+	for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
+		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+			if (getField(x, y, direction) == getField(x-1, y, direction) && getField(x, y, direction) != 0) {
 				return true;
 			}
 		}
@@ -318,11 +318,11 @@ bool GameState_2048::canMerge(direction_t direction){
 }
 
 void GameState_2048::merge(direction_t direction) {
-	for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
-		for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
-			if (getField(y, x, direction) == getField(y, x-1, direction)) {
-				setField(y, x-1, direction, getField(y, x-1, direction) * 2);
-				setField(y, x, direction, 0);
+	for (uint8_t x = 1; x < BOARD_WIDTH; ++x) {
+		for (uint8_t y = 0; y < BOARD_HEIGHT; ++y) {
+			if (getField(x, y, direction) == getField(x-1, y, direction)) {
+				setField(x-1, y, direction, getField(x-1, y, direction) * 2);
+				setField(x, y, direction, 0);
 			}
 		}
 	}
