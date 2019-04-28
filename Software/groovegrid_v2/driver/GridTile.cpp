@@ -8,11 +8,23 @@
 
 GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1):Adafruit_GFX(x1-x0, y1-y0)
 {
-	GridTile::x0 = x0;
-	GridTile::y0 = y0;
-	GridTile::x1 = x1;
-	GridTile::y1 = y1;
-	GridTile::pixelMultiplier = 1;
+	this->x0 = x0;
+	this->y0 = y0;
+	this->x1 = x1;
+	this->y1 = y1;
+	this->TileHeight = y1-y0;
+	this->TileWidth = x1-x0;
+	this->pixelMultiplier = 1;
+}
+
+uint8_t GridTile::getWidth()
+{
+	return this->TileWidth;
+}
+
+uint8_t GridTile::getHeight()
+{
+	return this->TileHeight;
 }
 
 void GridTile::writePixel(int16_t x, int16_t y, uint16_t color)

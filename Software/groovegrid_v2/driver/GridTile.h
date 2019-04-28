@@ -24,16 +24,17 @@ public:
 	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
 	void 		 endWrite(void);
 
+	uint8_t getWidth();
+	uint8_t getHeight();
+
 	uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
 	uint16_t RGB(uint32_t rgb);
 	uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
 protected:
 
 	uint16_t pixelMultiplier;
-	uint16_t x0;
-	uint16_t y0;
-	uint16_t x1;
-	uint16_t y1;
+	uint16_t x0,y0,x1,y1;
+	uint8_t TileWidth, TileHeight;
 private:
 };
 
