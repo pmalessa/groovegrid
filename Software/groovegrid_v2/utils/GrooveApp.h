@@ -5,14 +5,16 @@
 
 #include "../PLATFORM.h"
 #include "Task.h"
-#include "InputListener.h"
+#include "../driver/COMM.h"
 #include "../driver/GridTile.h"
 
-class GrooveApp : public Task,public InputListener
+class GrooveApp : public Task
 {
 public:
 	GrooveApp(GridTile* tile){this->tile = tile;};
 	virtual ~GrooveApp(){};
+	virtual void start() = 0;
+	virtual void stop() = 0;
 	virtual void run() = 0;					//has to be overridden by AppLoop
 protected:
 	GridTile* tile;							//has to be initialized

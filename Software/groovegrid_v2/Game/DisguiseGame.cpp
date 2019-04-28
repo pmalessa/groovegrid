@@ -17,13 +17,17 @@
 	{
 
 	}
-	void DisguiseGame::reset()
+
+	void DisguiseGame::start()
 	{
-		gameState = 0;
-		lastTime = 0;
-		flashTime = 0;
-		fadePosition = 0;
+
 	}
+
+	void DisguiseGame::stop()
+	{
+
+	}
+
 	void DisguiseGame::run()
 	{
 		uint16_t xPos, yPos;
@@ -58,28 +62,16 @@
 				break;
 		}
 	}
-	void DisguiseGame::onInput(char *data)
-	{
-		UNUSED(data);//No Input necessary
-	}
-
-	char* DisguiseGame::exportAppState()
-	{
-		return 0;	//not yet
-	}
-
-	void DisguiseGame::importAppState(char* json)
-	{
-		UNUSED(json); //not yet
-	}
-
-	//return percentage of counter expired
-	uint8_t DisguiseGame::getProgress()
-	{
-		uint32_t currentCounter = Timer::getMillis()-lastTime;
-		float fraction = currentCounter/flashTime;
-		return (uint8_t) fraction*100;	//return percentage converted to integer
-	}
+    std::string DisguiseGame::onUserRead(uint8_t channelID)
+    {
+    	UNUSED(channelID);
+    	return "0";
+    }
+    void DisguiseGame::onUserWrite(std::string data, uint8_t channelID)
+    {
+    	UNUSED(data);
+    	UNUSED(channelID);
+    }
 
 	uint32_t DisguiseGame::genFlashInterval()
 	{

@@ -48,14 +48,10 @@ public:
 	Game_2048(GridTile *tile);
 	~Game_2048();
 	void start();
-	void pause();
 	void stop();
-	void reset();
 	void run();
-	uint8_t getProgress();
-	char* exportAppState();
-	void importAppState(char *json);
-	void onInput(char *data);
+    std::string onUserRead(uint8_t channelID);
+    void onUserWrite(std::string data, uint8_t channelID);
 private:
 	void move(direction_t dir);
 	void DrawBoard(uint16_t arr[YMAX][XMAX]);

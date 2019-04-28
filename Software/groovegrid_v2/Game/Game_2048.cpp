@@ -28,15 +28,19 @@ void Game_2048::start()
 	DrawBoard(game.board);
 }
 
-void Game_2048::reset()
+void Game_2048::stop()
 {
-	game = GameState_2048();
-	game.initializeBoard();
 }
 
-void Game_2048::onInput(char *data)
+std::string Game_2048::onUserRead(uint8_t channelID)
 {
-	switch (*data) {
+	UNUSED(channelID);
+	return "0";
+}
+void Game_2048::onUserWrite(std::string data, uint8_t channelID)
+{
+	UNUSED(channelID);
+	switch (data.c_str()[0]) {
 		case 'u':
 			move(UP);
 			break;
@@ -54,17 +58,8 @@ void Game_2048::onInput(char *data)
 	}
 }
 
-char* Game_2048::exportAppState()
-{
-	return 0;	//not yet
-}
-
-void Game_2048::importAppState(char* json)
-{
-	UNUSED(json); //not yet
-}
-
 //for now: highest reached tile in percent, with 0=0% and 2048=100%
+/*
 uint8_t Game_2048::getProgress()
 {
 	uint16_t tileValue = game.highestTile;
@@ -75,6 +70,7 @@ uint8_t Game_2048::getProgress()
 	}while(tileValue > 0);
 	return (uint8_t)(powerOfTwo/11)*100;	//2^11 is 2048
 }
+*/
 
 
 void Game_2048::move(direction_t dir) {

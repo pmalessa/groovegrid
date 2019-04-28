@@ -5,42 +5,21 @@
  *      Author: pmale
  */
 #include "COMM.h"
-uint8_t deviceConnected;
 
-class MyServerCallbacks: public BLEServerCallbacks {
-    void onConnect(BLEServer* pServer) {
-      deviceConnected = true;
-    };
+bool COMM::isConnected()
+{
+	return connected;
+}
 
-    void onDisconnect(BLEServer* pServer) {
-      deviceConnected = false;
-    }
-};
+void COMM::onConnect()
+{
+	connected = true;
+}
 
-class FromGridCallback: public BLECharacteristicCallbacks {
-    void onRead(BLECharacteristic *pCharacteristic) {
-    }
-};
-
-class ToGridCallback: public BLECharacteristicCallbacks {
-    void onWrite(BLECharacteristic *pCharacteristic) {
-    	static COMM& comm = COMM::getInstance();
-    	std::string rxValue = pCharacteristic->getValue();
-    	switch (rxValue[0]) {
-    		case -1:
-    			break;
-    		case '1':
-    		case '2':
-    		case 'q':
-    		case 'x':
-    			comm.main_send(rxValue[0]);	//change to main
-    			break;
-    		default:
-    			comm.app_send(rxValue[0]);
-    			break;
-    	}
-    }
-};
+void COMM::onDisconnect()
+{
+	connected = false;
+}
 
 COMM& COMM::getInstance()
 {
@@ -51,63 +30,118 @@ COMM& COMM::getInstance()
 COMM::~COMM(){}
 COMM::COMM()
 {
-#if defined(__AVR__)
-	Serial.begin(9600);
-#elif defined(ESP32)
+	CommChannel *ch;
 	Serial.begin(115200);
 	Serial.print("Hey!\n");
+
+	channelList.setStorage(channelstorage, MAX_CHANNEL_NUM, 0);
+
+	/*SERVER*/
 	BLEDevice::init("GrooveGrid");
 	BluetoothServer = BLEDevice::createServer();
-	BluetoothServer->setCallbacks(new MyServerCallbacks());
-	BluetoothService = BluetoothServer->createService(SERVICE_UUID);
-	fromGridCharacteristic = BluetoothService->createCharacteristic(CHAR_FROMGRID_UUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
-	fromGridCharacteristic->setValue("Read Data here");
-	fromGridCharacteristic->setCallbacks(new FromGridCallback());
-	toGridCharacteristic = BluetoothService->createCharacteristic(CHAR_TOGRID_UUID,BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
-	toGridCharacteristic->setValue("Write Data here");
-	toGridCharacteristic->setCallbacks(new ToGridCallback());
-	BluetoothService->start();
+	BluetoothServer->setCallbacks(new CommServerCallback(this));
 	BluetoothAdvertiser = BLEDevice::getAdvertising();
-	BluetoothAdvertiser->addServiceUUID(SERVICE_UUID);
+
+	/*CONTROL*/
+	ch = new CommChannel;
+	ch->channelID = CHANNEL_CONTROL;
+	ch->channelName = "Control";
+	ch->serviceUUID = new BLEUUID(SERVICE_CONTROL_UUID);
+	ch->rxUUID = new BLEUUID(RX_UUID);
+	ch->txUUID = new BLEUUID(TX_UUID);
+	channelList.push_back(ch);
+
+	/*USER1*/
+	ch = new CommChannel;
+	ch->channelID = CHANNEL_USER1;
+	ch->channelName = "User1";
+	ch->serviceUUID = new BLEUUID(SERVICE_USER1_UUID);
+	ch->rxUUID = new BLEUUID(RX_UUID);
+	ch->txUUID = new BLEUUID(TX_UUID);
+	channelList.push_back(ch);
+
+	/*USER2*/
+	ch = new CommChannel;
+	ch->channelID = CHANNEL_USER2;
+	ch->channelName = "User2";
+	ch->serviceUUID = new BLEUUID(SERVICE_USER2_UUID);
+	ch->rxUUID = new BLEUUID(RX_UUID);
+	ch->txUUID = new BLEUUID(TX_UUID);
+	channelList.push_back(ch);
+
+	//Init all Channels at BLE
+	for (uint16_t i=0; i < channelList.size(); i++) {
+		ch = channelList.at(i);
+		ch->attachedService = BluetoothServer->createService(*ch->serviceUUID);
+		ch->rxCharacteristic = ch->attachedService->createCharacteristic(*ch->rxUUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
+		ch->txCharacteristic = ch->attachedService->createCharacteristic(*ch->txUUID,BLECharacteristic::PROPERTY_WRITE);
+		ch->rxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
+		ch->txCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
+		ch->attachedService->start();
+		ch->commInterface = (CommInterface *)nullptr;
+		BluetoothAdvertiser->addServiceUUID(*ch->serviceUUID);
+	}
+
 	BluetoothAdvertiser->setScanResponse(true);
 	BluetoothAdvertiser->setMinPreferred(0x06);  // functions that help with iPhone connections issue
 	BluetoothAdvertiser->setMinPreferred(0x12);
 	BLEDevice::startAdvertising();
-#endif
-	mainlist.setStorage(mainstorage, MAX_LISTENER_NUM, 0);
-	applist.setStorage(appstorage, MAX_LISTENER_NUM, 0);
 }
 
-void COMM::Attach(InputListener *functionPointer, COMM::InputType inputType)
+void COMM::Attach(CommInterface *callbackPointer, ChannelID channel)
 {
-	switch (inputType) {
-		case APP:
-			applist.push_back(functionPointer);
-			break;
-		case MAIN:
-			mainlist.push_back(functionPointer);
-			break;
+	for (uint16_t i=0; i < channelList.size(); i++) {
+		if(channelList.at(i)->channelID == channel)
+		{
+			channelList.at(i)->commInterface = callbackPointer;
+		}
 	}
 }
 
-void COMM::Detach(InputListener *functionPointer, COMM::InputType inputType)
+void COMM::Detach(CommInterface *callbackPointer)
 {
-	switch (inputType) {
-		case APP:
-			for (uint16_t i=0; i < applist.size(); i++) {
-				if(applist.at(i) == functionPointer)
-				{
-					applist.remove(i);
-				}
+	for (uint16_t i=0; i < channelList.size(); i++) {
+		if(channelList.at(i)->commInterface == callbackPointer)
+		{
+			//channelList.at(i)->commListener = (void *)0;	No detach necessary, attach does overwrite previous attach
+		}
+	}
+}
+
+std::string COMM::onRead(uint8_t channelID)
+{
+	Serial.print("Read on Channel ");
+	Serial.println(channelID);
+
+	for (uint16_t i=0; i < channelList.size(); i++)
+	{
+		if(channelList.at(i)->channelID == channelID)
+		{
+			if(channelList.at(i)->commInterface != nullptr)
+			{
+				return channelList.at(i)->commInterface->onUserRead(channelID); //call CommListeners
 			}
-			break;
-		case MAIN:
-			for (uint16_t i=0; i < mainlist.size(); i++) {
-				if(mainlist.at(i) == functionPointer)
-				{
-					mainlist.remove(i);
-				}
+		}
+	}
+
+	return "0";
+}
+void COMM::onWrite(std::string data, uint8_t channelID)
+{
+	Serial.print("Write on Channel ");//call CommListeners
+	Serial.print(channelID);
+	Serial.print(": ");
+	Serial.println(data.c_str());
+
+	for (uint16_t i=0; i < channelList.size(); i++)
+	{
+		if(channelList.at(i)->channelID == channelID)
+		{
+			if(channelList.at(i)->commInterface != nullptr)
+			{
+				channelList.at(i)->commInterface->onUserWrite(data, channelID); //call CommListeners
 			}
+		}
 	}
 }
 
@@ -123,40 +157,4 @@ void COMM::run()
 	if(BUTTON_bIsPressed(BUTTON_RIGHT))
 		//send r
 	 */
-	int byte = Serial.read();
-	switch (byte) {
-		case -1:
-			break;
-		case '1':
-		case '2':
-		case 'q':
-		case 'x':
-			main_send(byte);	//change to main
-			break;
-		default:
-			app_send(byte);
-			break;
-	}
-}
-
-void COMM::main_send(char byte)
-{
-	if(!mainlist.empty())
-	{
-		for(uint16_t i=0; i<mainlist.size();i++)
-		{
-			mainlist.at(i)->onInput(&byte);
-		}
-	}
-}
-
-void COMM::app_send(char byte)
-{
-	if(!applist.empty())
-	{
-		for(uint16_t i=0; i<applist.size();i++)
-		{
-			applist.at(i)->onInput(&byte);
-		}
-	}
 }

@@ -13,31 +13,38 @@ MainLoop& MainLoop::getInstance()
 	return _instance;
 }
 
+std::string MainLoop::onUserRead(uint8_t channelID)
+{
+	UNUSED(channelID);
+	return "bar";
+}
+void MainLoop::onUserWrite(std::string data, uint8_t channelID)
+{
+	UNUSED(data);
+	UNUSED(channelID);
+	input = data[0];
+}
+
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
 	input = 0;
 	programState = 0;
+	currentGame = nullptr;
+	animationRunner = nullptr;
 
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static COMM& comm = COMM::getInstance();
 
 	mainTile = new GridTile(0, 0, XMAX, YMAX);
-	game_2048 = new Game_2048(mainTile);
-	animationRunner = new AnimationRunner(mainTile);
-	disguiseGame = new DisguiseGame(mainTile);
 
 	Timer::start();
-
 	tsched.Attach(&comm);
-	comm.Attach(this, COMM::MAIN);
+	comm.Attach(this, CHANNEL_CONTROL);
+
+	animationRunner = new AnimationRunner(mainTile);
 	tsched.Attach(animationRunner);
 	animationRunner->start();
-}
-
-void MainLoop::onInput(char* data)
-{
-	input = *data;
 }
 
 void MainLoop::loop()
@@ -49,7 +56,6 @@ void MainLoop::loop()
 
 	switch (programState) {
 		case 0:	//ANIMATION
-
 			if(input == '1')
 			{
 				animationRunner->stop();
@@ -57,9 +63,11 @@ void MainLoop::loop()
 				input = 0;
 				programState = 1;
 				//ANIMATION_vBoot();
-				game_2048->start();
-				comm.Attach(game_2048, COMM::APP);	//attach input to app
-				tsched.Attach(game_2048);
+
+				currentGame = new Game_2048(mainTile);
+				currentGame->start();
+				comm.Attach(currentGame, CHANNEL_USER1);	//attach input to app
+				tsched.Attach(currentGame);
 			}
 			if(input == '2')
 			{
@@ -67,16 +75,48 @@ void MainLoop::loop()
 				tsched.Detach(animationRunner);
 				input = 0;
 				programState = 2;
-				comm.Attach(disguiseGame, COMM::APP);	//attach input to app
-				tsched.Attach(disguiseGame);
+
+				currentGame = new DisguiseGame(mainTile);
+				currentGame->start();
+				comm.Attach(currentGame, CHANNEL_USER1);	//attach input to app
+				tsched.Attach(currentGame);
 			}
 			break;
-		case 1:
+		case 1: //2048
 			if(input == 'q')
 			{
 				input = 0;
-				tsched.Detach(game_2048);
-				comm.Detach(game_2048, COMM::APP);	//detach input to app
+				tsched.Detach(currentGame);
+				comm.Detach(currentGame);
+				delete currentGame; currentGame = nullptr;
+
+				tsched.Attach(animationRunner);
+				animationRunner->start();
+				programState = 0;//quit
+			}
+			if(input == 'x')	//reset
+			{
+				input = 0;
+				//ANIMATION_vBoot();
+				currentGame->stop();
+				tsched.Detach(currentGame);
+				comm.Detach(currentGame);
+				delete currentGame;
+
+				currentGame = new Game_2048(mainTile);
+				currentGame->start();
+				comm.Attach(currentGame, CHANNEL_USER1);
+				tsched.Attach(currentGame);
+			}
+			break;
+		case 2:	//Disguise
+			if(input == 'q')
+			{
+				input = 0;
+				tsched.Detach(currentGame);
+				comm.Detach(currentGame);
+				delete currentGame; currentGame = nullptr;
+
 				tsched.Attach(animationRunner);
 				animationRunner->start();
 				programState = 0;//quit
@@ -85,25 +125,15 @@ void MainLoop::loop()
 			{
 				input = 0;
 				//ANIMATION_vBoot();
-				game_2048->reset();
-				game_2048->start();
-			}
-			break;
-		case 2:
-			if(input == 'q')
-			{
-				input = 0;
-				tsched.Detach(disguiseGame);
-				comm.Detach(disguiseGame, COMM::APP);	//detach input to app
-				tsched.Attach(animationRunner);
-				animationRunner->start();
-				programState = 0;//quit
-			}
-			if(input == 'x')
-			{
-				input = 0;
-				//ANIMATION_vBoot();
-				disguiseGame->reset();
+				currentGame->stop();
+				tsched.Detach(currentGame);
+				comm.Detach(currentGame);
+				delete currentGame;
+
+				currentGame = new Game_2048(mainTile);
+				currentGame->start();
+				comm.Attach(currentGame, CHANNEL_USER1);
+				tsched.Attach(currentGame);
 			}
 			break;
 		default:

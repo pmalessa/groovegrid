@@ -10,7 +10,6 @@
 
 #include "Animation/AnimationRunner.h"
 #include "PLATFORM.h"
-#include "utils/InputListener.h"
 #include "driver/COMM.h"
 #include "driver/GridTile.h"
 #include "driver/Timer.h"
@@ -19,12 +18,13 @@
 #include "Game/Game_2048.h"
 #include "Game/DisguiseGame.h"
 
-class MainLoop : public InputListener
+class MainLoop : public CommInterface
 {
 public:
 	static MainLoop& getInstance();
 	~MainLoop(void);
-	void onInput(char* data);
+    std::string onUserRead(uint8_t channelID);
+    void onUserWrite(std::string data, uint8_t channelID);
 	void loop();
 
 private:
@@ -34,9 +34,8 @@ private:
 
 	char input;
 	uint8_t programState;
-	Game_2048* game_2048;	//change to general Game* later
-	DisguiseGame* disguiseGame;
-	AnimationRunner* animationRunner;
+	GrooveGame *currentGame;
+	AnimationRunner *animationRunner;
 	GridTile* mainTile;
 };
 
