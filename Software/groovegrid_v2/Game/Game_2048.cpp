@@ -8,24 +8,33 @@
 
 #define GAME_SPEED 200	//lower is faster
 
-GameState_2048 game = GameState_2048();
 direction_t movdir = NONE;
 bool running = false;
 uint32_t previousMillisCounter = 0;
 
 Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 {
-	game.initializeBoard();
+	if(tile->getWidth() <= tile->getHeight())	//make board square
+	{
+		this->boardsize = tile->getWidth();
+	}
+	else
+	{
+		this->boardsize = tile->getHeight();
+	}
+	game = new GameState_2048(this->boardsize);
+	game->initializeBoard();
 }
 
 Game_2048::~Game_2048()
 {
+	delete game;
 }
 
 void Game_2048::start()
 {
 	running = true;
-	DrawBoard(game.board);
+	DrawBoard(game->board);
 }
 
 void Game_2048::stop()
@@ -88,21 +97,21 @@ void Game_2048::run()
 		previousMillisCounter = Timer::getMillis();
 		if (movdir != NONE)	//moving
 		{
-			if(game.canStep(movdir) || game.canMerge(movdir))	//if move possible
+			if(game->canStep(movdir) || game->canMerge(movdir))	//if move possible
 			{
 				move_possible = 1;
 			}
-			if(game.move(movdir))	//if move finished
+			if(game->move(movdir))	//if move finished
 			{
 				movdir = NONE;
 
 				if(move_possible > 0)	//if it was moving, spawn new field
 				{
-					game.fillRandomField();
+					game->fillRandomField();
 				}
 				move_possible = 0;
 			}
-			DrawBoard(game.board);
+			DrawBoard(game->board);
 		}
 	}
 }
@@ -159,15 +168,16 @@ void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 	}
 	tile->writePixel(x, y, col);
 
-	if(number > game.highestTile)	//update game progress
+	if(number > game->highestTile)	//update game progress
 	{
-		game.highestTile = number;
+		game->highestTile = number;
 	}
 }
 
-GameState_2048::GameState_2048()
+GameState_2048::GameState_2048(uint8_t boardsize)
 {
-	//highestTile = 0;
+	this->boardsize = boardsize;
+	highestTile = 0;
 }
 
 void GameState_2048::fillBoard(uint16_t value) {

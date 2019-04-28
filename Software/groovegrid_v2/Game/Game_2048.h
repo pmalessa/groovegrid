@@ -44,25 +44,9 @@ typedef enum{
 	COLOR_WHITE = 0xFFFFFF
 }color_t;
 
-class Game_2048 : public GrooveGame
-{
-public:
-	Game_2048(GridTile *tile);
-	~Game_2048();
-	void start();
-	void stop();
-	void run();
-    std::string onUserRead(uint8_t channelID);
-    void onUserWrite(std::string data, uint8_t channelID);
-private:
-	void move(direction_t dir);
-	void DrawBoard(uint16_t arr[BOARD_WIDTH][BOARD_HEIGHT]);
-	void DrawTile(uint16_t x, uint16_t y, uint16_t number);
-};
-
 class GameState_2048 {
 public:
-	GameState_2048();
+	GameState_2048(uint8_t boardsize);
 
 	void fillBoard(uint16_t value);
 	uint16_t getFreeSpaces();
@@ -74,12 +58,32 @@ public:
 	bool canStep(direction_t direction);
 	bool canMerge(direction_t direction);
 	uint16_t board[BOARD_WIDTH][BOARD_HEIGHT];
+
 	uint16_t highestTile;
 
 	private:
+		uint8_t boardsize;
 		void merge(direction_t direction);
 		void step(direction_t direction);
 		void removeInBetweenZeros(direction_t direction);
+};
+
+class Game_2048 : public GrooveGame
+{
+public:
+	Game_2048(GridTile *tile);
+	~Game_2048();
+	void start();
+	void stop();
+	void run();
+    std::string onUserRead(uint8_t channelID);
+    void onUserWrite(std::string data, uint8_t channelID);
+private:
+    GameState_2048 *game;
+    uint8_t boardsize;
+	void move(direction_t dir);
+	void DrawBoard(uint16_t arr[BOARD_WIDTH][BOARD_HEIGHT]);
+	void DrawTile(uint16_t x, uint16_t y, uint16_t number);
 };
 
 #endif /* GAME_2048_H_ */
