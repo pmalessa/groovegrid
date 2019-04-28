@@ -9,12 +9,9 @@
 #define PLATFORM_H_
 
 #include "Arduino.h"
+#include "CONFIG.h"
 
 #define FRAMERATE_MS 33	//33ms per frame -> 30fps
-
-// PLATFORM DEFINITION
-//#define DOOR16
-#define TABLE
 
 #if defined(DOOR16)
 	#define XMAX 4
