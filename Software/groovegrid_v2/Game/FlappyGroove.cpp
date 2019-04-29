@@ -9,27 +9,31 @@
 
 FlappyGroove::FlappyGroove(GridTile *tile):GrooveGame(tile)
 {
-	gameSpeed = 5;		 //new gameFrame after X frames
-	worldMoveSpeed = 10; //move world after X gameFrames
-	wallProbability = 25; //percent
+	gameSpeed = 1;		 //new gameFrame after X frames
+	worldMoveSpeed = 5; //move world after X gameFrames
+	wallProbability = 15; //percent
+	velocity = 0;
+	gravity = 0.003;
+	position = 0;
+	playerPosition = 0;
+
 	frameTimer.setTimeStep(FRAMERATE_MS*gameSpeed);
 	gameState = new FlappyGrooveState();
 
 	gameState->xmax = tile->getWidth()-1;	//getting board size
-	gameState->ymax = tile->getHeight()-2;  //1 pixel for floor
-	maxWallHeight = (gameState->ymax+1)/3;  //one third for wall and gap
+	gameState->ymax = tile->getHeight()-1;
+	maxWallHeight = gameState->ymax/3;  //one third for wall and gap
 
 	Serial.println(gameState->xmax);
 	Serial.println(gameState->ymax);
 	Serial.println(maxWallHeight);
 
-	gameState->board=new boardField*[gameState->xmax];	//initialize board
-	for(int i=0;i<gameState->xmax;i++)
+	gameState->board=new boardField*[gameState->xmax+1];	//initialize board
+	for(int i=0;i<=gameState->xmax;i++)
 	{
-		gameState->board[i]=new boardField[gameState->ymax];
+		gameState->board[i]=new boardField[gameState->ymax+1];
 	}
 	initBoard();
-	Serial.println("Const done");
 }
 
 FlappyGroove::~FlappyGroove()
@@ -42,17 +46,20 @@ void FlappyGroove::run()
 	static uint8_t worldMoveCounter = worldMoveSpeed;
 	if(frameTimer.isTimeUp())
 	{
+		updatePlayer();
 		drawBoard();
-		Serial.println("f");
 		if(worldMoveCounter == 0)
 		{
-			Serial.println("w");
 			worldMoveCounter = worldMoveSpeed;
 			moveWorld();
 		}
 		else
 		{
 			worldMoveCounter--;
+		}
+		if(isPlayerCollided())
+		{
+			restart();
 		}
 	}
 }
@@ -63,7 +70,7 @@ void FlappyGroove::spawnWall()
 	uint8_t topWall = rand()%maxWallHeight;
 	uint8_t botWall = rand()%maxWallHeight;
 
-	for(uint8_t i = 0;i<gameState->ymax;i++)
+	for(uint8_t i = 0;i<=gameState->ymax;i++)
 	{
 		if(i <= topWall)	//draw top wall
 		{
@@ -92,32 +99,34 @@ void FlappyGroove::moveWorld()
 	{
 		spawnWall();
 	}
-	else	//draw empty field
+	else	//draw empty field and floor
 	{
-		for(uint8_t i = 0; i <= gameState->ymax;i++)	//for each row
+		for(uint8_t i = 0; i < gameState->ymax;i++)	//for each row
 		{
 			gameState->board[gameState->xmax][i] = FIELD_EMPTY;
 		}
+		gameState->board[gameState->xmax][gameState->ymax] = FIELD_FLOOR;
 	}
 }
 
 void FlappyGroove::initBoard()
 {
-	for(uint8_t i=0;i<gameState->xmax;i++)
+	for(uint8_t i=0;i<=gameState->xmax;i++)
 	{
 		for(uint8_t j=0; j<gameState->ymax; j++)
 		{
 			gameState->board[i][j] = FIELD_EMPTY;
 		}
+		gameState->board[i][gameState->ymax] = FIELD_FLOOR;
 	}
 }
 
 void FlappyGroove::drawBoard()
 {
 	tile->startWrite();
-	for(uint8_t i=0;i<gameState->xmax;i++)
+	for(uint8_t i=0;i<=gameState->xmax;i++)
 	{
-		for(uint8_t j=0; j<gameState->ymax; j++)
+		for(uint8_t j=0; j<=gameState->ymax; j++)
 		{
 			switch (gameState->board[i][j]) {
 				case FIELD_SPACE:
@@ -127,26 +136,95 @@ void FlappyGroove::drawBoard()
 				case FIELD_WALL:
 					tile->writePixel(i, j, tile->RGB(255, 0, 0));
 					break;
-				case FIELD_PLAYER:
-					tile->writePixel(i, j, tile->RGB(0, 0, 255));
+				case FIELD_FLOOR:
+					tile->writePixel(i, j, tile->RGB(40, 125, 84));
 					break;
 				default:
 					break;
 			}
 		}
 	}
+	playerPosition = (float) gameState->ymax * position;//draw Player
+	tile->writePixel(0, gameState->ymax-1-playerPosition, tile->RGB(0, 0, 255));
 	tile->endWrite();
+}
+
+bool FlappyGroove::isPlayerCollided()
+{
+	if(gameState->board[0][playerPosition] == FIELD_WALL)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void FlappyGroove::updatePlayer()
+{
+	position += velocity;
+	if(position <= 0)
+	{
+		position = 0;
+		velocity = 0;
+	}
+	else
+	{
+		velocity -= gravity;        // Apply gravity to vertical velocity
+	}
 }
 
 void FlappyGroove::start()
 {
 	tile->fillScreen(tile->RGB(0, 0, 0));
-	tile->drawLine(0, gameState->ymax+1, gameState->xmax, gameState->ymax+1, tile->RGB(40, 125, 84));	//draw floor
 }
 void FlappyGroove::stop()
 {
 
 }
+
+void FlappyGroove::restart()
+{
+	bool restartDone = 0;
+	uint8_t i = 0;
+	initBoard();
+	position = 0;
+	while(!restartDone)
+	{
+		if(frameTimer.isTimeUp())
+		{
+			if(i <= gameState->xmax)
+			{
+				tile->drawLine(i, 0, i, gameState->ymax, tile->RGB(255, 0, 0));
+				i++;
+			}
+			else
+			{
+				restartDone = 1;
+			}
+		}
+	}
+	restartDone = 0;
+	i=0;
+	while(!restartDone)
+	{
+		if(frameTimer.isTimeUp())
+		{
+			if(i <= gameState->xmax)
+			{
+				tile->drawLine(i, 0, i, gameState->ymax-1, tile->RGB(0, 0, 0));
+				tile->drawPixel(i, gameState->ymax, tile->RGB(40, 125, 84));
+				i++;
+			}
+			else
+			{
+				restartDone = 1;
+			}
+		}
+	}
+}
+
 std::string FlappyGroove::onUserRead(uint8_t channelID)
 {
 	return 0;
@@ -156,7 +234,7 @@ void FlappyGroove::onUserWrite(std::string data, uint8_t channelID)
 	UNUSED(channelID);
 	switch (data.c_str()[0]) {
 		case 'u':
-			//move(UP);
+			velocity = 0.03;
 			break;
 		default:
 			break;

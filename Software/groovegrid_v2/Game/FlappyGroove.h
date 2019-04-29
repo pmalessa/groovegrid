@@ -25,17 +25,23 @@ private:
     void moveWorld();
     void initBoard();
     void drawBoard();
+    void updatePlayer();
+    bool isPlayerCollided();
+    void restart();
 
     uint16_t gameSpeed;
     uint8_t maxWallHeight;
     uint8_t wallProbability;
     uint8_t worldMoveSpeed;
+    uint8_t playerPosition;
+
+    float velocity, gravity, position;
 
     enum boardField{
     	FIELD_EMPTY,		//empty field
 		FIELD_WALL,			//top or bottom wall
 		FIELD_SPACE,		//space between top and bottom wall
-		FIELD_PLAYER		//Player Block
+		FIELD_FLOOR
     };
 
 
