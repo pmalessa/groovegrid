@@ -56,8 +56,8 @@ void RandomRectAnimation::generateNewRect()
 	desiredRed = rand()%256;
 	desiredGreen = rand()%256;
 	desiredRed = rand()%256;
-	x = rand()%XMAX;
-	y = rand()%YMAX;
-	w = rand()%XMAX;
-	h = rand()%YMAX;
+	x = rand()%GRID_WIDTH;
+	y = rand()%GRID_HEIGHT;
+	w = rand()%GRID_WIDTH;
+	h = rand()%GRID_HEIGHT;
 }

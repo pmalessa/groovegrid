@@ -6,10 +6,10 @@
  */
 #include "Grid.h"
 
-CRGB matrixleds[XMAX*YMAX];
+CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
 
 //4x4 display, starting at top left and going down zigzag
-FastLED_NeoMatrix Grid::matrix = FastLED_NeoMatrix(matrixleds,XMAX,YMAX,
+FastLED_NeoMatrix Grid::matrix = FastLED_NeoMatrix(matrixleds,GRID_WIDTH,GRID_HEIGHT,
 		  NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
 		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG);
 
@@ -22,7 +22,7 @@ Grid& Grid::getInstance()
 Grid::~Grid(){}
 Grid::Grid()
 {
-	FastLED.addLeds<NEOPIXEL,GRID_DATA_PIN>(matrixleds, XMAX*YMAX);
+	FastLED.addLeds<NEOPIXEL,GRID_DATA_PIN>(matrixleds, GRID_WIDTH*GRID_HEIGHT);
 	matrix.begin();
 }
 
@@ -59,6 +59,7 @@ uint16_t Grid::RGB(uint32_t rgb)
 uint16_t Grid::HSV(uint8_t h, uint8_t s, uint8_t v)
 {
 	UNUSED(h+s+v);
+
 	//TODO
 	return 0;
 }

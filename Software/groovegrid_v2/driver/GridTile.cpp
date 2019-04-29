@@ -6,7 +6,7 @@
  */
 #include "GridTile.h"
 
-GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1):Adafruit_GFX(x1-x0, y1-y0)
+GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1):Adafruit_GFX(x1-x0+1, y1-y0+1)
 {
 	this->x0 = x0;
 	this->y0 = y0;

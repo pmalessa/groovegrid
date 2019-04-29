@@ -36,9 +36,9 @@
 				if(Timer::getMillis()-lastTime > fadeDelay)
 				{
 					lastTime = Timer::getMillis();
-					tile->drawLine(0, fadePosition, XMAX-1, fadePosition, tile->RGB(255, 0, 0));	//draw red line
+					tile->drawLine(0, fadePosition, GRID_WIDTH-1, fadePosition, tile->RGB(255, 0, 0));	//draw red line
 					fadePosition++;
-					if(fadePosition == YMAX)
+					if(fadePosition == GRID_HEIGHT)
 					{
 						flashTime = genFlashInterval();
 						gameState = 1;
@@ -50,8 +50,8 @@
 				if(Timer::getMillis()-lastTime > flashTime)
 				{
 					lastTime = Timer::getMillis();
-					xPos = rand()%XMAX;
-					yPos = rand()%YMAX;
+					xPos = rand()%GRID_WIDTH;
+					yPos = rand()%GRID_HEIGHT;
 					tile->drawPixel(xPos,yPos, tile->RGB(rand()%256, rand()%256, rand()%256));
 					delay(flashDuration);
 					tile->drawPixel(xPos,yPos, tile->RGB(255, 0, 0));
