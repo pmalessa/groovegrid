@@ -9,9 +9,15 @@
 CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
 
 //4x4 display, starting at top left and going down zigzag
+#ifdef DOOR16
 FastLED_NeoMatrix Grid::matrix = FastLED_NeoMatrix(matrixleds,GRID_WIDTH,GRID_HEIGHT,
 		  NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
 		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG);
+#else
+FastLED_NeoMatrix Grid::matrix = FastLED_NeoMatrix(matrixleds,GRID_WIDTH,GRID_HEIGHT,
+		  NEO_MATRIX_TOP     + NEO_MATRIX_RIGHT +
+		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG);
+#endif
 
 Grid& Grid::getInstance()
 {
