@@ -19,6 +19,8 @@ public:
 	virtual ~GrooveAnimation(){};
 	void start(){};	//stub start
 	void stop(){};	//stub stop
+    virtual std::string onUserRead(uint8_t channelID){return 0;};
+    virtual void onUserWrite(std::string data, uint8_t channelID){};
 	virtual void run() = 0;					//has to be overridden by Animation loop
 protected:
 };
