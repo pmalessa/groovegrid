@@ -22,7 +22,8 @@ public:
 	void run();
 	void start();
 	void stop();
-	void onInput(char *data){UNUSED(data);};
+    std::string onUserRead(uint8_t channelID);
+    void onUserWrite(std::string data, uint8_t channelID);
 private:
 	uint8_t selectedAnimation;
 	GrooveAnimation* currentAnimation;
