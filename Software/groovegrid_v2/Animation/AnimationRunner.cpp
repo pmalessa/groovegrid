@@ -7,8 +7,6 @@
 
 #include "AnimationRunner.h"
 
-#include "../driver/Timer.h"
-#include "../utils/TaskScheduler.h"
 #include "BootTransition.h"
 #include "RandomLineAnimation.h"
 #include "RandomPixelAnimation.h"
@@ -18,9 +16,8 @@
 
 AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 {
-	selectedAnimation = 0;
-	currentAnimation = new RandomRectAnimation(tile);
-	animationTimer.setTimeStep(ANIMATION_RUNTIME_MS);
+	currentAnimation = 0;
+	repeating = true;
 }
 
 AnimationRunner::~AnimationRunner()
@@ -30,45 +27,66 @@ AnimationRunner::~AnimationRunner()
 
 void AnimationRunner::start()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	tsched.Attach(currentAnimation);
+	if(animationQueue.empty())
+	{
+		//init default Queue
+		AnimationEntry *entry;
+		entry = new AnimationEntry();
+		entry->animationPtr = new RandomRectAnimation(tile);
+		entry->animationLength = ANIMATION_RUNTIME_MS;
+		animationQueue.push_back(entry);
+
+		entry = new AnimationEntry();
+		entry->animationPtr = new RandomPixelAnimation(tile);
+		entry->animationLength = ANIMATION_RUNTIME_MS;
+		animationQueue.push_back(entry);
+
+		entry = new AnimationEntry();
+		entry->animationPtr = new RandomLineAnimation(tile);
+		entry->animationLength = ANIMATION_RUNTIME_MS;
+		animationQueue.push_back(entry);
+
+		currentAnimation = 0;
+		animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
+	}
 }
 
 void AnimationRunner::stop()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	tsched.Detach(currentAnimation);
 }
 
 void AnimationRunner::run()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	if(animationTimer.isTimeUp())
 	{
-		switch (selectedAnimation) {
-			case 3:
-				selectedAnimation = 0;
-				//nobreak
-			case 0:
-				tsched.Detach(currentAnimation);
-				delete currentAnimation;
-				currentAnimation = new RandomPixelAnimation(tile);
-				tsched.Attach(currentAnimation);
-				break;
-			case 1:
-				tsched.Detach(currentAnimation);
-				delete currentAnimation;
-				currentAnimation = new RandomLineAnimation(tile);
-				tsched.Attach(currentAnimation);
-				break;
-			case 2:
-				tsched.Detach(currentAnimation);
-				delete currentAnimation;
-				currentAnimation = new RandomRectAnimation(tile);
-				tsched.Attach(currentAnimation);
-				break;
+		currentAnimation++;//next animation
+		if(animationQueue.size() > currentAnimation)	//element available
+		{
+			animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
 		}
-		selectedAnimation++;
+		else
+		{
+			if(repeating == true)
+			{
+				currentAnimation = 0;
+				animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
+			}
+			else
+			{
+				animationQueue.clear();
+				tile->fillScreen(tile->RGB(0));
+			}
+		}
+	}
+	if(frameTimer.isTimeUp())
+	{
+		if(!animationQueue.empty())
+		{
+			if(animationQueue.at(currentAnimation)->animationPtr != nullptr)
+			{
+				animationQueue.at(currentAnimation)->animationPtr->run();
+			}
+		}
 	}
 }
 

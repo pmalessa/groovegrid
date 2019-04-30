@@ -82,4 +82,10 @@ User Channel AnimationRunner
 		arguments: AnimationQueue
 		return: none
 	}
+	
+	set Repeating
+	{
+		arguments: bool
+		return: none
+	}
 }
