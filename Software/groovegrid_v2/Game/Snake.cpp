@@ -62,6 +62,7 @@ void SnakeGame::run() {
 			direction = none;
 		}
 		draw();
+		wrapAroundBorder();
 	}
 }
 
@@ -90,6 +91,21 @@ void SnakeGame::spawnFood() {
 	}
 
 	food = new Coordinate(x, y);
+}
+
+void SnakeGame::wrapAroundBorder() {
+	if (gameState->head->x >= tile->getWidth() && direction == right) {
+		gameState->head->x = 0;
+	} else if (gameState->head->x == 0 && direction == left) {
+		gameState->head->x = tile->getWidth()-1;
+
+	}
+
+	if (gameState->head->y >= tile->getHeight() && direction == down) {
+		gameState->head->y = 0;
+	} else if (gameState->head->y <= 0 && direction == up) {
+		gameState->head->y = tile->getHeight()-1;
+	}
 }
 
 void SnakeGame::move() {

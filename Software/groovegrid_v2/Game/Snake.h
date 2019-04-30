@@ -45,13 +45,14 @@ private:
 
     MovementDirection direction = none;
 
-    uint32_t frameDelay = 10;
+    uint32_t frameDelay = 5;
 
     void draw();
     void drawElement(uint8_t x, uint8_t y);
     void drawElement(Coordinate coordinate);
     Coordinate* food;
     bool detectCollision();
+    void wrapAroundBorder();
 
     void spawnFood();
 
