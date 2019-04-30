@@ -3,6 +3,9 @@ All Commands will return an ACK or NACK even if they have no returns.
 
 Control Channel
 {
+	All Commands inside the Control Channel waits for the reception of the ACK by the right phone before it handles the next Command.
+	One way would be to block write access to symbolize business. Another way would be to return some kind of busy signal to the second phone.
+
 	get GridData
 	{
 		arguments: none
