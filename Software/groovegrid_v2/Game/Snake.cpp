@@ -85,7 +85,14 @@ void SnakeGame::move() {
 
 	if (direction != none) {
 		Coordinate* newPixel = new Coordinate(gameState->head->x, gameState->head->y);
-		gameState->body.pop_front();
+
+		if (food->x != gameState->head->x || food->y != gameState->head->y) {
+			gameState->body.pop_front();
+		} else {
+			// Eating food
+			spawnFood();
+		}
+
 		gameState->body.push_back(newPixel);
 	}
 
