@@ -51,6 +51,7 @@ private:
     void drawElement(uint8_t x, uint8_t y);
     void drawElement(Coordinate coordinate);
     Coordinate* food;
+    bool detectCollision();
 
     void spawnFood();
 

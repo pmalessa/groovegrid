@@ -58,8 +58,21 @@ void SnakeGame::onUserWrite(std::string data, uint8_t channelID) {
 void SnakeGame::run() {
 	if (frameTimer.isTimeUp()) {
 		move();
+		if (detectCollision()) {
+			direction = none;
+		}
 		draw();
 	}
+}
+
+bool SnakeGame::detectCollision() {
+	for (uint8_t i = 0; i < gameState->body.size(); ++i) {
+		if (gameState->head->x == gameState->body[i]->x && gameState->head->y == gameState->body[i]->y) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void SnakeGame::spawnFood() {
