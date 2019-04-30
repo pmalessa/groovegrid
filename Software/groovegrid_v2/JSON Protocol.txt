@@ -1,0 +1,85 @@
+Control Channel
+{
+	get GridData
+	{
+		arguments: none
+		return: GridWidth, GridHeight, OriginPosition
+		}
+	}
+	
+	create GridTile
+	{
+		arguments: x0, x1, y0, y1
+		return: GridID
+	}
+	remove GridTile
+	{
+		arguments: GridID
+		return: none
+	}
+	
+	get App List
+	{
+		arguments: none
+		return: AppList
+	}
+	
+	start App
+	{
+		arguments: AppName, GridID
+		return: AppID
+	}
+	
+	stop App
+	{
+		arguments: AppID
+		return: none
+	}
+	
+	connect Phone
+	{
+		arguments: none
+		return: UserChannel
+	}
+	disconnect Phone
+	{
+		arguments: none
+		return: none
+	}
+	
+
+}
+User Channel Game
+{
+	UserInput
+	{
+		arguments: Input
+		return: none
+	}
+	getGameState
+	{
+		arguments: GameID
+		return: GameState
+	}
+	
+	setGameState
+	{
+		arguments: GameID, GameState
+		return: none
+	}
+}
+
+User Channel AnimationRunner
+{
+	get Animations
+	{
+		arguments: none
+		return: animationList
+	}
+	
+	set AnimationQueue
+	{
+		arguments: AnimationQueue
+		return: none
+	}
+}
