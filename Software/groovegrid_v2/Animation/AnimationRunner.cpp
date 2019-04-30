@@ -71,3 +71,13 @@ void AnimationRunner::run()
 		selectedAnimation++;
 	}
 }
+
+std::string AnimationRunner::onUserRead(uint8_t channelID)
+{
+	return 0;
+}
+void AnimationRunner::onUserWrite(std::string data, uint8_t channelID)
+{
+	UNUSED(data);
+	UNUSED(channelID);
+}
