@@ -1,3 +1,6 @@
+All Commands have to include a unique randomly generated CommandID, which will be included in the Response as well
+All Commands will return an ACK or NACK even if they have no returns.
+
 Control Channel
 {
 	get GridData
@@ -12,7 +15,7 @@ Control Channel
 		arguments: x0, x1, y0, y1
 		return: GridID
 	}
-	remove GridTile
+	remove GridTile : removes all Apps running on this Grid as well
 	{
 		arguments: GridID
 		return: none
