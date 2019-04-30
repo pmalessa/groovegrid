@@ -17,6 +17,7 @@
 
 #include "Game/Game_2048.h"
 #include "Game/DisguiseGame.h"
+#include "Game/Snake.h"
 
 class MainLoop : public CommInterface
 {

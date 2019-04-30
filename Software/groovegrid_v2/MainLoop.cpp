@@ -81,6 +81,18 @@ void MainLoop::loop()
 				comm.Attach(currentGame, CHANNEL_USER1);	//attach input to app
 				tsched.Attach(currentGame);
 			}
+			if(input == '4')
+			{
+				animationRunner->stop();
+				tsched.Detach(animationRunner);
+				input = 0;
+				programState = 4;
+
+				currentGame = new SnakeGame(mainTile);
+				currentGame->start();
+				comm.Attach(currentGame, CHANNEL_USER1);	//attach input to app
+				tsched.Attach(currentGame);
+			}
 			break;
 		case 1: //2048
 			if(input == 'q')
@@ -131,6 +143,33 @@ void MainLoop::loop()
 				delete currentGame;
 
 				currentGame = new Game_2048(mainTile);
+				currentGame->start();
+				comm.Attach(currentGame, CHANNEL_USER1);
+				tsched.Attach(currentGame);
+			}
+			break;
+		case 4:	//Snake
+			if(input == 'q')
+			{
+				input = 0;
+				tsched.Detach(currentGame);
+				comm.Detach(currentGame);
+				delete currentGame; currentGame = nullptr;
+
+				tsched.Attach(animationRunner);
+				animationRunner->start();
+				programState = 0;//quit
+			}
+			if(input == 'x')
+			{
+				input = 0;
+				//ANIMATION_vBoot();
+				currentGame->stop();
+				tsched.Detach(currentGame);
+				comm.Detach(currentGame);
+				delete currentGame;
+
+				currentGame = new SnakeGame(mainTile);
 				currentGame->start();
 				comm.Attach(currentGame, CHANNEL_USER1);
 				tsched.Attach(currentGame);
