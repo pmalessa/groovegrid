@@ -24,6 +24,7 @@ public:
 	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
 	void 		 endWrite(void);
 	void 		 fillScreen(uint16_t color);
+	void		 fillScreenBuffer(uint16_t color);
 
 	uint8_t getWidth();
 	uint8_t getHeight();

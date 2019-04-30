@@ -46,14 +46,18 @@ void GridTile::drawPixel(int16_t x, int16_t y, uint16_t color)
 
 void GridTile::fillScreen(uint16_t color)
 {
-	for(uint16_t x = x0; x <= x1; x++)
-	{
-		for(uint16_t y = y0; y <= y1; y++)
-		{
-			writePixel(x, y, color);
-		}
-	}
+	fillScreenBuffer(color);
 	endWrite();
+}
+
+void GridTile::fillScreenBuffer(uint16_t color) {
+	for(uint16_t x = x0; x <= x1; x++)
+		{
+			for(uint16_t y = y0; y <= y1; y++)
+			{
+				writePixel(x, y, color);
+			}
+		}
 }
 
 void GridTile::endWrite()
