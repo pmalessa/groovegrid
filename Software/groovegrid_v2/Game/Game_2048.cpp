@@ -226,10 +226,10 @@ void GameState_2048::fillRandomField() {
 	if(getFreeSpaces()!= 0)
 	{
 		do{
-			x = rand() % boardsize;
-			y = rand() % boardsize;
+			x = esp_random() % boardsize;
+			y = esp_random() % boardsize;
 		}while(board[x][y]!=0);
-		if((rand() % 10) > 0)	//90% of cases
+		if((esp_random() % 10) > 0)	//90% of cases
 		{
 			board[x][y] = 2;
 		}

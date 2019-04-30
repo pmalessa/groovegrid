@@ -26,16 +26,16 @@ void RandomPixelAnimation::run()
 	{
 		if(wait == 0)
 		{
-			if(rand()%2)	//clear or draw
+			if(esp_random()%2)	//clear or draw
 			{
-				tile->drawPixel(rand()%GRID_WIDTH, rand()%GRID_HEIGHT, tile->RGB(rand()%256, rand()%256, rand()%256));
+				tile->drawPixel(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, tile->RGB(esp_random()%256, esp_random()%256, esp_random()%256));
 			}
 			else
 			{
-				tile->drawPixel(rand()%GRID_WIDTH, rand()%GRID_HEIGHT, tile->RGB(0, 0, 0));
+				tile->drawPixel(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, tile->RGB(0, 0, 0));
 			}
 
-			wait = rand()%animationSpeed;
+			wait = esp_random()%animationSpeed;
 		}
 		else
 		{

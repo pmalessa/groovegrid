@@ -9,6 +9,7 @@
 #define MAINLOOP_H_
 
 #include "Animation/AnimationRunner.h"
+#include "Animation/SpectrumAnimation.h"
 #include "PLATFORM.h"
 #include "driver/COMM.h"
 #include "driver/GridTile.h"
@@ -36,7 +37,7 @@ private:
 	char input;
 	uint8_t programState;
 	GrooveGame *currentGame;
-	AnimationRunner *animationRunner;
+	GrooveApp *currentApp;
 	GridTile* mainTile;
 };
 

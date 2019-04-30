@@ -67,8 +67,8 @@ void FlappyGroove::run()
 //spawn wall at the right corner
 void FlappyGroove::spawnWall()
 {
-	uint8_t topWall = rand()%maxWallHeight;
-	uint8_t botWall = rand()%maxWallHeight;
+	uint8_t topWall = esp_random()%maxWallHeight;
+	uint8_t botWall = esp_random()%maxWallHeight;
 
 	for(uint8_t i = 0;i<=gameState->ymax;i++)
 	{
@@ -95,7 +95,7 @@ void FlappyGroove::moveWorld()
 			gameState->board[j-1][i] = gameState->board[j][i];
 		}
 	}
-	if(rand()%100 < wallProbability)
+	if(esp_random()%100 < wallProbability)
 	{
 		spawnWall();
 	}

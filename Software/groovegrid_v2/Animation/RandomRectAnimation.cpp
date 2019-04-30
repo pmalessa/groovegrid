@@ -53,11 +53,11 @@ void RandomRectAnimation::run()
 void RandomRectAnimation::generateNewRect()
 {
 	fadeIn = true;
-	desiredRed = rand()%256;
-	desiredGreen = rand()%256;
-	desiredRed = rand()%256;
-	x = rand()%GRID_WIDTH;
-	y = rand()%GRID_HEIGHT;
-	w = rand()%GRID_WIDTH;
-	h = rand()%GRID_HEIGHT;
+	desiredRed = esp_random()%256;
+	desiredGreen = esp_random()%256;
+	desiredRed = esp_random()%256;
+	x = esp_random()%GRID_WIDTH;
+	y = esp_random()%GRID_HEIGHT;
+	w = esp_random()%GRID_WIDTH;
+	h = esp_random()%GRID_HEIGHT;
 }

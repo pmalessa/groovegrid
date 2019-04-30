@@ -31,7 +31,7 @@ MainLoop::MainLoop()
 	input = 0;
 	programState = 0;
 	currentGame = nullptr;
-	animationRunner = nullptr;
+	currentApp = nullptr;
 
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static COMM& comm = COMM::getInstance();
@@ -42,9 +42,9 @@ MainLoop::MainLoop()
 	tsched.Attach(&comm);
 	comm.Attach(this, CHANNEL_CONTROL);
 
-	animationRunner = new AnimationRunner(mainTile);
-	tsched.Attach(animationRunner);
-	animationRunner->start();
+	currentApp = new AnimationRunner(mainTile);
+	tsched.Attach(currentApp);
+	currentApp->start();
 }
 
 void MainLoop::loop()
@@ -58,8 +58,8 @@ void MainLoop::loop()
 		case 0:	//ANIMATION
 			if(input == '1')
 			{
-				animationRunner->stop();
-				tsched.Detach(animationRunner);
+				currentApp->stop();
+				tsched.Detach(currentApp);
 				input = 0;
 				programState = 1;
 				//ANIMATION_vBoot();
@@ -71,8 +71,8 @@ void MainLoop::loop()
 			}
 			if(input == '2')
 			{
-				animationRunner->stop();
-				tsched.Detach(animationRunner);
+				currentApp->stop();
+				tsched.Detach(currentApp);
 				input = 0;
 				programState = 2;
 
@@ -83,8 +83,8 @@ void MainLoop::loop()
 			}
 			if(input == '3')
 			{
-				animationRunner->stop();
-				tsched.Detach(animationRunner);
+				currentApp->stop();
+				tsched.Detach(currentApp);
 				input = 0;
 				programState = 3;
 
@@ -102,8 +102,8 @@ void MainLoop::loop()
 				comm.Detach(currentGame);
 				delete currentGame; currentGame = nullptr;
 
-				tsched.Attach(animationRunner);
-				animationRunner->start();
+				tsched.Attach(currentApp);
+				currentApp->start();
 				programState = 0;//quit
 			}
 			if(input == 'x')	//reset
@@ -129,8 +129,8 @@ void MainLoop::loop()
 				comm.Detach(currentGame);
 				delete currentGame; currentGame = nullptr;
 
-				tsched.Attach(animationRunner);
-				animationRunner->start();
+				tsched.Attach(currentApp);
+				currentApp->start();
 				programState = 0;//quit
 			}
 			if(input == 'x')
@@ -156,8 +156,8 @@ void MainLoop::loop()
 				comm.Detach(currentGame);
 				delete currentGame; currentGame = nullptr;
 
-				tsched.Attach(animationRunner);
-				animationRunner->start();
+				tsched.Attach(currentApp);
+				currentApp->start();
 				programState = 0;//quit
 			}
 			if(input == 'x')

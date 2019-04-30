@@ -50,9 +50,9 @@
 				if(Timer::getMillis()-lastTime > flashTime)
 				{
 					lastTime = Timer::getMillis();
-					xPos = rand()%GRID_WIDTH;
-					yPos = rand()%GRID_HEIGHT;
-					tile->drawPixel(xPos,yPos, tile->RGB(rand()%256, rand()%256, rand()%256));
+					xPos = esp_random()%GRID_WIDTH;
+					yPos = esp_random()%GRID_HEIGHT;
+					tile->drawPixel(xPos,yPos, tile->RGB(esp_random()%256, esp_random()%256, esp_random()%256));
 					delay(flashDuration);
 					tile->drawPixel(xPos,yPos, tile->RGB(255, 0, 0));
 					flashTime = genFlashInterval();
@@ -77,7 +77,7 @@
 	{
 		uint32_t tmp;
 		do{
-			tmp = rand()%maxFlashInterval;
+			tmp = esp_random()%maxFlashInterval;
 		}while(tmp < minFlashInterval);	//generate random number between min and max
 		return tmp*1000;	//in milliseconds
 	}
