@@ -15,6 +15,7 @@
 #include "driver/GridTile.h"
 #include "driver/Timer.h"
 #include "utils/TaskScheduler.h"
+#include <map>
 
 #include "Game/Game_2048.h"
 #include "Game/DisguiseGame.h"
@@ -31,15 +32,27 @@ public:
 	void loop();
 
 private:
+	class AppEntry{
+	public:
+		std::string appName;
+		GridTile *tile;
+		GrooveApp *runningApp;
+	};
+
+	uint8_t addApp(AppEntry *entry); //return appID
+	void removeApp(uint8_t appID);
+	void resetApp(uint8_t appID);
+	void generateAvailableAppsMap();
+
 	MainLoop();
 	MainLoop(const MainLoop&);
 	MainLoop & operator = (const MainLoop &);
 
+	std::vector<AppEntry*> runningAppList;
+	std::map<std::string,GrooveApp*> availableAppsMap;
+
 	char input;
-	uint8_t programState;
-	GrooveGame *currentGame;
-	GrooveApp *currentApp;
-	GridTile* mainTile;
+	uint8_t currentAppID;
 };
 
 

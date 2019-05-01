@@ -23,198 +23,133 @@ void MainLoop::onUserWrite(std::string data, uint8_t channelID)
 	UNUSED(data);
 	UNUSED(channelID);
 	input = data[0];
+
+	if(input == '0')
+	{
+		input = 0;
+
+		removeApp(currentAppID);
+		AppEntry *entry = new AppEntry();
+		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+		entry->runningApp = new AnimationRunner(entry->tile);
+		currentAppID = addApp(entry);
+	}
+	if(input == '1')
+	{
+		input = 0;
+
+		removeApp(currentAppID);
+		AppEntry *entry = new AppEntry();
+		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+		entry->runningApp = new Game_2048(entry->tile);
+		currentAppID = addApp(entry);
+	}
+	if(input == '2')
+	{
+		input = 0;
+
+		removeApp(currentAppID);
+		AppEntry *entry = new AppEntry();
+		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+		entry->runningApp = new DisguiseGame(entry->tile);
+		currentAppID = addApp(entry);
+	}
+	if(input == '3')
+	{
+		input = 0;
+
+		removeApp(currentAppID);
+		AppEntry *entry = new AppEntry();
+		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+		entry->runningApp = new FlappyGroove(entry->tile);
+		currentAppID = addApp(entry);
+	}
+	if(input == '4')
+	{
+		input = 0;
+
+		removeApp(currentAppID);
+		AppEntry *entry = new AppEntry();
+		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+		entry->runningApp = new SnakeGame(entry->tile);
+		currentAppID = addApp(entry);
+	}
+	if(input == 'x')	//reset
+	{
+		input = 0;
+		//resetApp(currentAppID);
+	}
 }
 
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
 	input = 0;
-	programState = 0;
-	currentGame = nullptr;
-	currentApp = nullptr;
 
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static COMM& comm = COMM::getInstance();
-
-	mainTile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
 
 	Timer::start();
 	tsched.Attach(&comm);
 	comm.Attach(this, CHANNEL_CONTROL);
 
-	currentApp = new AnimationRunner(mainTile);
-	tsched.Attach(currentApp);
-	currentApp->start();
+	//Start initial App
+	AppEntry *entry = new AppEntry();
+	entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+	entry->runningApp = new DisguiseGame(entry->tile);
+	currentAppID = addApp(entry);
+}
+
+void MainLoop::generateAvailableAppsMap()
+{
+	//availableAppsMap.insert("AnimationRunner", __x)
+}
+
+uint8_t MainLoop::addApp(AppEntry *entry)
+{
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	static COMM& comm = COMM::getInstance();
+
+	runningAppList.push_back(entry);
+	uint8_t appID = runningAppList.size()-1;
+	entry->runningApp->start();
+	tsched.Attach(entry->runningApp);
+	comm.Attach(entry->runningApp, CHANNEL_USER1);
+	return appID;	//return position in Vector as appID, which is the same as the size-1 directly after creating
+}
+
+void MainLoop::removeApp(uint8_t appID)
+{
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	static COMM& comm = COMM::getInstance();
+
+	if(appID < runningAppList.size())	//check if value in range
+	{
+		AppEntry *entry = runningAppList.at(appID);
+		runningAppList.erase(runningAppList.begin()+appID);
+		entry->runningApp->stop();
+		tsched.Detach(entry->runningApp);
+		comm.Detach(entry->runningApp);
+		//delete entry->runningApp;
+		//delete entry->tile;
+		//delete entry;
+	}
+}
+
+void MainLoop::resetApp(uint8_t appID)
+{
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	static COMM& comm = COMM::getInstance();
+
+	AppEntry *entry = runningAppList.at(appID);
+	tsched.Detach(entry->runningApp);
+	comm.Detach(entry->runningApp);
+	delete entry->runningApp;
+	//not done yet
 }
 
 void MainLoop::loop()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	static COMM& comm = COMM::getInstance();
-
 	tsched.handleTasks();
-
-	switch (programState) {
-		case 0:	//ANIMATION
-			if(input == '1')
-			{
-				currentApp->stop();
-				tsched.Detach(currentApp);
-				input = 0;
-				programState = 1;
-				//ANIMATION_vBoot();
-
-				currentGame = new Game_2048(mainTile);
-				currentGame->start();
-				comm.Attach(currentGame, CHANNEL_USER1);	//attach input to app
-				tsched.Attach(currentGame);
-			}
-			if(input == '2')
-			{
-				currentApp->stop();
-				tsched.Detach(currentApp);
-				input = 0;
-				programState = 2;
-
-				currentGame = new DisguiseGame(mainTile);
-				currentGame->start();
-				comm.Attach(currentGame, CHANNEL_USER1);	//attach input to app
-				tsched.Attach(currentGame);
-			}
-			if(input == '3')
-			{
-				currentApp->stop();
-				tsched.Detach(currentApp);
-				input = 0;
-				programState = 3;
-
-				currentGame = new FlappyGroove(mainTile);
-				currentGame->start();
-				comm.Attach(currentGame, CHANNEL_USER1);	//attach input to app
-				tsched.Attach(currentGame);
-			}
-			if(input == '4')
-			{
-				currentApp->stop();
-				tsched.Detach(currentApp);
-				input = 0;
-				programState = 4;
-
-				currentGame = new SnakeGame(mainTile);
-				currentGame->start();
-				comm.Attach(currentGame, CHANNEL_USER1);	//attach input to app
-				tsched.Attach(currentGame);
-			}
-			break;
-		case 1: //2048
-			if(input == 'q')
-			{
-				input = 0;
-				tsched.Detach(currentGame);
-				comm.Detach(currentGame);
-				delete currentGame; currentGame = nullptr;
-
-				tsched.Attach(currentApp);
-				currentApp->start();
-				programState = 0;//quit
-			}
-			if(input == 'x')	//reset
-			{
-				input = 0;
-				//ANIMATION_vBoot();
-				currentGame->stop();
-				tsched.Detach(currentGame);
-				comm.Detach(currentGame);
-				delete currentGame;
-
-				currentGame = new Game_2048(mainTile);
-				currentGame->start();
-				comm.Attach(currentGame, CHANNEL_USER1);
-				tsched.Attach(currentGame);
-			}
-			break;
-		case 2:	//Disguise
-			if(input == 'q')
-			{
-				input = 0;
-				tsched.Detach(currentGame);
-				comm.Detach(currentGame);
-				delete currentGame; currentGame = nullptr;
-
-				tsched.Attach(currentApp);
-				currentApp->start();
-				programState = 0;//quit
-			}
-			if(input == 'x')
-			{
-				input = 0;
-				//ANIMATION_vBoot();
-				currentGame->stop();
-				tsched.Detach(currentGame);
-				comm.Detach(currentGame);
-				delete currentGame;
-
-				currentGame = new Game_2048(mainTile);
-				currentGame->start();
-				comm.Attach(currentGame, CHANNEL_USER1);
-				tsched.Attach(currentGame);
-			}
-			break;
-		case 3:	//FlappyGroove
-			if(input == 'q')
-			{
-				input = 0;
-				tsched.Detach(currentGame);
-				comm.Detach(currentGame);
-				delete currentGame; currentGame = nullptr;
-
-				tsched.Attach(currentApp);
-				currentApp->start();
-				programState = 0;//quit
-			}
-			if(input == 'x')
-			{
-				input = 0;
-				//ANIMATION_vBoot();
-				currentGame->stop();
-				tsched.Detach(currentGame);
-				comm.Detach(currentGame);
-				delete currentGame;
-
-				currentGame = new FlappyGroove(mainTile);
-				currentGame->start();
-				comm.Attach(currentGame, CHANNEL_USER1);
-				tsched.Attach(currentGame);
-			}
-			break;
-		case 4:	//Snake
-			if(input == 'q')
-			{
-				input = 0;
-				tsched.Detach(currentGame);
-				comm.Detach(currentGame);
-				delete currentGame; currentGame = nullptr;
-
-				tsched.Attach(currentApp);
-				currentApp->start();
-				programState = 0;//quit
-			}
-			if(input == 'x')
-			{
-				input = 0;
-				//ANIMATION_vBoot();
-				currentGame->stop();
-				tsched.Detach(currentGame);
-				comm.Detach(currentGame);
-				delete currentGame;
-
-				currentGame = new SnakeGame(mainTile);
-				currentGame->start();
-				comm.Attach(currentGame, CHANNEL_USER1);
-				tsched.Attach(currentGame);
-			}
-			break;
-		default:
-			break;
-	}
 }

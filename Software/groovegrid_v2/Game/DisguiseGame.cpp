@@ -9,9 +9,7 @@
 
 	DisguiseGame::DisguiseGame(GridTile *tile):GrooveGame(tile)
 	{
-		gameState = 0;
-		lastTime = 0;
-		flashTime = 0;
+		frameTimer.setTimeStep(1000/tile->getWidth());
 	}
 	DisguiseGame::~DisguiseGame()
 	{
@@ -33,29 +31,27 @@
 		uint16_t xPos, yPos;
 		switch (gameState) {
 			case 0:	//fade in
-				if(Timer::getMillis()-lastTime > fadeDelay)
+				if(frameTimer.isTimeUp())
 				{
-					lastTime = Timer::getMillis();
-					tile->drawLine(0, fadePosition, GRID_WIDTH-1, fadePosition, tile->RGB(255, 0, 0));	//draw red line
+					tile->drawLine(tile->getWidth()-1-fadePosition, 0, tile->getWidth()-1-fadePosition, tile->getHeight()-1, tile->RGB(255, 0, 0));	//draw red line
 					fadePosition++;
-					if(fadePosition == GRID_HEIGHT)
+					if(fadePosition == tile->getWidth())
 					{
-						flashTime = genFlashInterval();
+						frameTimer.setTimeStep(genFlashInterval());
 						gameState = 1;
 					}
 				}
 
 				break;
 			case 1:	//flash sometimes
-				if(Timer::getMillis()-lastTime > flashTime)
+				if(frameTimer.isTimeUp())
 				{
-					lastTime = Timer::getMillis();
-					xPos = esp_random()%GRID_WIDTH;
-					yPos = esp_random()%GRID_HEIGHT;
+					xPos = esp_random()%tile->getWidth();
+					yPos = esp_random()%tile->getHeight();
 					tile->drawPixel(xPos,yPos, tile->RGB(esp_random()%256, esp_random()%256, esp_random()%256));
 					delay(flashDuration);
 					tile->drawPixel(xPos,yPos, tile->RGB(255, 0, 0));
-					flashTime = genFlashInterval();
+					frameTimer.setTimeStep(genFlashInterval());
 				}
 				break;
 			default:

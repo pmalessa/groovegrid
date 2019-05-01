@@ -80,7 +80,7 @@ void AnimationRunner::run()
 	}
 	if(frameTimer.isTimeUp())
 	{
-		if(!animationQueue.empty())
+		if(animationQueue.size() > currentAnimation)	//if current Element available in Queue
 		{
 			if(animationQueue.at(currentAnimation)->animationPtr != nullptr)
 			{
