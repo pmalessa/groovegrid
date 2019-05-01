@@ -1,10 +1,13 @@
-All Commands have to include a unique randomly generated CommandID, which will be included in the Response as well
+Each Command has to include a unique CommandID, which will be included in the Response as well
 All Commands will return an ACK or NACK even if they have no returns.
 
 Control Channel
 {
 	All Commands inside the Control Channel waits for the reception of the ACK by the right phone before it handles the next Command.
 	One way would be to block write access to symbolize business. Another way would be to return some kind of busy signal to the second phone.
+
+	Each commandID has to be mapped to the userID that sent that command. If a different userID read the command response, 
+	it will be kept in the characteristic for the next read, hopefully for the right phone. Otherwise delete response, because it reached its destination.
 
 	get GridData
 	{
@@ -42,12 +45,12 @@ Control Channel
 		return: none
 	}
 	
-	connect Phone
+	registerUser
 	{
 		arguments: none
-		return: UserChannel
+		return: userID
 	}
-	disconnect Phone
+	unregisterUser
 	{
 		arguments: none
 		return: none
@@ -95,3 +98,25 @@ User Channel AnimationRunner
 		return: none
 	}
 }
+
+
+Phone -------------------------------------------------- BLE Lib  ---------------------------------------------------------------- App
+
+write(Command(comID)) ----------------->
+
+										                    --------------------------------------------------------> onWrite(Command(comID), userID)
+																				
+																				                                          ...process Command...
+																				
+										                     <-------------------------------------------------------- writeResponse(response(comID))
+
+									                save response in
+									                 responseQueue,
+									            put first in Characteristic
+
+read() --------------------------------------------------->
+
+	<------------------------------------------------ response(comID)
+
+             									if right userID: remove response
+			            						if wrong userID: keep response
