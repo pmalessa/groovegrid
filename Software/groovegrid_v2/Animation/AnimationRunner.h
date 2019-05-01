@@ -11,7 +11,7 @@
 #include "../PLATFORM.h"
 #include "../utils/GrooveAnimation.h"
 #include "../utils/GrooveApp.h"
-#include "RandomRectAnimation.h"
+#include <queue>
 
 
 class AnimationRunner: public GrooveApp
@@ -25,8 +25,15 @@ public:
     std::string onUserRead(uint8_t channelID);
     void onUserWrite(std::string data, uint8_t channelID);
 private:
-	uint8_t selectedAnimation;
-	GrooveAnimation* currentAnimation;
+
+    struct AnimationEntry{
+    	GrooveAnimation* animationPtr;
+    	uint32_t animationLength;
+    };
+
+    std::vector<AnimationEntry *> animationQueue;
+    bool repeating;
+    uint8_t currentAnimation;
 	DeltaTimer animationTimer;
 };
 
