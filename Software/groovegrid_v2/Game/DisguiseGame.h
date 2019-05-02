@@ -11,6 +11,7 @@ public:
 	void stop();
     std::string onUserRead(uint8_t channelID);
     void onUserWrite(std::string data, uint8_t channelID);
+    GrooveApp* new_instance(GridTile *tile);
 private:
 	uint32_t genFlashInterval();
 

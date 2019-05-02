@@ -75,6 +75,7 @@ public:
 	void run();
     std::string onUserRead(uint8_t channelID);
     void onUserWrite(std::string data, uint8_t channelID);
+    GrooveApp* new_instance(GridTile *tile);
 private:
     GameState_2048 *gameState;
     uint8_t boardsize;

@@ -26,8 +26,6 @@ void MainLoop::onUserWrite(std::string data, uint8_t channelID)
 
 	if(input == '0')
 	{
-		input = 0;
-
 		removeApp(currentAppID);
 		AppEntry *entry = new AppEntry();
 		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
@@ -36,8 +34,6 @@ void MainLoop::onUserWrite(std::string data, uint8_t channelID)
 	}
 	if(input == '1')
 	{
-		input = 0;
-
 		removeApp(currentAppID);
 		AppEntry *entry = new AppEntry();
 		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
@@ -46,8 +42,6 @@ void MainLoop::onUserWrite(std::string data, uint8_t channelID)
 	}
 	if(input == '2')
 	{
-		input = 0;
-
 		removeApp(currentAppID);
 		AppEntry *entry = new AppEntry();
 		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
@@ -56,8 +50,6 @@ void MainLoop::onUserWrite(std::string data, uint8_t channelID)
 	}
 	if(input == '3')
 	{
-		input = 0;
-
 		removeApp(currentAppID);
 		AppEntry *entry = new AppEntry();
 		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
@@ -66,8 +58,6 @@ void MainLoop::onUserWrite(std::string data, uint8_t channelID)
 	}
 	if(input == '4')
 	{
-		input = 0;
-
 		removeApp(currentAppID);
 		AppEntry *entry = new AppEntry();
 		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
@@ -76,16 +66,13 @@ void MainLoop::onUserWrite(std::string data, uint8_t channelID)
 	}
 	if(input == 'x')	//reset
 	{
-		input = 0;
-		//resetApp(currentAppID);
+		resetApp(currentAppID);
 	}
 }
 
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
-	input = 0;
-
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static COMM& comm = COMM::getInstance();
 
@@ -98,11 +85,6 @@ MainLoop::MainLoop()
 	entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
 	entry->runningApp = new DisguiseGame(entry->tile);
 	currentAppID = addApp(entry);
-}
-
-void MainLoop::generateAvailableAppsMap()
-{
-	//availableAppsMap.insert("AnimationRunner", __x)
 }
 
 uint8_t MainLoop::addApp(AppEntry *entry)
@@ -130,9 +112,9 @@ void MainLoop::removeApp(uint8_t appID)
 		entry->runningApp->stop();
 		tsched.Detach(entry->runningApp);
 		comm.Detach(entry->runningApp);
-		//delete entry->runningApp;
-		//delete entry->tile;
-		//delete entry;
+		delete entry->runningApp;
+		delete entry->tile;
+		delete entry;
 	}
 }
 
@@ -144,8 +126,12 @@ void MainLoop::resetApp(uint8_t appID)
 	AppEntry *entry = runningAppList.at(appID);
 	tsched.Detach(entry->runningApp);
 	comm.Detach(entry->runningApp);
+	GrooveApp *newApp = entry->runningApp->new_instance(entry->tile);
 	delete entry->runningApp;
-	//not done yet
+	entry->runningApp = newApp;
+	entry->runningApp->start();
+	tsched.Attach(entry->runningApp);
+	comm.Attach(entry->runningApp, CHANNEL_USER1);
 }
 
 void MainLoop::loop()

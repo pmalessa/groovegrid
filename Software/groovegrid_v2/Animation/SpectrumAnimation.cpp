@@ -16,6 +16,11 @@ SpectrumAnimation::SpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
 	generateBars();
 }
 
+GrooveApp* SpectrumAnimation::new_instance(GridTile *tile)
+{
+	return new SpectrumAnimation(tile);
+}
+
 void SpectrumAnimation::run()
 {
 	if(frameTimer.isTimeUp())

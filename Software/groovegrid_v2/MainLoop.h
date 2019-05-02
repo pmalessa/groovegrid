@@ -49,7 +49,6 @@ private:
 	MainLoop & operator = (const MainLoop &);
 
 	std::vector<AppEntry*> runningAppList;
-	std::map<std::string,GrooveApp*> availableAppsMap;
 
 	char input;
 	uint8_t currentAppID;

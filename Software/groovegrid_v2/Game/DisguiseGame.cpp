@@ -16,6 +16,11 @@
 
 	}
 
+	GrooveApp* DisguiseGame::new_instance(GridTile *tile)
+	{
+		return new DisguiseGame(tile);
+	}
+
 	void DisguiseGame::start()
 	{
 

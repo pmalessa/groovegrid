@@ -14,6 +14,11 @@ SnakeGame::~SnakeGame(){
 	delete gameState;
 }
 
+GrooveApp* SnakeGame::new_instance(GridTile *tile)
+{
+	return new SnakeGame(tile);
+}
+
 void SnakeGame::initialize() {
 	gameState = new SnakeGameState();
 	gameState->head = new Coordinate(10, 3);

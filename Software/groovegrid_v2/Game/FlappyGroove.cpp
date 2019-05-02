@@ -41,6 +41,11 @@ FlappyGroove::~FlappyGroove()
 	delete gameState;
 }
 
+GrooveApp* FlappyGroove::new_instance(GridTile *tile)
+{
+	return new FlappyGroove(tile);
+}
+
 void FlappyGroove::run()
 {
 	static uint8_t worldMoveCounter = worldMoveSpeed;

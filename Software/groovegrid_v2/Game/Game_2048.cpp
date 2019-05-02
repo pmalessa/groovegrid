@@ -27,6 +27,11 @@ Game_2048::~Game_2048()
 	delete gameState;
 }
 
+GrooveApp* Game_2048::new_instance(GridTile *tile)
+{
+	return new Game_2048(tile);
+}
+
 void Game_2048::start()
 {
 	DrawBoard(gameState->board);

@@ -19,6 +19,7 @@ public:
 	virtual void run() = 0;					//has to be overridden by AppLoop
     virtual std::string onUserRead(uint8_t channelID) = 0;
     virtual void onUserWrite(std::string data, uint8_t channelID) = 0;
+    virtual GrooveApp* new_instance(GridTile *tile) = 0;
 protected:
 	GridTile* tile;							//has to be initialized
 	DeltaTimer frameTimer;

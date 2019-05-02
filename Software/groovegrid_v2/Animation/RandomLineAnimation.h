@@ -12,6 +12,7 @@ public:
 	RandomLineAnimation(GridTile* gridTile);
 	~RandomLineAnimation();
 	void run();
+	GrooveApp* new_instance(GridTile *tile);
 private:
 	uint32_t animationSpeed;
 };

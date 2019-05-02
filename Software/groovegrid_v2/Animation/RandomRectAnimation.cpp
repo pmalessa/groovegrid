@@ -21,6 +21,11 @@ RandomRectAnimation::~RandomRectAnimation()
 {
 }
 
+GrooveApp* RandomRectAnimation::new_instance(GridTile *tile)
+{
+	return new RandomRectAnimation(tile);
+}
+
 void RandomRectAnimation::run()
 {
 	if(frameTimer.isTimeUp())

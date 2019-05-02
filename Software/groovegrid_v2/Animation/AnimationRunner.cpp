@@ -25,6 +25,11 @@ AnimationRunner::~AnimationRunner()
 
 }
 
+GrooveApp* AnimationRunner::new_instance(GridTile *tile)
+{
+	return new AnimationRunner(tile);
+}
+
 void AnimationRunner::start()
 {
 	if(animationQueue.empty())
