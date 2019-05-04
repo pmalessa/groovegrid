@@ -42,12 +42,12 @@ void AnimationRunner::start()
 		animationQueue.push_back(entry);
 
 		entry = new AnimationEntry();
-		entry->animationPtr = new RandomPixelAnimation(tile);
+		entry->animationPtr = new RandomRectAnimation(tile);
 		entry->animationLength = ANIMATION_RUNTIME_MS;
 		animationQueue.push_back(entry);
 
 		entry = new AnimationEntry();
-		entry->animationPtr = new RandomLineAnimation(tile);
+		entry->animationPtr = new RandomRectAnimation(tile);
 		entry->animationLength = ANIMATION_RUNTIME_MS;
 		animationQueue.push_back(entry);
 
