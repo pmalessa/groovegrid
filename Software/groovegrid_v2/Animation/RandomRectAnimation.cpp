@@ -28,8 +28,44 @@ GrooveApp* RandomRectAnimation::new_instance(GridTile *tile)
 
 void RandomRectAnimation::run()
 {
+	//static uint8_t i = 0,j = 0, on = 1;
 	if(frameTimer.isTimeUp())
 	{
+		/*
+		if(on == 1)
+		{
+			tile->drawPixel(i, j, tile->RGB(100, 100, 100));
+		}
+		else
+		{
+			tile->drawPixel(i, j, tile->RGB(0, 255, 0));
+		}
+
+		if(i == tile->getWidth()-1)
+		{
+			i=0;
+			if(j == tile->getHeight()-1)
+			{
+				j=0;
+				if(on == 1)
+				{
+					on = 0;
+				}
+				else
+				{
+					on = 1;
+				}
+			}
+			else
+			{
+				j++;
+			}
+		}
+		else
+		{
+			i++;
+		}
+		*/
 		if(fadeIn == true)	//clear or draw
 		{
 			tile->fillRect(x, y, w, h, tile->RGB(currentRed, currentGreen, currentBlue));
