@@ -68,10 +68,10 @@ void RandomRectAnimation::run()
 		*/
 		if(fadeIn == true)	//clear or draw
 		{
-			tile->fillRect(x, y, w, h, tile->RGB(currentRed, currentGreen, currentBlue));
 			if(currentRed + stepSize > desiredRed) 		currentRed = desiredRed; 		else currentRed += stepSize;
 			if(currentGreen + stepSize > desiredGreen)	currentGreen = desiredGreen; 	else currentGreen += stepSize;
 			if(currentBlue + stepSize > desiredBlue) 	currentBlue = desiredBlue; 		else currentBlue += stepSize;
+			tile->fillRect(x, y, w, h, tile->RGB(currentRed, currentGreen, currentBlue));
 			if(currentRed == desiredRed && currentGreen == desiredGreen && currentBlue == desiredBlue)
 			{
 				fadeIn = false;
@@ -79,10 +79,10 @@ void RandomRectAnimation::run()
 		}
 		else
 		{
-			tile->fillRect(x, y, w, h, tile->RGB(currentRed, currentGreen, currentBlue));
 			if(currentRed-stepSize < 0) 	currentRed=0; 		else currentRed -= stepSize;
 			if(currentGreen-stepSize < 0) 	currentGreen=0; 	else currentGreen -= stepSize;
 			if(currentBlue-stepSize < 0) 	currentBlue=0; 		else currentBlue -= stepSize;
+			tile->fillRect(x, y, w, h, tile->RGB(currentRed, currentGreen, currentBlue));
 			if(currentRed == 0 && currentGreen == 0 && currentBlue == 0)
 			{
 				generateNewRect();
