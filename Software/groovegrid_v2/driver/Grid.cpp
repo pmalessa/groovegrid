@@ -8,17 +8,6 @@
 
 CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
 
-//4x4 display, starting at top left and going down zigzag
-#ifdef DOOR16
-FastLED_NeoMatrix Grid::matrix = FastLED_NeoMatrix(matrixleds,GRID_WIDTH,GRID_HEIGHT,
-		  NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
-		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG);
-#else
-FastLED_NeoMatrix Grid::matrix = FastLED_NeoMatrix(matrixleds,GRID_WIDTH,GRID_HEIGHT,
-		  NEO_MATRIX_TOP     + NEO_MATRIX_RIGHT +
-		  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG);
-#endif
-
 Grid& Grid::getInstance()
 {
 	static Grid _instance;
@@ -39,37 +28,54 @@ Grid::Grid()
 	FastLED.addLeds<NEOPIXEL,GRID_DATA6_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*5, NUM_LEDS_PER_CHANNEL);
 	FastLED.addLeds<NEOPIXEL,GRID_DATA7_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*6, NUM_LEDS_PER_CHANNEL);
 #endif
-	matrix.begin();
 }
 
 void Grid::writePixel(int16_t x, int16_t y, uint16_t color)
 {
-	matrix.drawPixel(x, y, color);
+	if(y%2 == 0)	//even row
+	{
+#ifdef DOOR16	//First LED Top Left
+		matrixleds[GRID_WIDTH*y + x] = expandColor(color);
+#else			//First LED Top Right
+		matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = expandColor(color);
+#endif
+	}
+	else			//odd row
+	{
+#ifdef DOOR16	//First LED Top Left
+		matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = expandColor(color);
+#else			//First LED Top Right
+		matrixleds[GRID_WIDTH*y + x-1] = expandColor(color);
+#endif
+	}
 }
 
 void Grid::drawPixel(int16_t x, int16_t y, uint16_t color)
 {
-	matrix.drawPixel(x, y, color);
-	matrix.show();
+	writePixel(x, y, color);
+	FastLED.show();
 }
 
 void Grid::endWrite()
 {
-	matrix.show();
+	FastLED.show();
 }
 
 void Grid::clearDisplay()
 {
-	matrix.clear();
+	FastLED.clear(true);
 }
 
+// Downgrade 24-bit color to 16-bit
 uint16_t Grid::RGB(uint8_t r, uint8_t g, uint8_t b)
 {
-	return matrix.Color(r, g, b);
+	  return ((uint16_t)(r & 0xF8) << 8) |
+	         ((uint16_t)(g & 0xFC) << 3) |
+	                    (b         >> 3);
 }
 uint16_t Grid::RGB(uint32_t rgb)
 {
-	return matrix.Color((rgb&0xFF0000)>>16,(rgb&0x00FF00)>>8,(rgb&0x0000FF)>>0);
+	return RGB((rgb&0xFF0000)>>16,(rgb&0x00FF00)>>8,(rgb&0x0000FF)>>0);
 }
 
 uint16_t Grid::HSV(uint8_t h, uint8_t s, uint8_t v)
@@ -80,7 +86,15 @@ uint16_t Grid::HSV(uint8_t h, uint8_t s, uint8_t v)
 	return 0;
 }
 
+// Expand 16-bit input color (Adafruit_GFX colorspace) to 24-bit (NeoPixel)
+// (w/gamma adjustment)
+uint32_t Grid::expandColor(uint16_t color) {
+  return ((uint32_t)pgm_read_byte(&gamma5[ color >> 11       ]) << 16) |
+         ((uint32_t)pgm_read_byte(&gamma6[(color >> 5) & 0x3F]) <<  8) |
+                    pgm_read_byte(&gamma5[ color       & 0x1F]);
+}
+
 void Grid::setBrightness(uint8_t brightness)
 {
-	matrix.setBrightness(brightness);
+	FastLED.setBrightness(brightness);
 }

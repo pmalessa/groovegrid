@@ -9,7 +9,8 @@
 #define GRID_H_
 
 #include "../PLATFORM.h"
-#include "FastLED_NeoMatrix/FastLED_NeoMatrix.h"
+#include <FastLED.h>
+#include "gamma.h"
 
 class Grid {
  public:
@@ -26,11 +27,11 @@ class Grid {
 uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
 uint16_t RGB(uint32_t rgb);
 uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
+uint32_t expandColor(uint16_t color);
 
  private:
 	Grid();
 	Grid(const Grid&);
 	Grid & operator = (const Grid &);
-	static FastLED_NeoMatrix matrix;
 };
 #endif /* GRID_H_ */
