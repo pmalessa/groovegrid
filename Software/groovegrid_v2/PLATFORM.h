@@ -11,7 +11,7 @@
 #include "Arduino.h"
 #include "CONFIG.h"
 
-#define FRAMERATE_MS 33	//33ms per frame -> 30fps
+#define FRAMERATE_MS 10	//33ms per frame -> 30fps
 
 #if defined(DOOR16)
 	#define GRID_WIDTH 4

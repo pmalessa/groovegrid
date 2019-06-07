@@ -11,6 +11,7 @@
 #include "RandomLineAnimation.h"
 #include "RandomPixelAnimation.h"
 #include "RandomRectAnimation.h"
+#include "ColorPaletteAnimation.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 
@@ -37,10 +38,11 @@ void AnimationRunner::start()
 		//init default Queue
 		AnimationEntry *entry;
 		entry = new AnimationEntry();
-		entry->animationPtr = new RandomRectAnimation(tile);
-		entry->animationLength = ANIMATION_RUNTIME_MS;
+		entry->animationPtr = new ColorPaletteAnimation(tile);
+		entry->animationLength = 99999999;//ANIMATION_RUNTIME_MS;
 		animationQueue.push_back(entry);
 
+		/*
 		entry = new AnimationEntry();
 		entry->animationPtr = new RandomRectAnimation(tile);
 		entry->animationLength = ANIMATION_RUNTIME_MS;
@@ -50,7 +52,7 @@ void AnimationRunner::start()
 		entry->animationPtr = new RandomRectAnimation(tile);
 		entry->animationLength = ANIMATION_RUNTIME_MS;
 		animationQueue.push_back(entry);
-
+	*/
 		currentAnimation = 0;
 		animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
 	}
