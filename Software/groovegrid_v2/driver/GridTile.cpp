@@ -76,6 +76,11 @@ uint16_t GridTile::RGB(uint32_t rgb)
 	static Grid& grid = Grid::getInstance();
 	return grid.RGB(rgb);
 }
+uint16_t GridTile::fromCRGB(CRGB crgb)
+{
+	static Grid& grid = Grid::getInstance();
+	return grid.RGB(crgb.r,crgb.g,crgb.b);
+}
 uint16_t GridTile::HSV(uint8_t h, uint8_t s, uint8_t v)
 {
 	static Grid& grid = Grid::getInstance();

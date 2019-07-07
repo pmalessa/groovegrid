@@ -31,6 +31,7 @@ public:
 
 	uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
 	uint16_t RGB(uint32_t rgb);
+	uint16_t fromCRGB(CRGB crgb);
 	uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
 protected:
 
