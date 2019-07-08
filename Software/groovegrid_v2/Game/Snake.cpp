@@ -160,12 +160,6 @@ void SnakeGame::draw() {
 
 	for (uint8_t i=0;i < gameState->body.size() ; ++i) {
 		drawElement(*gameState->body[i]);
-		Serial.println("Body at index ");
-		Serial.println(i);
-		Serial.println("is at pixel: ");
-		Serial.println(gameState->body[i]->x);
-		Serial.println(", ");
-		Serial.println(gameState->body[i]->y);
 	}
 
 	tile->endWrite();

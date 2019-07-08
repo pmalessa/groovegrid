@@ -147,7 +147,7 @@ __attribute__ ((always_inline)) inline static uint32_t __clock_cycles() {
 // -- Number of RMT channels to use (up to 8)
 //    Redefine this value to 1 to force serial output
 #ifndef FASTLED_RMT_MAX_CHANNELS
-#define FASTLED_RMT_MAX_CHANNELS 1
+#define FASTLED_RMT_MAX_CHANNELS 3
 #endif
 
 // -- Array of all controllers
