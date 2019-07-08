@@ -153,7 +153,6 @@ void SnakeGame::move() {
 }
 
 void SnakeGame::draw() {
-	tile->startWrite();
 	tile->fillScreenBuffer(tile->RGB(0)); // Clear Screen
 
 	tile->writePixel(gameState->head->x, gameState->head->y, tile->RGB(color));

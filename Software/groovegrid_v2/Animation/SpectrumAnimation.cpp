@@ -32,10 +32,9 @@ void SpectrumAnimation::run()
 
 void SpectrumAnimation::drawBars()
 {
-	tile->startWrite();
 	for(uint8_t i=0;i<barNumber;i++)
 	{
-		tile->drawRect(barArray[i].xPos, barArray[i].yPos, barWidth, tile->getHeight()-1, barArray->color);
+		tile->writeRect(barArray[i].xPos, barArray[i].yPos, barWidth, tile->getHeight()-1, barArray->color);
 	}
 	tile->endWrite();
 }

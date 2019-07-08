@@ -38,7 +38,8 @@
 			case 0:	//fade in
 				if(frameTimer.isTimeUp())
 				{
-					tile->drawLine(tile->getWidth()-1-fadePosition, 0, tile->getWidth()-1-fadePosition, tile->getHeight()-1, tile->RGB(255, 0, 0));	//draw red line
+					tile->writeLine(tile->getWidth()-1-fadePosition, 0, tile->getWidth()-1-fadePosition, tile->getHeight()-1, tile->RGB(255, 0, 0));	//draw red line
+					tile->endWrite();
 					fadePosition++;
 					if(fadePosition == tile->getWidth())
 					{
@@ -53,9 +54,11 @@
 				{
 					xPos = esp_random()%tile->getWidth();
 					yPos = esp_random()%tile->getHeight();
-					tile->drawPixel(xPos,yPos, tile->RGB(esp_random()%256, esp_random()%256, esp_random()%256));
+					tile->writePixel(xPos,yPos, tile->RGB(esp_random()%256, esp_random()%256, esp_random()%256));
+					tile->endWrite();
 					delay(flashDuration);
-					tile->drawPixel(xPos,yPos, tile->RGB(255, 0, 0));
+					tile->writePixel(xPos,yPos, tile->RGB(255, 0, 0));
+					tile->endWrite();
 					frameTimer.setTimeStep(genFlashInterval());
 				}
 				break;

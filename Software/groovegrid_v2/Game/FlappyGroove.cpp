@@ -128,7 +128,6 @@ void FlappyGroove::initBoard()
 
 void FlappyGroove::drawBoard()
 {
-	tile->startWrite();
 	for(uint8_t i=0;i<=gameState->xmax;i++)
 	{
 		for(uint8_t j=0; j<=gameState->ymax; j++)
@@ -201,7 +200,8 @@ void FlappyGroove::restart()
 		{
 			if(i <= gameState->xmax)
 			{
-				tile->drawLine(i, 0, i, gameState->ymax, tile->RGB(255, 0, 0));
+				tile->writeLine(i, 0, i, gameState->ymax, tile->RGB(255, 0, 0));
+				tile->endWrite();
 				i++;
 			}
 			else
@@ -218,8 +218,9 @@ void FlappyGroove::restart()
 		{
 			if(i <= gameState->xmax)
 			{
-				tile->drawLine(i, 0, i, gameState->ymax-1, tile->RGB(0, 0, 0));
-				tile->drawPixel(i, gameState->ymax, tile->RGB(40, 125, 84));
+				tile->writeLine(i, 0, i, gameState->ymax-1, tile->RGB(0, 0, 0));
+				tile->writePixel(i, gameState->ymax, tile->RGB(40, 125, 84));
+				tile->endWrite();
 				i++;
 			}
 			else
