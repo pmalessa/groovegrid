@@ -21,6 +21,7 @@ public:
 
 	//Those functions depend on the dimension, therefore they have to be overridden
 	void 		 writePixel(int16_t x, int16_t y, uint16_t color);
+	void 		 writePixel(int16_t x, int16_t y, CRGB color);
 	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
 	void 		 endWrite(void);
 	void 		 fillScreen(uint16_t color);

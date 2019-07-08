@@ -35,6 +35,16 @@ void GridTile::writePixel(int16_t x, int16_t y, uint16_t color)
 		grid.writePixel(x, y, color);
 	}
 }
+
+void GridTile::writePixel(int16_t x, int16_t y, CRGB color)
+{
+	static Grid& grid = Grid::getInstance();
+	if(!((uint16_t)x < x0 || (uint16_t)y < y0 || (uint16_t)x > x1 || (uint16_t)y > y1))	//if draw is inside tile dimensions
+	{
+		grid.writePixel(x, y, color);
+	}
+}
+
 void GridTile::drawPixel(int16_t x, int16_t y, uint16_t color)
 {
 	static Grid& grid = Grid::getInstance();
