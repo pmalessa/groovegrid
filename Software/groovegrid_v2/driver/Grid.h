@@ -9,7 +9,7 @@
 #define GRID_H_
 
 #include "../PLATFORM.h"
-#include <FastLED.h>
+#include "FastLED/FastLED.h"
 #include "gamma.h"
 
 class Grid {
@@ -30,11 +30,9 @@ uint16_t RGB(uint32_t rgb);
 uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
 uint32_t expandColor(uint16_t color);
 
-volatile uint8_t renderTriggered;
  private:
 	Grid();
 	Grid(const Grid&);
 	Grid & operator = (const Grid &);
-	TaskHandle_t renderTask;
 };
 #endif /* GRID_H_ */

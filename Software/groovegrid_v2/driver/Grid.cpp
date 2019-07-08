@@ -8,31 +8,6 @@
 
 CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
 
-void renderLoop(void *parameter)
-{
-	static Grid& grid = Grid::getInstance();
-	Serial.print("renderTask started\n");
-	while(true)
-	{
-		if(grid.renderTriggered == true)
-		{
-			grid.renderTriggered = false;
-			FastLED.show();
-		}
-	}
-}
-
-extern "C" void createRenderTask(TaskHandle_t *renderTask)
-{
-	xTaskCreatePinnedToCore(renderLoop, /* Function to implement the task */
-	      "renderTask", /* Name of the task */
-	      10000,  /* Stack size in words */
-	      NULL,  /* Task input parameter */
-	      0,  /* Priority of the task */
-	      renderTask,  /* Task handle. */
-	      0); /* Core where the task should run */
-}
-
 Grid& Grid::getInstance()
 {
 	static Grid _instance;
@@ -52,9 +27,8 @@ Grid::Grid()
 	FastLED.addLeds<NEOPIXEL,GRID_DATA5_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*4, NUM_LEDS_PER_CHANNEL);
 	FastLED.addLeds<NEOPIXEL,GRID_DATA6_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*5, NUM_LEDS_PER_CHANNEL);
 	FastLED.addLeds<NEOPIXEL,GRID_DATA7_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*6, NUM_LEDS_PER_CHANNEL);
+	//FastLED.setMaxRefreshRate(100, 0);
 #endif
-	createRenderTask(&renderTask);
-	renderTriggered = false;
 }
 
 void Grid::writePixel(int16_t x, int16_t y, uint16_t color)
@@ -72,7 +46,7 @@ void Grid::writePixel(int16_t x, int16_t y, uint16_t color)
 #ifdef DOOR16	//First LED Top Left
 		matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = expandColor(color);
 #else			//First LED Top Right
-		matrixleds[GRID_WIDTH*y + x-1] = expandColor(color);
+		matrixleds[GRID_WIDTH*y + x] = expandColor(color);
 #endif
 	}
 }
@@ -105,7 +79,7 @@ void Grid::drawPixel(int16_t x, int16_t y, uint16_t color)
 
 void Grid::endWrite()
 {
-	renderTriggered = true;
+	FastLED.show();
 }
 
 void Grid::clearDisplay()
