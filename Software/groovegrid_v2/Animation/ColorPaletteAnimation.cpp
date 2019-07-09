@@ -43,17 +43,28 @@ void ColorPaletteAnimation::FillLEDsFromPaletteColors( uint8_t colorIndex)
 
     for(int i=0;i<tile->getHeight();i++)
     {
-    	for(int j=0;j<tile->getWidth();j++)
+    	if(i%2 == 0) //even row
     	{
-    		tile->writePixel(j, i, ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending));
-    		colorIndex += 3;
+        	for(int j=tile->getWidth();j>0;j--)
+        	{
+        		tile->writePixel(j, i, ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending));
+        		colorIndex += 3;
+        	}
+    	}
+    	else	//odd row
+    	{
+        	for(int j=0;j<tile->getWidth();j++)
+        	{
+        		tile->writePixel(j, i, ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending));
+        		colorIndex += 3;
+        	}
     	}
     }
 }
 
 void ColorPaletteAnimation::ChangePalettePeriodically()
 {
-    uint8_t secondHand = (millis() / 1000) % 30;
+    uint8_t secondHand = (millis() / 1000) % 60;
     static uint8_t lastSecond = 99;
 
     if( lastSecond != secondHand) {
