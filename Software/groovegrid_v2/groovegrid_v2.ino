@@ -5,6 +5,7 @@
 
 void setup()
 {
+	delay(3000);
 }
 
 // The loop function is called in an endless loop

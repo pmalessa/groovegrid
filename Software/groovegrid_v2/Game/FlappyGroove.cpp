@@ -128,7 +128,6 @@ void FlappyGroove::initBoard()
 
 void FlappyGroove::drawBoard()
 {
-	tile->startWrite();
 	for(uint8_t i=0;i<=gameState->xmax;i++)
 	{
 		for(uint8_t j=0; j<=gameState->ymax; j++)
@@ -136,13 +135,13 @@ void FlappyGroove::drawBoard()
 			switch (gameState->board[i][j]) {
 				case FIELD_SPACE:
 				case FIELD_EMPTY:
-					tile->writePixel(i, j, tile->RGB(0, 0, 0));
+					tile->writePixel(i, j, CRGB(0, 0, 0));
 					break;
 				case FIELD_WALL:
-					tile->writePixel(i, j, tile->RGB(255, 0, 0));
+					tile->writePixel(i, j, CRGB(255, 0, 0));
 					break;
 				case FIELD_FLOOR:
-					tile->writePixel(i, j, tile->RGB(40, 125, 84));
+					tile->writePixel(i, j, CRGB(40, 125, 84));
 					break;
 				default:
 					break;
@@ -150,7 +149,7 @@ void FlappyGroove::drawBoard()
 		}
 	}
 	playerPosition = (float) gameState->ymax * position;//draw Player
-	tile->writePixel(0, gameState->ymax-1-playerPosition, tile->RGB(0, 0, 255));
+	tile->writePixel(0, gameState->ymax-1-playerPosition, CRGB(0, 0, 255));
 	tile->endWrite();
 }
 
@@ -182,7 +181,7 @@ void FlappyGroove::updatePlayer()
 
 void FlappyGroove::start()
 {
-	tile->fillScreen(tile->RGB(0, 0, 0));
+	tile->fillScreen(CRGB(0, 0, 0));
 }
 void FlappyGroove::stop()
 {
@@ -201,7 +200,8 @@ void FlappyGroove::restart()
 		{
 			if(i <= gameState->xmax)
 			{
-				tile->drawLine(i, 0, i, gameState->ymax, tile->RGB(255, 0, 0));
+				tile->writeLine(i, 0, i, gameState->ymax, CRGB(255, 0, 0));
+				tile->endWrite();
 				i++;
 			}
 			else
@@ -218,8 +218,9 @@ void FlappyGroove::restart()
 		{
 			if(i <= gameState->xmax)
 			{
-				tile->drawLine(i, 0, i, gameState->ymax-1, tile->RGB(0, 0, 0));
-				tile->drawPixel(i, gameState->ymax, tile->RGB(40, 125, 84));
+				tile->writeLine(i, 0, i, gameState->ymax-1, CRGB(0, 0, 0));
+				tile->writePixel(i, gameState->ymax, CRGB(40, 125, 84));
+				tile->endWrite();
 				i++;
 			}
 			else

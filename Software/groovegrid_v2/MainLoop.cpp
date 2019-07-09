@@ -83,7 +83,7 @@ MainLoop::MainLoop()
 	//Start initial App
 	AppEntry *entry = new AppEntry();
 	entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-	entry->runningApp = new DisguiseGame(entry->tile);
+	entry->runningApp = new AnimationRunner(entry->tile);
 	currentAppID = addApp(entry);
 }
 
@@ -138,4 +138,6 @@ void MainLoop::loop()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	tsched.handleTasks();
+	static Grid& grid = Grid::getInstance();
+	grid.endWrite();
 }

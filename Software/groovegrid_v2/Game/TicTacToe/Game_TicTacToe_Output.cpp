@@ -24,29 +24,30 @@ void Game_TicTacToe_Output()
 
 		switch(GameBoard[i / xMax][ i % xMax]){
 			case 1 :
-				grid.drawPixel(i % xMax, i / xMax, grid.RGB(255,0,0));
+				grid.writePixel(i % xMax, i / xMax, CRGB(255,0,0));
 				break;
 
 			case 2 :
-				grid.drawPixel(i % xMax, i / xMax, grid.RGB(0,255,0));
+				grid.writePixel(i % xMax, i / xMax, CRGB(0,255,0));
 				break;
 
 			default :
-				grid.drawPixel(i % xMax, i / xMax, grid.RGB(0,0,255));
+				grid.writePixel(i % xMax, i / xMax, CRGB(0,0,255));
 				break;
 		}
 	}
+	grid.endWrite();
 
 	game_cnt++;
 	if(game_cnt > 1000){
 		blink_cnt++;
 		if(blink_cnt % 2 == 1){
-			grid.drawPixel(playerPosition[0], playerPosition[1], grid.RGB(255,255,255));
+			grid.writePixel(playerPosition[0], playerPosition[1], CRGB(255,255,255));
 		}else{
 			if(playerTurn == 1){
-				grid.drawPixel(playerPosition[0], playerPosition[1], grid.RGB(0,0,255));
+				grid.writePixel(playerPosition[0], playerPosition[1], CRGB(0,0,255));
 			}else{
-				grid.drawPixel(playerPosition[0], playerPosition[1], grid.RGB(0,255,0));
+				grid.writePixel(playerPosition[0], playerPosition[1], CRGB(0,255,0));
 			}
 		}
 		game_cnt = 0;

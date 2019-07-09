@@ -28,14 +28,51 @@ GrooveApp* RandomRectAnimation::new_instance(GridTile *tile)
 
 void RandomRectAnimation::run()
 {
+	//static uint8_t i = 0,j = 0, on = 1;
 	if(frameTimer.isTimeUp())
 	{
+		/*
+		if(on == 1)
+		{
+			tile->drawPixel(i, j, tile->RGB(100, 100, 100));
+		}
+		else
+		{
+			tile->drawPixel(i, j, tile->RGB(0, 255, 0));
+		}
+
+		if(i == tile->getWidth()-1)
+		{
+			i=0;
+			if(j == tile->getHeight()-1)
+			{
+				j=0;
+				if(on == 1)
+				{
+					on = 0;
+				}
+				else
+				{
+					on = 1;
+				}
+			}
+			else
+			{
+				j++;
+			}
+		}
+		else
+		{
+			i++;
+		}
+		*/
 		if(fadeIn == true)	//clear or draw
 		{
-			tile->fillRect(x, y, w, h, tile->RGB(currentRed, currentGreen, currentBlue));
 			if(currentRed + stepSize > desiredRed) 		currentRed = desiredRed; 		else currentRed += stepSize;
 			if(currentGreen + stepSize > desiredGreen)	currentGreen = desiredGreen; 	else currentGreen += stepSize;
 			if(currentBlue + stepSize > desiredBlue) 	currentBlue = desiredBlue; 		else currentBlue += stepSize;
+			tile->writeFilledRect(x, y, w, h, CRGB(currentRed, currentGreen, currentBlue));
+			tile->endWrite();
 			if(currentRed == desiredRed && currentGreen == desiredGreen && currentBlue == desiredBlue)
 			{
 				fadeIn = false;
@@ -43,10 +80,11 @@ void RandomRectAnimation::run()
 		}
 		else
 		{
-			tile->fillRect(x, y, w, h, tile->RGB(currentRed, currentGreen, currentBlue));
 			if(currentRed-stepSize < 0) 	currentRed=0; 		else currentRed -= stepSize;
 			if(currentGreen-stepSize < 0) 	currentGreen=0; 	else currentGreen -= stepSize;
 			if(currentBlue-stepSize < 0) 	currentBlue=0; 		else currentBlue -= stepSize;
+			tile->writeFilledRect(x, y, w, h, CRGB(currentRed, currentGreen, currentBlue));
+			tile->endWrite();
 			if(currentRed == 0 && currentGreen == 0 && currentBlue == 0)
 			{
 				generateNewRect();
