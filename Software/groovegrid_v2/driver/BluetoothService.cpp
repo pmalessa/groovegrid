@@ -4,31 +4,31 @@
  *  Created on: 20.03.2019
  *      Author: pmale
  */
-#include "COMM.h"
+#include "BluetoothService.h"
 
-bool COMM::isConnected()
+bool BluetoothService::isConnected()
 {
 	return connected;
 }
 
-void COMM::onConnect()
+void BluetoothService::onConnect()
 {
 	connected = true;
 }
 
-void COMM::onDisconnect()
+void BluetoothService::onDisconnect()
 {
 	connected = false;
 }
 
-COMM& COMM::getInstance()
+BluetoothService& BluetoothService::getInstance()
 {
-	static COMM _instance;
+	static BluetoothService _instance;
 	return _instance;
 }
 
-COMM::~COMM(){}
-COMM::COMM()
+BluetoothService::~BluetoothService(){}
+BluetoothService::BluetoothService()
 {
 	CommChannel *ch;
 	Serial.begin(115200);
@@ -76,7 +76,6 @@ COMM::COMM()
 		ch->rxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
 		ch->txCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
 		ch->attachedService->start();
-		ch->commInterface = (CommInterface *)nullptr;
 		BluetoothAdvertiser->addServiceUUID(*ch->serviceUUID);
 	}
 
@@ -84,65 +83,54 @@ COMM::COMM()
 	BluetoothAdvertiser->setMinPreferred(0x06);  // functions that help with iPhone connections issue
 	BluetoothAdvertiser->setMinPreferred(0x12);
 	BLEDevice::startAdvertising();
+
 }
 
-void COMM::Attach(CommInterface *callbackPointer, ChannelID channel)
-{
-	for (uint16_t i=0; i < channelList.size(); i++) {
-		if(channelList.at(i)->channelID == channel)
-		{
-			channelList.at(i)->commInterface = callbackPointer;
-		}
-	}
-}
-
-void COMM::Detach(CommInterface *callbackPointer)
-{
-	for (uint16_t i=0; i < channelList.size(); i++) {
-		if(channelList.at(i)->commInterface == callbackPointer)
-		{
-			//channelList.at(i)->commListener = (void *)0;	No detach necessary, attach does overwrite previous attach
-		}
-	}
-}
-
-std::string COMM::onRead(uint8_t channelID)
+std::string BluetoothService::onRead(uint8_t channelID)
 {
 	Serial.print("Read on Channel ");
 	Serial.println(channelID);
 
-	for (uint16_t i=0; i < channelList.size(); i++)
-	{
-		if(channelList.at(i)->channelID == channelID)
-		{
-			if(channelList.at(i)->commInterface != nullptr)
-			{
-				return channelList.at(i)->commInterface->onUserRead(channelID); //call CommListeners
-			}
-		}
-	}
-
 	return "0";
 }
-void COMM::onWrite(std::string data, uint8_t channelID)
+
+void BluetoothService::onWrite(std::string data, uint8_t channelID)
 {
+	DynamicJsonDocument doc(200);
+
 	Serial.print("Write on Channel ");//call CommListeners
 	Serial.print(channelID);
 	Serial.print(": ");
 	Serial.println(data.c_str());
 
-	for (uint16_t i=0; i < channelList.size(); i++)
-	{
-		if(channelList.at(i)->channelID == channelID)
-		{
-			if(channelList.at(i)->commInterface != nullptr)
-			{
-				channelList.at(i)->commInterface->onUserWrite(data, channelID); //call CommListeners
-			}
-		}
+	DeserializationError error = deserializeJson(doc, data);
+	if (error) {
+	Serial.print(F("deserializeJson() failed: "));
+	Serial.println(error.c_str());
+	return;
 	}
+
+	channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
 }
 
-void COMM::run()
+void BluetoothService::Attach(CommInterface *callbackPointer, ChannelID channelID)
+{
+    for (uint16_t i=0; i < channelList.size(); i++) {
+        if(channelList.at(i)->channelID == channelID)
+        {
+            channelList.at(i)->commInterface = callbackPointer;
+        }
+    }
+}
+
+void BluetoothService::sendResponse(DynamicJsonDocument doc, uint8_t channelID)
+{
+	String Output;
+	serializeJson(doc, Output);
+	channelList[channelID]->txCharacteristic->setValue(Output.c_str());
+	channelList[channelID]->txCharacteristic->notify(true);
+}
+
+void BluetoothService::run()
 {
 }

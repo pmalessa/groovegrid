@@ -16,17 +16,6 @@ Control Channel
 		}
 	}
 	
-	create GridTile
-	{
-		arguments: x0, x1, y0, y1
-		return: GridID
-	}
-	remove GridTile : removes all Apps running on this Grid as well
-	{
-		arguments: GridID
-		return: none
-	}
-	
 	get App List
 	{
 		arguments: none
@@ -35,13 +24,25 @@ Control Channel
 	
 	start App
 	{
-		arguments: AppName, GridID
-		return: AppID
+		arguments: AppName
+		return: none
+	}
+	
+	load App
+	{
+		arguments: AppName, SaveGame
+		return: none
+	}
+
+	save App
+	{
+		arguments: none
+		return: SaveGame
 	}
 	
 	stop App
 	{
-		arguments: AppID
+		arguments: none
 		return: none
 	}
 	
@@ -65,16 +66,11 @@ User Channel Game
 		arguments: Input
 		return: none
 	}
-	getGameState
-	{
-		arguments: GameID
-		return: GameState
-	}
 	
-	setGameState
+	UserNotify	-> back channel from Grid to Phone
 	{
-		arguments: GameID, GameState
-		return: none
+		arguments:
+		return: Message
 	}
 }
 
@@ -86,15 +82,9 @@ User Channel AnimationRunner
 		return: animationList
 	}
 	
-	set AnimationQueue
+	set Animation
 	{
-		arguments: AnimationQueue
-		return: none
-	}
-	
-	set Repeating
-	{
-		arguments: bool
+		arguments: AnimationName, Config
 		return: none
 	}
 }

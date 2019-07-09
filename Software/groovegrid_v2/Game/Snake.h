@@ -10,10 +10,10 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveGame.h"
-#include "../driver/COMM.h"
 #include "../driver/Timer.h"
 #include "../driver/GridTile.h"
 #include <deque>
+#include "../driver/BluetoothService.h"
 
 struct Coordinate{
 	uint8_t x;

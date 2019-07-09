@@ -8,9 +8,9 @@
 #ifndef GAME_2048_H_
 #define GAME_2048_H_
 
+#include "../driver/BluetoothService.h"
 #include "../PLATFORM.h"
 #include "../utils/GrooveGame.h"
-#include "../driver/COMM.h"
 #include "../driver/Timer.h"
 #include "../driver/GridTile.h"
 
