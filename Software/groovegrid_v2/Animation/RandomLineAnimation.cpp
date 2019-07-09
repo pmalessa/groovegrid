@@ -31,11 +31,11 @@ void RandomLineAnimation::run()
 		{
 			if(esp_random()%2)
 			{
-				tile->writeLine(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, tile->RGB(esp_random()%256, esp_random()%256, esp_random()%256));
+				tile->writeLine(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, CRGB(esp_random()%256, esp_random()%256, esp_random()%256));
 			}
 			else
 			{
-				tile->writeLine(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, tile->RGB(0, 0, 0));
+				tile->writeLine(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, CRGB(0, 0, 0));
 			}
 			tile->endWrite();
 			wait = esp_random()%animationSpeed;

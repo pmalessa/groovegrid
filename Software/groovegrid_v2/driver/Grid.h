@@ -19,9 +19,7 @@ class Grid {
 
 	void         display(void);
 	void         clearDisplay(void);
-	void 		 writePixel(int16_t x, int16_t y, uint16_t color);
 	void  		 writePixel(int16_t x, int16_t y, CRGB color);
-	void 		 drawPixel(int16_t x, int16_t y, uint16_t color);
 	void 		 endWrite(void);
 	void		 setBrightness(uint8_t brightness);	//set global brightness value 0..255
 

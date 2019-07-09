@@ -29,7 +29,7 @@ void SnakeGame::initialize() {
 }
 
 void SnakeGame::start() {
-	tile->fillScreen(tile->RGB(0));
+	tile->fillScreen(CRGB(0));
 }
 
 void SnakeGame::stop() {
@@ -153,9 +153,9 @@ void SnakeGame::move() {
 }
 
 void SnakeGame::draw() {
-	tile->fillScreenBuffer(tile->RGB(0)); // Clear Screen
+	tile->fillScreenBuffer(CRGB(0)); // Clear Screen
 
-	tile->writePixel(gameState->head->x, gameState->head->y, tile->RGB(color));
+	tile->writePixel(gameState->head->x, gameState->head->y, CRGB(color));
 	drawElement(*food);
 
 	for (uint8_t i=0;i < gameState->body.size() ; ++i) {
@@ -166,7 +166,7 @@ void SnakeGame::draw() {
 }
 
 void SnakeGame::drawElement(uint8_t x, uint8_t y) {
-	tile->writePixel(x, y, tile->RGB(color));
+	tile->writePixel(x, y, CRGB(color));
 }
 
 void SnakeGame::drawElement(Coordinate coordinate) {

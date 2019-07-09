@@ -9,7 +9,7 @@
 Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 {
 	gameSpeed = 5;
-	tile->fillScreen(tile->RGB(0, 0, 0));	//fill grid black
+	tile->fillScreen(CRGB(0, 0, 0));	//fill grid black
 	if(tile->getWidth() <= tile->getHeight())	//make board square
 	{
 		this->boardsize = tile->getWidth();
@@ -139,37 +139,37 @@ void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 	uint16_t col = 0;
 	switch (number) {
 		case 2:
-			 col = tile->RGB(COLOR_RED);
+			 col = CRGB(COLOR_RED);
 			break;
 		case 4:
-			col = tile->RGB(COLOR_GREEN);
+			col = CRGB(COLOR_GREEN);
 			break;
 		case 8:
-			col = tile->RGB(COLOR_BLUE);
+			col = CRGB(COLOR_BLUE);
 			break;
 		case 16:
-			col = tile->RGB(COLOR_WHITE);
+			col = CRGB(COLOR_WHITE);
 			break;
 		case 32:
-			col = tile->RGB(COLOR_YELLOW);
+			col = CRGB(COLOR_YELLOW);
 			break;
 		case 64:
-			col = tile->RGB(COLOR_VIOLET);
+			col = CRGB(COLOR_VIOLET);
 			break;
 		case 128:
-			col = tile->RGB(COLOR_CYAN);
+			col = CRGB(COLOR_CYAN);
 			break;
 		case 256:
-			col = tile->RGB(COLOR_PINK);
+			col = CRGB(COLOR_PINK);
 			break;
 		case 512:
-			col = tile->RGB(COLOR_ORANGE);
+			col = CRGB(COLOR_ORANGE);
 			break;
 		case 1024:
-			col = tile->RGB(COLOR_LIGHTGREEN);
+			col = CRGB(COLOR_LIGHTGREEN);
 			break;
 		case 2048:
-			col = tile->RGB(COLOR_PINKRED);
+			col = CRGB(COLOR_PINKRED);
 			break;
 		default:
 			break;

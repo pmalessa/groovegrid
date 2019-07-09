@@ -31,26 +31,6 @@ Grid::Grid()
 #endif
 }
 
-void Grid::writePixel(int16_t x, int16_t y, uint16_t color)
-{
-	if(y%2 == 0)	//even row
-	{
-#ifdef DOOR16	//First LED Top Left
-		matrixleds[GRID_WIDTH*y + x] = expandColor(color);
-#else			//First LED Top Right
-		matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = expandColor(color);
-#endif
-	}
-	else			//odd row
-	{
-#ifdef DOOR16	//First LED Top Left
-		matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = expandColor(color);
-#else			//First LED Top Right
-		matrixleds[GRID_WIDTH*y + x] = expandColor(color);
-#endif
-	}
-}
-
 void Grid::writePixel(int16_t x, int16_t y, CRGB color)
 {
 	if(y%2 == 0)	//even row
@@ -71,12 +51,6 @@ void Grid::writePixel(int16_t x, int16_t y, CRGB color)
 	}
 }
 
-void Grid::drawPixel(int16_t x, int16_t y, uint16_t color)
-{
-	writePixel(x, y, color);
-	endWrite();
-}
-
 void Grid::endWrite()
 {
 	FastLED.show();
@@ -85,34 +59,6 @@ void Grid::endWrite()
 void Grid::clearDisplay()
 {
 	FastLED.clear(true);
-}
-
-// Downgrade 24-bit color to 16-bit
-uint16_t Grid::RGB(uint8_t r, uint8_t g, uint8_t b)
-{
-	  return ((uint16_t)(r & 0xF8) << 8) |
-	         ((uint16_t)(g & 0xFC) << 3) |
-	                    (b         >> 3);
-}
-uint16_t Grid::RGB(uint32_t rgb)
-{
-	return RGB((rgb&0xFF0000)>>16,(rgb&0x00FF00)>>8,(rgb&0x0000FF)>>0);
-}
-
-uint16_t Grid::HSV(uint8_t h, uint8_t s, uint8_t v)
-{
-	UNUSED(h+s+v);
-
-	//TODO
-	return 0;
-}
-
-// Expand 16-bit input color (Adafruit_GFX colorspace) to 24-bit (NeoPixel)
-// (w/gamma adjustment)
-uint32_t Grid::expandColor(uint16_t color) {
-  return ((uint32_t)pgm_read_byte(&gamma5[ color >> 11       ]) << 16) |
-         ((uint32_t)pgm_read_byte(&gamma6[(color >> 5) & 0x3F]) <<  8) |
-                    pgm_read_byte(&gamma5[ color       & 0x1F]);
 }
 
 void Grid::setBrightness(uint8_t brightness)

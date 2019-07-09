@@ -45,6 +45,6 @@ void SpectrumAnimation::generateBars()
 	{
 		barArray[i].xPos = barWidth*i;
 		barArray[i].yPos = esp_random()%tile->getHeight();
-		barArray[i].color = tile->RGB(esp_random());
+		barArray[i].color = CRGB(esp_random());
 	}
 }

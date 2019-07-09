@@ -81,7 +81,7 @@ void AnimationRunner::run()
 			else
 			{
 				animationQueue.clear();
-				tile->fillScreen(tile->RGB(0));
+				tile->fillScreen(CRGB(0));
 			}
 		}
 	}

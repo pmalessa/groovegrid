@@ -28,15 +28,6 @@ uint8_t GridTile::getHeight()
 	return (y1-y0)+1;
 }
 
-void GridTile::writePixel(int16_t x, int16_t y, uint16_t color)
-{
-	static Grid& grid = Grid::getInstance();
-	if(!((uint16_t)x < x0 || (uint16_t)y < y0 || (uint16_t)x > x1 || (uint16_t)y > y1))	//if draw is inside tile dimensions
-	{
-		grid.writePixel(x, y, color);
-	}
-}
-
 void GridTile::writePixel(int16_t x, int16_t y, CRGB color)
 {
 	static Grid& grid = Grid::getInstance();
@@ -46,13 +37,13 @@ void GridTile::writePixel(int16_t x, int16_t y, CRGB color)
 	}
 }
 
-void GridTile::fillScreen(uint16_t color)
+void GridTile::fillScreen(CRGB color)
 {
 	fillScreenBuffer(color);
 	endWrite();
 }
 
-void GridTile::fillScreenBuffer(uint16_t color) {
+void GridTile::fillScreenBuffer(CRGB color) {
 	for(uint16_t x = x0; x <= x1; x++)
 		{
 			for(uint16_t y = y0; y <= y1; y++)
@@ -68,7 +59,7 @@ void GridTile::endWrite()
 //	grid.endWrite();
 }
 
-void GridTile::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
+void GridTile::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
 {
     int16_t steep = abs(y1 - y0) > abs(x1 - x0);
     if (steep) {
@@ -108,7 +99,7 @@ void GridTile::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_
     }
 }
 
-void GridTile::writeRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+void GridTile::writeRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color)
 {
     writeFastHLine(x, y, w, color);
     writeFastHLine(x, y+h-1, w, color);
@@ -116,40 +107,19 @@ void GridTile::writeRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t co
     writeFastVLine(x+w-1, y, h, color);
 }
 
-void GridTile::writeFilledRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+void GridTile::writeFilledRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color)
 {
     for (int16_t i=x; i<x+w; i++) {
         writeFastVLine(i, y, h, color);
     }
 }
 
-void GridTile::writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
+void GridTile::writeFastVLine(int16_t x, int16_t y, int16_t h, CRGB color)
 {
 	writeLine(x, y, x, y+h-1, color);
 }
 
-void GridTile::writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
+void GridTile::writeFastHLine(int16_t x, int16_t y, int16_t w, CRGB color)
 {
 	writeLine(x, y, x+w-1, y, color);
-}
-
-uint16_t GridTile::RGB(uint8_t r, uint8_t g, uint8_t b)
-{
-	static Grid& grid = Grid::getInstance();
-	return grid.RGB(r,g,b);
-}
-uint16_t GridTile::RGB(uint32_t rgb)
-{
-	static Grid& grid = Grid::getInstance();
-	return grid.RGB(rgb);
-}
-uint16_t GridTile::fromCRGB(CRGB crgb)
-{
-	static Grid& grid = Grid::getInstance();
-	return grid.RGB(crgb.r,crgb.g,crgb.b);
-}
-uint16_t GridTile::HSV(uint8_t h, uint8_t s, uint8_t v)
-{
-	static Grid& grid = Grid::getInstance();
-	return grid.HSV(h, s, v);
 }

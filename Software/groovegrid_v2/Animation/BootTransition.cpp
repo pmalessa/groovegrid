@@ -12,9 +12,9 @@ BootTransition::BootTransition(GridTile* gridTile):GrooveTransition(gridTile)
 }
 void BootTransition::run()
 {
-	tile->writeLine(0, 1, GRID_WIDTH-1, 1, tile->RGB(255, 0, 0));
+	tile->writeLine(0, 1, GRID_WIDTH-1, 1, CRGB(255, 0, 0));
 	tile->endWrite();
-	tile->writeLine(0, 2, GRID_WIDTH-1, 2, tile->RGB(255, 0, 0));
+	tile->writeLine(0, 2, GRID_WIDTH-1, 2, CRGB(255, 0, 0));
 	tile->endWrite();
 /*
 	for (uint8_t i=0; i < YMAX; i++) {
