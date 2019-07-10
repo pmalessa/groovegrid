@@ -66,16 +66,6 @@
 				break;
 		}
 	}
-    std::string DisguiseGame::onUserRead(uint8_t channelID)
-    {
-    	UNUSED(channelID);
-    	return "0";
-    }
-    void DisguiseGame::onUserWrite(std::string data, uint8_t channelID)
-    {
-    	UNUSED(data);
-    	UNUSED(channelID);
-    }
 
 	uint32_t DisguiseGame::genFlashInterval()
 	{

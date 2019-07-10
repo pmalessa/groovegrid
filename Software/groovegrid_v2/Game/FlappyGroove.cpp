@@ -231,19 +231,14 @@ void FlappyGroove::restart()
 	}
 }
 
-std::string FlappyGroove::onUserRead(uint8_t channelID)
-{
-	return 0;
-}
-void FlappyGroove::onUserWrite(std::string data, uint8_t channelID)
+void FlappyGroove::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 {
 	UNUSED(channelID);
-	switch (data.c_str()[0]) {
-		case 'u':
-			velocity = 0.03;
-			break;
-		default:
-			break;
+	String move = doc["move"].as<String>();
+
+	if(move=="up")
+	{
+		velocity = 0.03;
 	}
 }
 

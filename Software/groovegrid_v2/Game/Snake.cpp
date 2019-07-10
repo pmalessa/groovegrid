@@ -36,28 +36,27 @@ void SnakeGame::stop() {
 
 }
 
-std::string SnakeGame::onUserRead(uint8_t channelID) {
-	return "";
-}
-
-void SnakeGame::onUserWrite(std::string data, uint8_t channelID) {
+void SnakeGame::onCommand(DynamicJsonDocument doc, uint8_t channelID)
+{
 	UNUSED(channelID);
-	switch (data.c_str()[0]) {
-			case 'u':
-				direction = up;
-				break;
-			case 'd':
-				direction = down;
-				break;
-			case 'r':
-				direction = right;
-				break;
-			case 'l':
-				direction = left;
-				break;
-			default:
-				break;
-		}
+	String move = doc["move"].as<String>();
+
+	if(move=="up")
+	{
+		direction = up;
+	}
+	else if(move=="down")
+	{
+		direction = down;
+	}
+	else if(move=="right")
+	{
+		direction = right;
+	}
+	else if(move=="left")
+	{
+		direction = left;
+	}
 }
 
 void SnakeGame::run() {

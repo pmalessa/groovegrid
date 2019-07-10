@@ -13,60 +13,52 @@ MainLoop& MainLoop::getInstance()
 	return _instance;
 }
 
-std::string MainLoop::onUserRead(uint8_t channelID)
+void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 {
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	UNUSED(channelID);
-	return "bar";
-}
-void MainLoop::onUserWrite(std::string data, uint8_t channelID)
-{
-	UNUSED(data);
-	UNUSED(channelID);
-	input = data[0];
+	String cmd = doc["cmd"].as<String>();
+	String game = doc["game"].as<String>();
 
-	if(input == '0')
+	if(cmd=="start")
 	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new AnimationRunner(entry->tile);
-		currentAppID = addApp(entry);
+		currentApp->runningApp->stop();
+		tsched.Detach(currentApp->runningApp);
+		delete currentApp->runningApp;
+		if(game=="AnimationRunner")
+		{
+			currentApp->runningApp = new AnimationRunner(currentApp->tile);
+			currentApp->runningApp->start();
+			tsched.Attach(currentApp->runningApp);
+		}
+		else if(game=="Snake")
+		{
+			currentApp->runningApp = new SnakeGame(currentApp->tile);
+			currentApp->runningApp->start();
+			tsched.Attach(currentApp->runningApp);
+		}
+		else if(game=="FlappyGroove")
+		{
+			currentApp->runningApp = new FlappyGroove(currentApp->tile);
+			currentApp->runningApp->start();
+			tsched.Attach(currentApp->runningApp);
+		}
+		else if(game=="2048")
+		{
+			currentApp->runningApp = new Game_2048(currentApp->tile);
+			currentApp->runningApp->start();
+			tsched.Attach(currentApp->runningApp);
+		}
+		else if(game=="DisguiseGame")
+		{
+			currentApp->runningApp = new DisguiseGame(currentApp->tile);
+			currentApp->runningApp->start();
+			tsched.Attach(currentApp->runningApp);
+		}
 	}
-	if(input == '1')
+	else if(cmd=="reset")
 	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new Game_2048(entry->tile);
-		currentAppID = addApp(entry);
-	}
-	if(input == '2')
-	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new DisguiseGame(entry->tile);
-		currentAppID = addApp(entry);
-	}
-	if(input == '3')
-	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new FlappyGroove(entry->tile);
-		currentAppID = addApp(entry);
-	}
-	if(input == '4')
-	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new SnakeGame(entry->tile);
-		currentAppID = addApp(entry);
-	}
-	if(input == 'x')	//reset
-	{
-		resetApp(currentAppID);
+		resetApp();
 	}
 }
 
@@ -79,51 +71,24 @@ MainLoop::MainLoop()
 	Timer::start();
 	tsched.Attach(&btService);
 
+	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface
+
 	//Start initial App
-	AppEntry *entry = new AppEntry();
-	entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-	entry->runningApp = new AnimationRunner(entry->tile);
-	currentAppID = addApp(entry);
+	currentApp = new AppEntry();
+	currentApp->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+	currentApp->runningApp = new AnimationRunner(currentApp->tile);
 }
 
-uint8_t MainLoop::addApp(AppEntry *entry)
+void MainLoop::resetApp()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 
-	runningAppList.push_back(entry);
-	uint8_t appID = runningAppList.size()-1;
-	entry->runningApp->start();
-	tsched.Attach(entry->runningApp);
-	return appID;	//return position in Vector as appID, which is the same as the size-1 directly after creating
-}
-
-void MainLoop::removeApp(uint8_t appID)
-{
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-
-	if(appID < runningAppList.size())	//check if value in range
-	{
-		AppEntry *entry = runningAppList.at(appID);
-		runningAppList.erase(runningAppList.begin()+appID);
-		entry->runningApp->stop();
-		tsched.Detach(entry->runningApp);
-		delete entry->runningApp;
-		delete entry->tile;
-		delete entry;
-	}
-}
-
-void MainLoop::resetApp(uint8_t appID)
-{
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-
-	AppEntry *entry = runningAppList.at(appID);
-	tsched.Detach(entry->runningApp);
-	GrooveApp *newApp = entry->runningApp->new_instance(entry->tile);
-	delete entry->runningApp;
-	entry->runningApp = newApp;
-	entry->runningApp->start();
-	tsched.Attach(entry->runningApp);
+	tsched.Detach(currentApp->runningApp);
+	GrooveApp *newApp = currentApp->runningApp->new_instance(currentApp->tile);
+	delete currentApp->runningApp;
+	currentApp->runningApp = newApp;
+	currentApp->runningApp->start();
+	tsched.Attach(currentApp->runningApp);
 }
 
 void MainLoop::loop()

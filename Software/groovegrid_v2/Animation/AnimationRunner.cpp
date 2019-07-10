@@ -97,12 +97,7 @@ void AnimationRunner::run()
 	}
 }
 
-std::string AnimationRunner::onUserRead(uint8_t channelID)
+void AnimationRunner::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 {
-	return 0;
-}
-void AnimationRunner::onUserWrite(std::string data, uint8_t channelID)
-{
-	UNUSED(data);
-	UNUSED(channelID);
+	String move = doc["move"].as<String>();
 }

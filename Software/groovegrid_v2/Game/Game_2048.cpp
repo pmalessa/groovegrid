@@ -41,29 +41,26 @@ void Game_2048::stop()
 {
 }
 
-std::string Game_2048::onUserRead(uint8_t channelID)
+void Game_2048::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 {
 	UNUSED(channelID);
-	return "0";
-}
-void Game_2048::onUserWrite(std::string data, uint8_t channelID)
-{
-	UNUSED(channelID);
-	switch (data.c_str()[0]) {
-		case 'u':
-			move(UP);
-			break;
-		case 'd':
-			move(DOWN);
-			break;
-		case 'r':
-			move(RIGHT);
-			break;
-		case 'l':
-			move(LEFT);
-			break;
-		default:
-			break;
+	String moveCmd = doc["move"].as<String>();
+
+	if(moveCmd=="up")
+	{
+		move(UP);
+	}
+	else if(moveCmd=="down")
+	{
+		move(DOWN);
+	}
+	else if(moveCmd=="right")
+	{
+		move(RIGHT);
+	}
+	else if(moveCmd=="left")
+	{
+		move(LEFT);
 	}
 }
 

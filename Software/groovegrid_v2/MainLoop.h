@@ -22,13 +22,11 @@
 #include "Game/FlappyGroove.h"
 #include "Game/Snake.h"
 
-class MainLoop
+class MainLoop : private CommInterface
 {
 public:
 	static MainLoop& getInstance();
 	~MainLoop(void);
-    std::string onUserRead(uint8_t channelID);
-    void onUserWrite(std::string data, uint8_t channelID);
 	void loop();
 
 private:
@@ -38,20 +36,15 @@ private:
 		GridTile *tile;
 		GrooveApp *runningApp;
 	};
-
-	uint8_t addApp(AppEntry *entry); //return appID
-	void removeApp(uint8_t appID);
-	void resetApp(uint8_t appID);
+	void resetApp();
 	void generateAvailableAppsMap();
+	void onCommand(DynamicJsonDocument doc, uint8_t channelID);
 
 	MainLoop();
 	MainLoop(const MainLoop&);
 	MainLoop & operator = (const MainLoop &);
 
-	std::vector<AppEntry*> runningAppList;
-
-	char input;
-	uint8_t currentAppID;
+	AppEntry *currentApp;
 };
 
 
