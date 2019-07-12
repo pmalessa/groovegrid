@@ -10,9 +10,3 @@ class ConnectionStateChanged extends ConnectionEvent {
 
   ConnectionStateChanged({@required this.state}): super();
 }
-
-class MessageReceived extends ConnectionEvent {
-  String message;
-
-  MessageReceived(this.message): super();
-}

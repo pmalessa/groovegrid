@@ -4,6 +4,4 @@ class GridConnectionState {
   bool isConnected = false;
 
   BluetoothState connectionState;
-
-  String lastReceivedMessage = "";
 }

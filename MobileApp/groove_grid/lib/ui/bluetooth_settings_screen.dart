@@ -4,6 +4,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:groove_grid/bloc/bloc_provider.dart';
 import 'package:groove_grid/bloc/connection_bloc.dart';
 import 'package:groove_grid/bloc/global_bloc.dart';
+import 'package:groove_grid/bloc/message_bloc.dart';
 import 'package:groove_grid/data/connection_state.dart';
 import 'package:groove_grid/services/bluetooth_service.dart';
 
@@ -19,8 +20,9 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   static final TextEditingController _text = new TextEditingController();
 
   ConnectionBloc _connectionBloc;
+  MessageBloc _messageBloc;
 
-  BluetoothService bluetooth = BluetoothService();
+  GrooveBluetoothService bluetooth = GrooveBluetoothService();
 
   List<BluetoothDevice> _devices = [];
   BluetoothDevice _deviceInternal;
@@ -42,6 +44,7 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
   void initState() {
     super.initState();
     _connectionBloc = BlocProvider.of<GlobalBloc>(context).connectionBloc;
+    _messageBloc = BlocProvider.of<GlobalBloc>(context).messageBloc;
     _device = bluetooth.lastConnectedDevice;
     bluetooth.isConnected.then((connected) {
       setState(() {
@@ -93,7 +96,7 @@ class _BluetoothSettingsViewState extends State<BluetoothSettingsView> {
 //      }
 //    });
 
-    _connectionBloc.output.listen((state) {
+    _messageBloc.output.listen((state) {
       String msg = state.lastReceivedMessage;
       setState(() {
         print('Read: $msg');

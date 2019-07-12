@@ -1,8 +1,7 @@
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:groove_grid/data/groove_grid_apps.dart';
 
 class GrooveGridAppsState {
-  //GrooveGridApp get runningApplication => GrooveGridApp.runningApplication;
+
   GrooveGridApp runningApplication;
 
   List<GrooveGridAnimation> animations;
@@ -10,42 +9,10 @@ class GrooveGridAppsState {
 
   GrooveGridAppsState({this.runningApplication, this.games, this.animations}) {
     if (animations == null) {
-      animations = [
-        GrooveGridAnimation(title: "Standard Animation"),
-//    GrooveGridAnimation(title: "New Animation"),
-//    GrooveGridAnimation(title: "Another New Animation"),
-      ];
+      animations = [];
     }
     if (games == null) {
-      games = [
-        GrooveGridGame(
-          title: "2048",
-          subtitle: "Can math really be fun?",
-          progress: 0.3,
-          startCommand: () async {
-            if (await FlutterBluetoothSerial.instance.isConnected) {
-              FlutterBluetoothSerial.instance.write('1');
-            }
-          },
-          stopCommand: () async {
-            if (await FlutterBluetoothSerial.instance.isConnected) {
-              FlutterBluetoothSerial.instance.write('q');
-            }
-          },
-        ),
-//    GrooveGridGame(
-//      title: "Invisible",
-//      subtitle: "Sneak yourself to victory",
-//      progress: 0.8,
-//      startCommand: () {
-//        print("Start command called on Invisible Game");
-//      },
-//    ),
-//    GrooveGridGame(
-//        title: "Whack-A-Mole",
-//        subtitle: "Can you whack 'em all?",
-//        progress: 0.5),
-      ];
+      games = [];
     }
   }
 

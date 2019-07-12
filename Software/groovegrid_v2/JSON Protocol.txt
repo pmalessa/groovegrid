@@ -1,0 +1,122 @@
+Each Command has to include a unique CommandID, which will be included in the Response as well
+All Commands will return an ACK or NACK even if they have no returns.
+
+Control Channel
+{
+	All Commands inside the Control Channel waits for the reception of the ACK by the right phone before it handles the next Command.
+	One way would be to block write access to symbolize business. Another way would be to return some kind of busy signal to the second phone.
+
+	Each commandID has to be mapped to the userID that sent that command. If a different userID read the command response, 
+	it will be kept in the characteristic for the next read, hopefully for the right phone. Otherwise delete response, because it reached its destination.
+
+	get GridData
+	{
+		arguments: none
+		return: GridWidth, GridHeight, OriginPosition
+		}
+	}
+	
+	create GridTile
+	{
+		arguments: x0, x1, y0, y1
+		return: GridID
+	}
+	remove GridTile : removes all Apps running on this Grid as well
+	{
+		arguments: GridID
+		return: none
+	}
+	
+	get App List
+	{
+		arguments: none
+		return: AppList
+	}
+	
+	start App
+	{
+		arguments: AppName, GridID
+		return: AppID
+	}
+	
+	stop App
+	{
+		arguments: AppID
+		return: none
+	}
+	
+	registerUser
+	{
+		arguments: none
+		return: userID
+	}
+	unregisterUser
+	{
+		arguments: none
+		return: none
+	}
+	
+
+}
+User Channel Game
+{
+	UserInput
+	{
+		arguments: Input
+		return: none
+	}
+	getGameState
+	{
+		arguments: GameID
+		return: GameState
+	}
+	
+	setGameState
+	{
+		arguments: GameID, GameState
+		return: none
+	}
+}
+
+User Channel AnimationRunner
+{
+	get Animations
+	{
+		arguments: none
+		return: animationList
+	}
+	
+	set AnimationQueue
+	{
+		arguments: AnimationQueue
+		return: none
+	}
+	
+	set Repeating
+	{
+		arguments: bool
+		return: none
+	}
+}
+
+
+Phone -------------------------------------------------- BLE Lib  ---------------------------------------------------------------- App
+
+write(Command(comID)) ----------------->
+
+										                    --------------------------------------------------------> onWrite(Command(comID), userID)
+																				
+																				                                          ...process Command...
+																				
+										                     <-------------------------------------------------------- writeResponse(response(comID))
+
+									                save response in
+									                 responseQueue,
+									            put first in Characteristic
+
+read() --------------------------------------------------->
+
+	<------------------------------------------------ response(comID)
+
+             									if right userID: remove response
+			            						if wrong userID: keep response
