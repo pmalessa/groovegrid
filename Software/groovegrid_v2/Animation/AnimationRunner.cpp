@@ -33,28 +33,11 @@ GrooveApp* AnimationRunner::new_instance(GridTile *tile)
 
 void AnimationRunner::start()
 {
+	currentAnimation = 0;
 	if(animationQueue.empty())
 	{
-		//init default Queue
-		AnimationEntry *entry;
-		entry = new AnimationEntry();
-		entry->animationPtr = new ColorPaletteAnimation(tile);
-		entry->animationLength = 99999999;//ANIMATION_RUNTIME_MS;
-		animationQueue.push_back(entry);
-
-		/*
-		entry = new AnimationEntry();
-		entry->animationPtr = new RandomRectAnimation(tile);
-		entry->animationLength = ANIMATION_RUNTIME_MS;
-		animationQueue.push_back(entry);
-
-		entry = new AnimationEntry();
-		entry->animationPtr = new RandomRectAnimation(tile);
-		entry->animationLength = ANIMATION_RUNTIME_MS;
-		animationQueue.push_back(entry);
-	*/
-		currentAnimation = 0;
-		animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
+		setAnimation("RandomMix");
+		animationTimer.setTimeStep(animationQueue.front()->animationLength);
 	}
 }
 
@@ -62,36 +45,69 @@ void AnimationRunner::stop()
 {
 }
 
+void AnimationRunner::clearQueue()
+{
+	while(!animationQueue.empty())
+	{
+		delete animationQueue.front()->animationPtr;
+		delete animationQueue.front();
+		animationQueue.pop();
+	}
+}
+
+void AnimationRunner::setAnimation(String animationName)
+{
+	if(animationName == "ColorPalette")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new ColorPaletteAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else if(animationName == "RandomMix")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new RandomRectAnimation(tile);
+		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
+		animationQueue.push(entry);
+		entry = new AnimationEntry();
+		entry->animationPtr = new RandomLineAnimation(tile);
+		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
+		animationQueue.push(entry);
+		entry = new AnimationEntry();
+		entry->animationPtr = new RandomPixelAnimation(tile);
+		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
+		animationQueue.push(entry);
+	}
+}
+
 void AnimationRunner::run()
 {
 	if(animationTimer.isTimeUp())
 	{
-		currentAnimation++;//next animation
-		if(animationQueue.size() > currentAnimation)	//element available
+		if(repeating == true)
 		{
-			animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
+			animationQueue.push(animationQueue.front()); //put first element to the back
+		}
+		animationQueue.pop();	//remove element
+		if(!animationQueue.empty())	//element available
+		{
+			animationTimer.setTimeStep(animationQueue.front()->animationLength);
 		}
 		else
 		{
-			if(repeating == true)
-			{
-				currentAnimation = 0;
-				animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
-			}
-			else
-			{
-				animationQueue.clear();
-				tile->fillScreen(CRGB(0));
-			}
+			tile->fillScreen(CRGB(0));
 		}
 	}
 	if(frameTimer.isTimeUp())
 	{
-		if(animationQueue.size() > currentAnimation)	//if current Element available in Queue
+		if(!animationQueue.empty())
 		{
-			if(animationQueue.at(currentAnimation)->animationPtr != nullptr)
+			if(animationQueue.front()->animationPtr != nullptr)
 			{
-				animationQueue.at(currentAnimation)->animationPtr->run();
+				animationQueue.front()->animationPtr->run();
 			}
 		}
 	}

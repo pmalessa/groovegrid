@@ -41,9 +41,9 @@ void Game_2048::stop()
 {
 }
 
-void Game_2048::onCommand(DynamicJsonDocument doc, uint8_t channelID)
+void Game_2048::onCommand(DynamicJsonDocument doc, uint8_t userID)
 {
-	UNUSED(channelID);
+	UNUSED(userID);
 	String moveCmd = doc["move"].as<String>();
 
 	if(moveCmd=="up")
@@ -62,6 +62,17 @@ void Game_2048::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 	{
 		move(LEFT);
 	}
+}
+
+void Game_2048::load(DynamicJsonDocument *doc)
+{
+	boardsize = (*doc)["savegame"]["size"];	//this seems to work but is not very elegant...
+	//boardsize = savegame["size"];
+}
+void Game_2048::save(DynamicJsonDocument *doc)
+{
+	JsonObject savegame = doc->createNestedObject("savegame");
+	savegame["size"] = boardsize;
 }
 
 //for now: highest reached tile in percent, with 0=0% and 2048=100%

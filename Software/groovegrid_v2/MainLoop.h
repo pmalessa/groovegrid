@@ -32,10 +32,12 @@ public:
 private:
 	class AppEntry{
 	public:
-		std::string appName;
+		String appName;
 		GridTile *tile;
 		GrooveApp *runningApp;
 	};
+	void startApp(String appName);
+	void stopApp();
 	void resetApp();
 	void generateAvailableAppsMap();
 	void onCommand(DynamicJsonDocument doc, uint8_t channelID);

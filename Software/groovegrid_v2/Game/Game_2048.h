@@ -73,8 +73,10 @@ public:
 	void start();
 	void stop();
 	void run();
-	void onCommand(DynamicJsonDocument doc, uint8_t channelID);
+	void onCommand(DynamicJsonDocument doc, uint8_t userID);
     GrooveApp* new_instance(GridTile *tile);
+    void load(DynamicJsonDocument *doc);
+    void save(DynamicJsonDocument *doc);
 private:
     GameState_2048 *gameState;
     uint8_t boardsize;

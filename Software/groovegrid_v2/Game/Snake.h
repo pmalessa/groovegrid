@@ -30,7 +30,7 @@ public:
 	void start();
 	void stop();
 	void run();
-	void onCommand(DynamicJsonDocument doc, uint8_t channelID);
+	void onCommand(DynamicJsonDocument doc, uint8_t userID);
     GrooveApp* new_instance(GridTile *tile);
 
     uint32_t color = 0xFF0000;

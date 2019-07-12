@@ -18,7 +18,7 @@ public:
 	void run();
 	void start();
 	void stop();
-	void onCommand(DynamicJsonDocument doc, uint8_t channelID);
+	void onCommand(DynamicJsonDocument doc, uint8_t userID);
     GrooveApp* new_instance(GridTile *tile);
 private:
     void spawnWall();

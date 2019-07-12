@@ -16,7 +16,11 @@ start Game
 {
 	"cmdID": nonce,
 	"cmd": "start",
-	"arg": "2048/AnimationRunner/Snake/FlappyGroove"
+	"app": "2048/AnimationRunner/Snake/FlappyGroove"
+	"options": 
+		{
+			"animation": "RandomMix/RandomRects/RandomLines/RandomPixels/ColorPalette/Color"
+		}
 }
 reset Game
 {
@@ -37,8 +41,8 @@ save Game
 Response:
 {
 	"rspID": cmdID,
-	"gameName": "2048/AnimationRunner/Snake/FlappyGroove"
-	"savegame": {...},
+	"name": "2048/AnimationRunner/Snake/FlappyGroove"
+	"saveGame": {...},
 	"error": 0 if okay, else errorCode
 }
 
@@ -46,8 +50,8 @@ load Game
 {
 	"cmdID": nonce,
 	"cmd": "load",
-	"gameName": "2048/AnimationRunner/Snake/FlappyGroove",
-	"savegame": {...}
+	"name": "2048/AnimationRunner/Snake/FlappyGroove",
+	"saveGame": {...}
 }
 Response:
 {
@@ -59,12 +63,25 @@ connect:
 {
 	"cmdID": nonce,
 	"cmd": "connect"
+	"userID": userID	//set desired userID
+}
+Response:
+{
+	"rspID": cmdID,
+	"error": 0 if okay, else errorCode
+}
+
+getUserIDs:
+{
+	"cmdID": nonce,
+	"cmd": "getMyID"
 }
 
 Response:
 {
 	"rspID": cmdID,
-	"userID": userID,
+	"myID": userID,
+	"otherIDs": [...]
 	"error": 0 if okay, else errorCode
 }
 
@@ -112,7 +129,7 @@ Response
 {
 	"cmd": "setAnimation",
 	"name": "RandomMix/RandomRects/RandomLines/RandomPixels/ColorPalette/Color",
-	"config": {
+	"options": {
 		"color": "hexValue",
 		"repeating":"random/linear/no",
 		"time":"timeInSeconds"

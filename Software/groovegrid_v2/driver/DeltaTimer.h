@@ -15,11 +15,11 @@ class DeltaTimer
 {
 public:
 	DeltaTimer();
-	void setTimeStep(uint32_t milliseconds);
+	void setTimeStep(int32_t milliseconds);
 	bool isTimeUp();
 private:
 	uint32_t startTime;
-	uint32_t timeStep;
+	int32_t timeStep;
 };
 
 

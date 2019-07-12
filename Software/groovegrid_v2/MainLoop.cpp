@@ -15,51 +15,85 @@ MainLoop& MainLoop::getInstance()
 
 void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	UNUSED(channelID);
+	static BluetoothService& btService = BluetoothService::getInstance();
+	DynamicJsonDocument rspDoc(200);
+	uint8_t errorCode = 0;
+	rspDoc["rspID"] = doc["cmdID"];	//send cmdID back as rspID
+
 	String cmd = doc["cmd"].as<String>();
-	String game = doc["game"].as<String>();
 
 	if(cmd=="start")
 	{
-		currentApp->runningApp->stop();
-		tsched.Detach(currentApp->runningApp);
-		delete currentApp->runningApp;
+		String game = doc["app"].as<String>();
 		if(game=="AnimationRunner")
 		{
-			currentApp->runningApp = new AnimationRunner(currentApp->tile);
-			currentApp->runningApp->start();
-			tsched.Attach(currentApp->runningApp);
+			stopApp();
+			startApp(game);
+			String animation = doc["options"]["animation"].as<String>();
+			if(animation!="")	//pass first animation to AnimationRunner
+			{
+				AnimationRunner *app = (AnimationRunner*) currentApp->runningApp;
+				app->setAnimation(animation);
+			}
 		}
 		else if(game=="Snake")
 		{
-			currentApp->runningApp = new SnakeGame(currentApp->tile);
-			currentApp->runningApp->start();
-			tsched.Attach(currentApp->runningApp);
+			stopApp();
+			startApp(game);
 		}
 		else if(game=="FlappyGroove")
 		{
-			currentApp->runningApp = new FlappyGroove(currentApp->tile);
-			currentApp->runningApp->start();
-			tsched.Attach(currentApp->runningApp);
+			stopApp();
+			startApp(game);
 		}
 		else if(game=="2048")
 		{
-			currentApp->runningApp = new Game_2048(currentApp->tile);
-			currentApp->runningApp->start();
-			tsched.Attach(currentApp->runningApp);
+			stopApp();
+			startApp(game);
 		}
 		else if(game=="DisguiseGame")
 		{
-			currentApp->runningApp = new DisguiseGame(currentApp->tile);
-			currentApp->runningApp->start();
-			tsched.Attach(currentApp->runningApp);
+			stopApp();
+			startApp(game);
+		}
+		else
+		{
+			errorCode = 2;
 		}
 	}
 	else if(cmd=="reset")
 	{
 		resetApp();
 	}
+	else if(cmd=="load")
+	{
+		currentApp->runningApp->load(&doc); //put Savegame
+	}
+	else if(cmd=="save")
+	{
+		rspDoc["name"] = currentApp->appName;
+		currentApp->runningApp->save(&rspDoc);	//get Savegame
+	}
+	else if(cmd=="getGridData")
+	{
+		JsonObject gridData = rspDoc.createNestedObject("data");
+		gridData["height"] = GRID_HEIGHT;
+		gridData["width"] = GRID_WIDTH;
+	}
+	else if(cmd=="connect")
+	{
+
+	}
+	else if(cmd=="disconnect")
+	{
+
+	}
+	else
+	{
+		errorCode = 1;
+	}
+	rspDoc["error"]= errorCode;					//add errorCode
+	btService.sendResponse(rspDoc, channelID);	//send Response
 }
 
 MainLoop::~MainLoop(){}
@@ -76,7 +110,42 @@ MainLoop::MainLoop()
 	//Start initial App
 	currentApp = new AppEntry();
 	currentApp->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-	currentApp->runningApp = new AnimationRunner(currentApp->tile);
+	startApp("AnimationRunner");
+}
+
+void MainLoop::stopApp()
+{
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	currentApp->runningApp->stop();
+	tsched.Detach(currentApp->runningApp);
+	delete currentApp->runningApp;
+}
+
+void MainLoop::startApp(String appName)
+{
+	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	if(appName=="AnimationRunner")
+	{
+		currentApp->runningApp = new AnimationRunner(currentApp->tile);
+	}
+	else if(appName=="2048")
+	{
+		currentApp->runningApp = new Game_2048(currentApp->tile);
+	}
+	else if(appName=="FlappyGroove")
+	{
+		currentApp->runningApp = new FlappyGroove(currentApp->tile);
+	}
+	else if(appName=="Snake")
+	{
+		currentApp->runningApp = new SnakeGame(currentApp->tile);
+	}
+	else
+	{
+		return;
+	}
+	currentApp->runningApp->start();
+	tsched.Attach(currentApp->runningApp);
 }
 
 void MainLoop::resetApp()

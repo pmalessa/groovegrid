@@ -96,7 +96,7 @@ std::string BluetoothService::onRead(uint8_t channelID)
 
 void BluetoothService::onWrite(std::string data, uint8_t channelID)
 {
-	DynamicJsonDocument doc(200);
+	DynamicJsonDocument doc(200), rspDoc(200);
 
 	Serial.print("Write on Channel ");//call CommListeners
 	Serial.print(channelID);
@@ -107,9 +107,11 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 	if (error) {
 	Serial.print(F("deserializeJson() failed: "));
 	Serial.println(error.c_str());
+	//send error response
 	return;
 	}
 
+	//map channelID to userID here; channelID=0->Control Channel
 	channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
 }
 
