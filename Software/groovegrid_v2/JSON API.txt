@@ -80,8 +80,8 @@ getUserIDs:
 Response:
 {
 	"rspID": cmdID,
-	"myID": userID,
-	"otherIDs": [...]
+	"usedIDs": [...],
+	"freeIDs": [...]
 	"error": 0 if okay, else errorCode
 }
 
@@ -89,6 +89,7 @@ disconnect:
 {
 	"cmdID": nonce,
 	"cmd": "disconnect"
+	"userID": userID
 }
 
 Response:

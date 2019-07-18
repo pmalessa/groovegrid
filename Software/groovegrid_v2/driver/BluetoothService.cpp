@@ -34,6 +34,11 @@ BluetoothService::BluetoothService()
 	Serial.begin(115200);
 	Serial.print("Hey!\n");
 
+	for(uint8_t i=0;i<MAX_USERS;i++)
+	{
+		connectedUsers[i] = false;
+	}
+
 	/*SERVER*/
 	BLEDevice::init("GrooveGrid");
 	BluetoothServer = BLEDevice::createServer();
@@ -97,8 +102,9 @@ std::string BluetoothService::onRead(uint8_t channelID)
 void BluetoothService::onWrite(std::string data, uint8_t channelID)
 {
 	DynamicJsonDocument doc(200), rspDoc(200);
+	uint8_t errorCode = 0;
 
-	Serial.print("Write on Channel ");//call CommListeners
+	Serial.print("Write on Channel ");
 	Serial.print(channelID);
 	Serial.print(": ");
 	Serial.println(data.c_str());
@@ -107,12 +113,82 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 	if (error) {
 	Serial.print(F("deserializeJson() failed: "));
 	Serial.println(error.c_str());
-	//send error response
+	rspDoc["error"]= error.c_str();				//add error
+	sendResponse(rspDoc, channelID);			//send Response
 	return;
 	}
 
-	//map channelID to userID here; channelID=0->Control Channel
-	channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
+	//parse BLE commands here:
+	rspDoc["rspID"] = doc["cmdID"];	//send cmdID back as rspID
+	if(doc["cmd"] == "connect")
+	{
+		uint8_t userID = doc["userID"];
+		if(userID < MAX_USERS)
+		{
+			if(connectedUsers[userID] != true)
+			{
+				connectedUsers[userID] = true; //slot is free, connect allowed
+				errorCode = 0;//send success response
+			}
+			else
+			{
+				errorCode = 1;//send error response
+			}
+		}
+		else
+		{
+			errorCode = 2;//send error response
+		}
+	}
+	else if(doc["cmd"] == "disconnect")
+	{
+		uint8_t userID = doc["userID"];
+		if(userID < MAX_USERS)
+		{
+			if(connectedUsers[userID] == true)
+			{
+				connectedUsers[userID] = false; //slot is used, disconnect allowed
+				errorCode = 0;//send success response
+			}
+			else
+			{
+				errorCode = 1;//send error response
+			}
+		}
+		else
+		{
+			errorCode = 2;//send error response
+		}
+	}
+	else if(doc["cmd"] == "getUserIDs")
+	{
+		//send userIDs
+		JsonArray users = rspDoc.createNestedArray("userIDs");
+		for(uint8_t i=0;i<MAX_USERS;i++)
+		{
+			users.add(connectedUsers[i]);
+		}
+		errorCode = 0;
+	}
+	else
+	{
+		if(channelID == 0)	//if control channel
+		{
+			channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
+			return;	//no response from here
+		}
+		else if(connectedUsers[channelID-1] == true)	//if user channel is connected
+		{
+			channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
+			return; //no response from here
+		}
+		else
+		{
+			errorCode = 3;//error response
+		}
+	}
+	rspDoc["error"]= errorCode;					//add errorCode
+	sendResponse(rspDoc, channelID);			//send Response
 }
 
 void BluetoothService::Attach(CommInterface *callbackPointer, ChannelID channelID)

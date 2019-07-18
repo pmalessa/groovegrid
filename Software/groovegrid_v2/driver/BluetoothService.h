@@ -15,6 +15,8 @@
 #include "CommInterface.h"
 
 #define MAX_CHANNEL_NUM 10
+#define MAX_USERS 4
+
 #include "BLEDevice.h"
 #include "BLE2902.h"
 
@@ -71,6 +73,7 @@ class BluetoothService : public Task{
 	bool connected = false;
 	BLEServer *BluetoothServer;
 	BLEAdvertising *BluetoothAdvertiser;
+	bool connectedUsers[MAX_USERS];
 
 
 	class CommServerCallback : public BLEServerCallbacks
