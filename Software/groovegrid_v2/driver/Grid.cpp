@@ -46,7 +46,7 @@ void Grid::writePixel(int16_t x, int16_t y, CRGB color)
 #ifdef DOOR16	//First LED Top Left
 		matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
 #else			//First LED Top Right
-		matrixleds[GRID_WIDTH*y + x-1] = color;
+		matrixleds[GRID_WIDTH*y + x] = color;
 #endif
 	}
 }
