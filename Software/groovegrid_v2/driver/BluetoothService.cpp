@@ -115,11 +115,13 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 	Serial.println(error.c_str());
 	rspDoc["error"]= error.c_str();				//add error
 	sendResponse(rspDoc, channelID);			//send Response
-	return;
+	return;										//leave if error
 	}
 
-	//parse BLE commands here:
+	//----------BLE Command Parsing---------------
 	rspDoc["rspID"] = doc["cmdID"];	//send cmdID back as rspID
+
+	//CONNECT CMD
 	if(doc["cmd"] == "connect")
 	{
 		uint8_t userID = doc["userID"];
@@ -140,6 +142,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 			errorCode = 2;//send error response
 		}
 	}
+	//DISCONNECT CMD
 	else if(doc["cmd"] == "disconnect")
 	{
 		uint8_t userID = doc["userID"];
@@ -160,27 +163,29 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 			errorCode = 2;//send error response
 		}
 	}
+	//GET USER IDs CMD
 	else if(doc["cmd"] == "getUserIDs")
 	{
 		//send userIDs
-		JsonArray users = rspDoc.createNestedArray("userIDs");
+		JsonArray usersArray = rspDoc.createNestedArray("userIDs");
 		for(uint8_t i=0;i<MAX_USERS;i++)
 		{
-			users.add(connectedUsers[i]);
+			usersArray.add(connectedUsers[i]);
 		}
 		errorCode = 0;
 	}
+	//OTHER CMDs
 	else
 	{
 		if(channelID == 0)	//if control channel
 		{
 			channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
-			return;	//no response from here
+			return;	//no response from here, handled by app
 		}
 		else if(connectedUsers[channelID-1] == true)	//if user channel is connected
 		{
 			channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
-			return; //no response from here
+			return; //no response from here, handled by app
 		}
 		else
 		{
@@ -188,7 +193,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 		}
 	}
 	rspDoc["error"]= errorCode;					//add errorCode
-	sendResponse(rspDoc, channelID);			//send Response
+	sendResponse(rspDoc, channelID);			//send Error Response
 }
 
 void BluetoothService::Attach(CommInterface *callbackPointer, ChannelID channelID)
