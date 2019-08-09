@@ -72,6 +72,24 @@ BluetoothService::BluetoothService()
 	ch->txUUID = new BLEUUID(TX_UUID);
 	channelList.push_back(ch);
 
+	/*USER3*/
+	ch = new CommChannel;
+	ch->channelID = CHANNEL_USER3;
+	ch->channelName = "User3";
+	ch->serviceUUID = new BLEUUID(SERVICE_USER3_UUID);
+	ch->rxUUID = new BLEUUID(RX_UUID);
+	ch->txUUID = new BLEUUID(TX_UUID);
+	channelList.push_back(ch);
+
+	/*USER4*/
+	ch = new CommChannel;
+	ch->channelID = CHANNEL_USER4;
+	ch->channelName = "User4";
+	ch->serviceUUID = new BLEUUID(SERVICE_USER4_UUID);
+	ch->rxUUID = new BLEUUID(RX_UUID);
+	ch->txUUID = new BLEUUID(TX_UUID);
+	channelList.push_back(ch);
+
 	//Init all Channels at BLE
 	for (uint16_t i=0; i < channelList.size(); i++) {
 		ch = channelList.at(i);
@@ -114,7 +132,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 	Serial.print(F("deserializeJson() failed: "));
 	Serial.println(error.c_str());
 	rspDoc["error"]= error.c_str();				//add error
-	sendResponse(rspDoc, channelID);			//send Response
+	//sendResponse(rspDoc, channelID);			//send Response
 	return;										//leave if error
 	}
 
@@ -130,6 +148,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 			if(connectedUsers[userID] != true)
 			{
 				connectedUsers[userID] = true; //slot is free, connect allowed
+				channelList.at(userID+1)->commInterface->onCommand(doc, channelID);	//channelID= userID+1, notify game
 				errorCode = 0;//send success response
 			}
 			else
@@ -151,6 +170,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 			if(connectedUsers[userID] == true)
 			{
 				connectedUsers[userID] = false; //slot is used, disconnect allowed
+				channelList.at(userID+1)->commInterface->onCommand(doc, channelID);	//channelID= userID+1, notify game
 				errorCode = 0;//send success response
 			}
 			else
@@ -182,6 +202,12 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 			channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
 			return;	//no response from here, handled by app
 		}
+		else
+		{
+			//remove later
+			channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
+		}
+		/*
 		else if(connectedUsers[channelID-1] == true)	//if user channel is connected
 		{
 			channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
@@ -191,9 +217,10 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 		{
 			errorCode = 3;//error response
 		}
+		*/
 	}
 	rspDoc["error"]= errorCode;					//add errorCode
-	sendResponse(rspDoc, channelID);			//send Error Response
+	//sendResponse(rspDoc, channelID);			//send Error Response
 }
 
 void BluetoothService::Attach(CommInterface *callbackPointer, ChannelID channelID)

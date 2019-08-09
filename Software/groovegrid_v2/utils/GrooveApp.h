@@ -9,7 +9,7 @@
 #include "../driver/GridTile.h"
 #include "../driver/DeltaTimer.h"
 
-class GrooveApp : public Task, CommInterface
+class GrooveApp : public Task, public CommInterface
 {
 public:
 	GrooveApp(GridTile* tile){this->tile = tile; frameTimer.setTimeStep(FRAMERATE_MS);};

@@ -1,11 +1,20 @@
+/*
+ * SimplyRedAnimation.h
+ *
+ *  Created on: 02.08.2019
+ *      Author: pmale
+ */
+
+#ifndef ANIMATION_SIMPLYREDANIMATION_H_
+#define ANIMATION_SIMPLYREDANIMATION_H_
 
 #include "../PLATFORM.h"
-#include "../utils/GrooveGame.h"
+#include "../utils/GrooveAnimation.h"
 
-class DisguiseGame: public GrooveGame{
+class SimplyRedAnimation: public GrooveAnimation{
 public:
-	DisguiseGame(GridTile *tile);
-	~DisguiseGame();
+	SimplyRedAnimation(GridTile *tile);
+	~SimplyRedAnimation();
 	void run();
 	void start();
 	void stop();
@@ -20,3 +29,7 @@ private:
 	uint32_t minFlashInterval = 100; //seconds
 	uint32_t maxFlashInterval = 3000; //seconds
 };
+
+
+
+#endif /* ANIMATION_SIMPLYREDANIMATION_H_ */

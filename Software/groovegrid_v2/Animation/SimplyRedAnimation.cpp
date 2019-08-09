@@ -1,37 +1,37 @@
 /*
- * DisguiseGame.cpp
+ * SimplyRedAnimation.cpp
  *
- *  Created on: 07.04.2019
+ *  Created on: 02.08.2019
  *      Author: pmale
  */
 
-#include "DisguiseGame.h"
+#include "SimplyRedAnimation.h"
 
-	DisguiseGame::DisguiseGame(GridTile *tile):GrooveGame(tile)
+	SimplyRedAnimation::SimplyRedAnimation(GridTile *tile):GrooveAnimation(tile)
 	{
 		frameTimer.setTimeStep(1000/tile->getWidth());
 	}
-	DisguiseGame::~DisguiseGame()
+	SimplyRedAnimation::~SimplyRedAnimation()
 	{
 
 	}
 
-	GrooveApp* DisguiseGame::new_instance(GridTile *tile)
+	GrooveApp* SimplyRedAnimation::new_instance(GridTile *tile)
 	{
-		return new DisguiseGame(tile);
+		return new SimplyRedAnimation(tile);
 	}
 
-	void DisguiseGame::start()
-	{
-
-	}
-
-	void DisguiseGame::stop()
+	void SimplyRedAnimation::start()
 	{
 
 	}
 
-	void DisguiseGame::run()
+	void SimplyRedAnimation::stop()
+	{
+
+	}
+
+	void SimplyRedAnimation::run()
 	{
 		uint16_t xPos, yPos;
 		switch (gameState) {
@@ -67,7 +67,7 @@
 		}
 	}
 
-	uint32_t DisguiseGame::genFlashInterval()
+	uint32_t SimplyRedAnimation::genFlashInterval()
 	{
 		uint32_t tmp;
 		do{
@@ -75,3 +75,5 @@
 		}while(tmp < minFlashInterval);	//generate random number between min and max
 		return tmp*1000;	//in milliseconds
 	}
+
+

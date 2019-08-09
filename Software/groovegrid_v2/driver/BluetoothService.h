@@ -50,6 +50,8 @@ class BluetoothService : public Task{
 #define SERVICE_CONTROL_UUID        "66c93897-a5f9-4a03-9d77-de1404d39270"
 #define SERVICE_USER1_UUID        	"66c93897-a5f9-4a03-9d77-de1404d39271"
 #define SERVICE_USER2_UUID        	"66c93897-a5f9-4a03-9d77-de1404d39272"
+#define SERVICE_USER3_UUID        	"66c93897-a5f9-4a03-9d77-de1404d39273"
+#define SERVICE_USER4_UUID        	"66c93897-a5f9-4a03-9d77-de1404d39274"
 #define RX_UUID 			        "9e21d8fd-8837-482f-93ac-d9d81db00f33"
 #define TX_UUID 			        "9e21d8fd-8837-482f-93ac-d9d81db00f34"
 
