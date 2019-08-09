@@ -9,7 +9,6 @@
 #define MAINLOOP_H_
 
 #include "Animation/AnimationRunner.h"
-#include "Animation/SpectrumAnimation.h"
 #include "PLATFORM.h"
 #include "driver/GridTile.h"
 #include "driver/Timer.h"
@@ -18,7 +17,6 @@
 #include "driver/BluetoothService.h"
 
 #include "Game/Game_2048.h"
-#include "Game/DisguiseGame.h"
 #include "Game/FlappyGroove.h"
 #include "Game/Snake.h"
 

@@ -12,6 +12,8 @@
 #include "RandomPixelAnimation.h"
 #include "RandomRectAnimation.h"
 #include "ColorPaletteAnimation.h"
+#include "NFSAnimation.h"
+#include "SimplyRedAnimation.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 
@@ -36,7 +38,7 @@ void AnimationRunner::start()
 	currentAnimation = 0;
 	if(animationQueue.empty())
 	{
-		setAnimation("RandomMix");
+		setAnimation("Color Palette");
 		animationTimer.setTimeStep(animationQueue.front()->animationLength);
 	}
 }
@@ -57,7 +59,7 @@ void AnimationRunner::clearQueue()
 
 void AnimationRunner::setAnimation(String animationName)
 {
-	if(animationName == "ColorPalette")
+	if(animationName == "Color Palette")
 	{
 		clearQueue();
 		AnimationEntry *entry = new AnimationEntry();
@@ -65,7 +67,7 @@ void AnimationRunner::setAnimation(String animationName)
 		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
 		animationQueue.push(entry);
 	}
-	else if(animationName == "RandomMix")
+	else if(animationName == "Dancefloor")
 	{
 		clearQueue();
 		AnimationEntry *entry = new AnimationEntry();
@@ -79,6 +81,30 @@ void AnimationRunner::setAnimation(String animationName)
 		entry = new AnimationEntry();
 		entry->animationPtr = new RandomPixelAnimation(tile);
 		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
+		animationQueue.push(entry);
+	}
+	else if(animationName == "Need for Speed")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new NFSAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else if(animationName == "Simply Red")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new SimplyRedAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else
+	{ //emergency animation
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new ColorPaletteAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
 		animationQueue.push(entry);
 	}
 }

@@ -41,17 +41,12 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 			stopApp();
 			startApp(game);
 		}
-		else if(game=="FlappyGroove")
+		else if(game=="Flappy Groove")
 		{
 			stopApp();
 			startApp(game);
 		}
 		else if(game=="2048")
-		{
-			stopApp();
-			startApp(game);
-		}
-		else if(game=="DisguiseGame")
 		{
 			stopApp();
 			startApp(game);
@@ -124,6 +119,8 @@ void MainLoop::stopApp()
 void MainLoop::startApp(String appName)
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
+	static BluetoothService& btService = BluetoothService::getInstance();
+
 	if(appName=="AnimationRunner")
 	{
 		currentApp->runningApp = new AnimationRunner(currentApp->tile);
@@ -146,6 +143,8 @@ void MainLoop::startApp(String appName)
 	}
 	currentApp->runningApp->start();
 	tsched.Attach(currentApp->runningApp);
+	btService.Attach(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
+	btService.Attach(currentApp->runningApp, CHANNEL_USER2);
 }
 
 void MainLoop::resetApp()
