@@ -14,6 +14,7 @@
 #include "ColorPaletteAnimation.h"
 #include "NFSAnimation.h"
 #include "SimplyRedAnimation.h"
+#include "MatrixAnimation.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 
@@ -38,7 +39,7 @@ void AnimationRunner::start()
 	currentAnimation = 0;
 	if(animationQueue.empty())
 	{
-		setAnimation("Color Palette");
+		setAnimation("Matrix");
 		animationTimer.setTimeStep(animationQueue.front()->animationLength);
 	}
 }
@@ -96,6 +97,14 @@ void AnimationRunner::setAnimation(String animationName)
 		clearQueue();
 		AnimationEntry *entry = new AnimationEntry();
 		entry->animationPtr = new SimplyRedAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else if(animationName == "Matrix")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new MatrixAnimation(tile);
 		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
 		animationQueue.push(entry);
 	}

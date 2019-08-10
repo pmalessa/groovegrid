@@ -1,5 +1,5 @@
 /*
- * MatrixAnimation.cpp
+ * NFSAnimation.cpp
  *
  *  Created on: 02.08.2019
  *      Author: pmale
