@@ -15,6 +15,7 @@
 #include "NFSAnimation.h"
 #include "SimplyRedAnimation.h"
 #include "MatrixAnimation.h"
+#include "SpectrumAnimation.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 
@@ -39,7 +40,7 @@ void AnimationRunner::start()
 	currentAnimation = 0;
 	if(animationQueue.empty())
 	{
-		setAnimation("Matrix");
+		setAnimation("Spectrum");
 		animationTimer.setTimeStep(animationQueue.front()->animationLength);
 	}
 }
@@ -108,6 +109,14 @@ void AnimationRunner::setAnimation(String animationName)
 		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
 		animationQueue.push(entry);
 	}
+	else if(animationName == "Spectrum")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new SpectrumAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
 	else
 	{ //emergency animation
 		clearQueue();
@@ -136,14 +145,11 @@ void AnimationRunner::run()
 			tile->fillScreen(CRGB(0));
 		}
 	}
-	if(frameTimer.isTimeUp())
+	if(!animationQueue.empty())
 	{
-		if(!animationQueue.empty())
+		if(animationQueue.front()->animationPtr != nullptr)
 		{
-			if(animationQueue.front()->animationPtr != nullptr)
-			{
-				animationQueue.front()->animationPtr->run();
-			}
+			animationQueue.front()->animationPtr->run();
 		}
 	}
 }

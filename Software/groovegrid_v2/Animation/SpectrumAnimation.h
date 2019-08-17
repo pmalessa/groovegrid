@@ -20,7 +20,7 @@ public:
 	void generateBars();
 	void drawBars();
 private:
-
+	void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType);
 	class Bar{
 	public:
 		uint16_t color;

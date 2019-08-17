@@ -6,6 +6,8 @@
  */
 
 #include "SpectrumAnimation.h"
+#include "../driver/Microphone.h"
+
 
 SpectrumAnimation::SpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
 {
@@ -23,11 +25,13 @@ GrooveApp* SpectrumAnimation::new_instance(GridTile *tile)
 
 void SpectrumAnimation::run()
 {
-	if(frameTimer.isTimeUp())
+	Microphone& mic = Microphone::getInstance();
+	mic.computeFFT();
+	if(mic.isFFTAvailable())
 	{
-		drawBars();
-		generateBars();
+		mic.printFFT();
 	}
+	delay(1000); /* Repeat after delay */
 }
 
 void SpectrumAnimation::drawBars()
