@@ -1,6 +1,6 @@
 #include "Snake.h"
 
-Coordinate::Coordinate(uint8_t x, uint8_t y) {
+Coordinate::Coordinate(int8_t x, int8_t y) {
 	this->x = x;
 	this->y = y;
 }
@@ -36,38 +36,37 @@ void SnakeGame::stop() {
 
 }
 
-std::string SnakeGame::onUserRead(uint8_t channelID) {
-	return "";
-}
+void SnakeGame::onCommand(DynamicJsonDocument doc, uint8_t userID)
+{
+	UNUSED(userID);
+	String move = doc["move"].as<String>();
 
-void SnakeGame::onUserWrite(std::string data, uint8_t channelID) {
-	UNUSED(channelID);
-	switch (data.c_str()[0]) {
-			case 'u':
-				direction = up;
-				break;
-			case 'd':
-				direction = down;
-				break;
-			case 'r':
-				direction = right;
-				break;
-			case 'l':
-				direction = left;
-				break;
-			default:
-				break;
-		}
+	if(move=="up")
+	{
+		direction = up;
+	}
+	else if(move=="down")
+	{
+		direction = down;
+	}
+	else if(move=="right")
+	{
+		direction = right;
+	}
+	else if(move=="left")
+	{
+		direction = left;
+	}
 }
 
 void SnakeGame::run() {
 	if (frameTimer.isTimeUp()) {
 		move();
+		wrapAroundBorder();
 		if (detectCollision()) {
 			direction = none;
 		}
 		draw();
-		wrapAroundBorder();
 	}
 }
 
@@ -99,16 +98,16 @@ void SnakeGame::spawnFood() {
 }
 
 void SnakeGame::wrapAroundBorder() {
-	if (gameState->head->x >= tile->getWidth() && direction == right) {
+	if (gameState->head->x >= tile->getWidth()) {
 		gameState->head->x = 0;
-	} else if (gameState->head->x == 0 && direction == left) {
+	} else if (gameState->head->x < 0) {
 		gameState->head->x = tile->getWidth()-1;
 
 	}
 
-	if (gameState->head->y >= tile->getHeight() && direction == down) {
+	if (gameState->head->y >= tile->getHeight()) {
 		gameState->head->y = 0;
-	} else if (gameState->head->y <= 0 && direction == up) {
+	} else if (gameState->head->y < 0) {
 		gameState->head->y = tile->getHeight()-1;
 	}
 }

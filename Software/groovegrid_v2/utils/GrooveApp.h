@@ -3,9 +3,9 @@
 #ifndef UTILS_GROOVEAPP_H_
 #define UTILS_GROOVEAPP_H_
 
+#include "../driver/BluetoothService.h"
 #include "../PLATFORM.h"
 #include "Task.h"
-#include "../driver/COMM.h"
 #include "../driver/GridTile.h"
 #include "../driver/DeltaTimer.h"
 
@@ -17,9 +17,10 @@ public:
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual void run() = 0;					//has to be overridden by AppLoop
-    virtual std::string onUserRead(uint8_t channelID) = 0;
-    virtual void onUserWrite(std::string data, uint8_t channelID) = 0;
     virtual GrooveApp* new_instance(GridTile *tile) = 0;
+    void onCommand(DynamicJsonDocument doc, uint8_t userID){};	//can be overridden
+    void load(DynamicJsonDocument *doc){};								//can be overridden
+    void save(DynamicJsonDocument *doc){doc->createNestedObject("savegame");};	//create empty savegame object, can be overridden
 protected:
 	GridTile* tile;							//has to be initialized
 	DeltaTimer frameTimer;

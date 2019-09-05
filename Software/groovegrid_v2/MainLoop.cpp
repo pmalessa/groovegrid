@@ -13,125 +13,167 @@ MainLoop& MainLoop::getInstance()
 	return _instance;
 }
 
-std::string MainLoop::onUserRead(uint8_t channelID)
+void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 {
-	UNUSED(channelID);
-	return "bar";
-}
-void MainLoop::onUserWrite(std::string data, uint8_t channelID)
-{
-	UNUSED(data);
-	UNUSED(channelID);
-	input = data[0];
+	static BluetoothService& btService = BluetoothService::getInstance();
+	DynamicJsonDocument rspDoc(200);
+	uint8_t errorCode = 0;
+	rspDoc["rspID"] = doc["cmdID"];	//send cmdID back as rspID
 
-	if(input == '0')
+	String cmd = doc["cmd"].as<String>();
+
+	if(cmd=="start")
 	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new AnimationRunner(entry->tile);
-		currentAppID = addApp(entry);
+		String game = doc["app"].as<String>();
+		if(game=="AnimationRunner")
+		{
+			stopApp();
+			startApp(game);
+			String animation = doc["options"]["animation"].as<String>();
+			if(animation!="")	//pass first animation to AnimationRunner
+			{
+				AnimationRunner *app = (AnimationRunner*) currentApp->runningApp;
+				app->setAnimation(animation);
+			}
+		}
+		else if(game=="Snake")
+		{
+			stopApp();
+			startApp(game);
+		}
+		else if(game=="Flappy Groove")
+		{
+			stopApp();
+			startApp(game);
+		}
+		else if(game=="2048")
+		{
+			stopApp();
+			startApp(game);
+		}
+		else
+		{
+			errorCode = 2;
+		}
 	}
-	if(input == '1')
+	else if(cmd=="reset")
 	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new Game_2048(entry->tile);
-		currentAppID = addApp(entry);
+		resetApp();
 	}
-	if(input == '2')
+	else if(cmd=="load")
 	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new DisguiseGame(entry->tile);
-		currentAppID = addApp(entry);
+		currentApp->runningApp->load(&doc); //put Savegame
 	}
-	if(input == '3')
+	else if(cmd=="save")
 	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new FlappyGroove(entry->tile);
-		currentAppID = addApp(entry);
+		rspDoc["name"] = currentApp->appName;
+		currentApp->runningApp->save(&rspDoc);	//get Savegame
 	}
-	if(input == '4')
+	else if(cmd=="getGridData")
 	{
-		removeApp(currentAppID);
-		AppEntry *entry = new AppEntry();
-		entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-		entry->runningApp = new SnakeGame(entry->tile);
-		currentAppID = addApp(entry);
+		JsonObject gridData = rspDoc.createNestedObject("data");
+		gridData["height"] = GRID_HEIGHT;
+		gridData["width"] = GRID_WIDTH;
 	}
-	if(input == 'x')	//reset
+	else if(cmd =="getGames")
 	{
-		resetApp(currentAppID);
+		JsonArray gameList = rspDoc.createNestedArray("list");
+		gameList.add("Snake");
+		gameList.add("2048");
+		gameList.add("FlappyGroove");
+		gameList.add("Battleship");
 	}
+	else if(cmd =="getAnimations")
+	{
+		JsonArray gameList = rspDoc.createNestedArray("list");
+		gameList.add("Color Palette");
+		gameList.add("Matrix");
+		gameList.add("Need for Speed");
+		gameList.add("Simply Red");
+		gameList.add("Spectrum");
+	}
+	else if(cmd=="connect")
+	{
+
+	}
+	else if(cmd=="disconnect")
+	{
+
+	}
+	else
+	{
+		errorCode = 1;
+	}
+	rspDoc["error"]= errorCode;					//add errorCode
+	btService.sendResponse(rspDoc, channelID);	//send Response
 }
 
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	static COMM& comm = COMM::getInstance();
+	static BluetoothService& btService = BluetoothService::getInstance();
 
 	Timer::start();
-	tsched.Attach(&comm);
-	comm.Attach(this, CHANNEL_CONTROL);
+	tsched.Attach(&btService);
+
+	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface
 
 	//Start initial App
-	AppEntry *entry = new AppEntry();
-	entry->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
-	entry->runningApp = new AnimationRunner(entry->tile);
-	currentAppID = addApp(entry);
+	currentApp = new AppEntry();
+	currentApp->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+	startApp("AnimationRunner");
 }
 
-uint8_t MainLoop::addApp(AppEntry *entry)
+void MainLoop::stopApp()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	static COMM& comm = COMM::getInstance();
-
-	runningAppList.push_back(entry);
-	uint8_t appID = runningAppList.size()-1;
-	entry->runningApp->start();
-	tsched.Attach(entry->runningApp);
-	comm.Attach(entry->runningApp, CHANNEL_USER1);
-	return appID;	//return position in Vector as appID, which is the same as the size-1 directly after creating
+	currentApp->runningApp->stop();
+	tsched.Detach(currentApp->runningApp);
+	delete currentApp->runningApp;
 }
 
-void MainLoop::removeApp(uint8_t appID)
+void MainLoop::startApp(String appName)
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	static COMM& comm = COMM::getInstance();
+	static BluetoothService& btService = BluetoothService::getInstance();
 
-	if(appID < runningAppList.size())	//check if value in range
+	if(appName=="AnimationRunner")
 	{
-		AppEntry *entry = runningAppList.at(appID);
-		runningAppList.erase(runningAppList.begin()+appID);
-		entry->runningApp->stop();
-		tsched.Detach(entry->runningApp);
-		comm.Detach(entry->runningApp);
-		delete entry->runningApp;
-		delete entry->tile;
-		delete entry;
+		currentApp->runningApp = new AnimationRunner(currentApp->tile);
 	}
+	else if(appName=="2048")
+	{
+		currentApp->runningApp = new Game_2048(currentApp->tile);
+	}
+	else if(appName=="Flappy Groove")
+	{
+		currentApp->runningApp = new FlappyGroove(currentApp->tile);
+	}
+	else if(appName=="Snake")
+	{
+		currentApp->runningApp = new SnakeGame(currentApp->tile);
+	}
+	else
+	{
+		return;
+	}
+	currentApp->runningApp->start();
+	tsched.Attach(currentApp->runningApp);
+	btService.Attach(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
+	btService.Attach(currentApp->runningApp, CHANNEL_USER2);
 }
 
-void MainLoop::resetApp(uint8_t appID)
+void MainLoop::resetApp()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	static COMM& comm = COMM::getInstance();
 
-	AppEntry *entry = runningAppList.at(appID);
-	tsched.Detach(entry->runningApp);
-	comm.Detach(entry->runningApp);
-	GrooveApp *newApp = entry->runningApp->new_instance(entry->tile);
-	delete entry->runningApp;
-	entry->runningApp = newApp;
-	entry->runningApp->start();
-	tsched.Attach(entry->runningApp);
-	comm.Attach(entry->runningApp, CHANNEL_USER1);
+	tsched.Detach(currentApp->runningApp);
+	GrooveApp *newApp = currentApp->runningApp->new_instance(currentApp->tile);
+	delete currentApp->runningApp;
+	currentApp->runningApp = newApp;
+	currentApp->runningApp->start();
+	tsched.Attach(currentApp->runningApp);
 }
 
 void MainLoop::loop()

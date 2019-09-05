@@ -9,14 +9,13 @@
 #define DRIVER_COMMINTERFACE_H_
 
 #include "../PLATFORM.h"
-#include "COMM.h"
+#include "BluetoothService.h"
 
 class CommInterface
 {
 public:
 	virtual ~CommInterface(){};
-    virtual std::string onUserRead(uint8_t channel) = 0;
-    virtual void onUserWrite(std::string data, uint8_t channel) = 0;
+    virtual void onCommand(DynamicJsonDocument doc, uint8_t channelID) = 0;
 private:
 };
 

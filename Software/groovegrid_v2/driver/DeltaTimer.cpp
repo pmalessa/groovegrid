@@ -13,13 +13,17 @@ DeltaTimer::DeltaTimer()
 	timeStep = 0;
 }
 
-void DeltaTimer::setTimeStep(uint32_t milliseconds)
+void DeltaTimer::setTimeStep(int32_t milliseconds)
 {
 	timeStep = milliseconds;
 }
 
 bool DeltaTimer::isTimeUp()
 {
+	if(timeStep == -1)
+	{
+		return false; //endless
+	}
 	if(Timer::getMillis()-startTime > timeStep)
 	{
 		startTime = Timer::getMillis();

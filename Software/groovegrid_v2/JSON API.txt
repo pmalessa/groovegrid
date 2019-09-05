@@ -1,0 +1,144 @@
+Control Channel:
+
+get GridData
+{
+	"cmdID": nonce,
+	"cmd": "getGridData"
+}
+Response:
+{
+	"rspID": cmdID,
+	"data": {...}
+	"error": 0 if okay, else errorCode
+}
+
+start Game
+{
+	"cmdID": nonce,
+	"cmd": "start",
+	"app": "2048/AnimationRunner/Snake/FlappyGroove"
+	"options": 
+		{
+			"animation": "RandomMix/RandomRects/RandomLines/RandomPixels/ColorPalette/Color"
+		}
+}
+reset Game
+{
+	"cmdID": nonce,
+	"cmd": "reset"
+}
+Response:
+{
+	"rspID": cmdID,
+	"error": 0 if okay, else errorCode
+}
+
+save Game
+{
+	"cmdID": nonce,
+	"cmd": "save"
+}
+Response:
+{
+	"rspID": cmdID,
+	"name": "2048/AnimationRunner/Snake/FlappyGroove"
+	"saveGame": {...},
+	"error": 0 if okay, else errorCode
+}
+
+load Game
+{
+	"cmdID": nonce,
+	"cmd": "load",
+	"name": "2048/AnimationRunner/Snake/FlappyGroove",
+	"saveGame": {...}
+}
+Response:
+{
+	"rspID": cmdID,
+	"error": 0 if okay, else errorCode
+}
+
+connect:
+{
+	"cmdID": nonce,
+	"cmd": "connect"
+	"userID": userID	//set desired userID
+}
+Response:
+{
+	"rspID": cmdID,
+	"error": 0 if okay, else errorCode
+}
+
+getUserIDs:
+{
+	"cmdID": nonce,
+	"cmd": "getMyID"
+}
+
+Response:
+{
+	"rspID": cmdID,
+	"usedIDs": [...],
+	"freeIDs": [...]
+	"error": 0 if okay, else errorCode
+}
+
+disconnect:
+{
+	"cmdID": nonce,
+	"cmd": "disconnect"
+	"userID": userID
+}
+
+Response:
+{
+	"rspID": cmdID,
+	"error": 0 if okay, else errorCode
+}
+
+
+
+User Channel
+
+
+move	//game dependent
+{
+	"cmdID": nonce,
+	"move": "up/down/right/left"	//2048/Snake
+	"move": "up"					//FlappyGroove
+}
+no Response, as it is fire-and-forget to speedup input
+
+
+//AnimationRunner
+//getAnimations
+{
+	"cmdID": nonce,
+	"cmd": "getAnimations"
+}
+
+Response
+{
+	"rspID": cmdID,
+	"list" :["RandomMix","RandomRects","RandomLines","RandomPixels","ColorPalette","Color"],
+	"error": 0 if okay, else errorCode
+}
+
+//setAnimation
+{
+	"cmd": "setAnimation",
+	"name": "RandomMix/RandomRects/RandomLines/RandomPixels/ColorPalette/Color",
+	"options": {
+		"color": "hexValue",
+		"repeating":"random/linear/no",
+		"time":"timeInSeconds"
+	}
+}
+
+Response
+{
+	"rspID": cmdID
+	"error": 0 if okay, else errorCode
+}

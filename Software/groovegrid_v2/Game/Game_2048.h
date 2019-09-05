@@ -8,9 +8,9 @@
 #ifndef GAME_2048_H_
 #define GAME_2048_H_
 
+#include "../driver/BluetoothService.h"
 #include "../PLATFORM.h"
 #include "../utils/GrooveGame.h"
-#include "../driver/COMM.h"
 #include "../driver/Timer.h"
 #include "../driver/GridTile.h"
 
@@ -73,9 +73,10 @@ public:
 	void start();
 	void stop();
 	void run();
-    std::string onUserRead(uint8_t channelID);
-    void onUserWrite(std::string data, uint8_t channelID);
+	void onCommand(DynamicJsonDocument doc, uint8_t userID);
     GrooveApp* new_instance(GridTile *tile);
+    void load(DynamicJsonDocument *doc);
+    void save(DynamicJsonDocument *doc);
 private:
     GameState_2048 *gameState;
     uint8_t boardsize;

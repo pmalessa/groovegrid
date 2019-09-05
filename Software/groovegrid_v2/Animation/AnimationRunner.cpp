@@ -12,6 +12,10 @@
 #include "RandomPixelAnimation.h"
 #include "RandomRectAnimation.h"
 #include "ColorPaletteAnimation.h"
+#include "NFSAnimation.h"
+#include "SimplyRedAnimation.h"
+#include "MatrixAnimation.h"
+#include "SpectrumAnimation.h"
 
 #define ANIMATION_RUNTIME_MS 10000
 
@@ -33,28 +37,11 @@ GrooveApp* AnimationRunner::new_instance(GridTile *tile)
 
 void AnimationRunner::start()
 {
+	currentAnimation = 0;
 	if(animationQueue.empty())
 	{
-		//init default Queue
-		AnimationEntry *entry;
-		entry = new AnimationEntry();
-		entry->animationPtr = new ColorPaletteAnimation(tile);
-		entry->animationLength = 99999999;//ANIMATION_RUNTIME_MS;
-		animationQueue.push_back(entry);
-
-		/*
-		entry = new AnimationEntry();
-		entry->animationPtr = new RandomRectAnimation(tile);
-		entry->animationLength = ANIMATION_RUNTIME_MS;
-		animationQueue.push_back(entry);
-
-		entry = new AnimationEntry();
-		entry->animationPtr = new RandomRectAnimation(tile);
-		entry->animationLength = ANIMATION_RUNTIME_MS;
-		animationQueue.push_back(entry);
-	*/
-		currentAnimation = 0;
-		animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
+		setAnimation("Color Palette");
+		animationTimer.setTimeStep(animationQueue.front()->animationLength);
 	}
 }
 
@@ -62,47 +49,112 @@ void AnimationRunner::stop()
 {
 }
 
+void AnimationRunner::clearQueue()
+{
+	while(!animationQueue.empty())
+	{
+		delete animationQueue.front()->animationPtr;
+		delete animationQueue.front();
+		animationQueue.pop();
+	}
+}
+
+void AnimationRunner::setAnimation(String animationName)
+{
+	if(animationName == "Color Palette")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new ColorPaletteAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else if(animationName == "Dancefloor")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new RandomRectAnimation(tile);
+		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
+		animationQueue.push(entry);
+		entry = new AnimationEntry();
+		entry->animationPtr = new RandomLineAnimation(tile);
+		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
+		animationQueue.push(entry);
+		entry = new AnimationEntry();
+		entry->animationPtr = new RandomPixelAnimation(tile);
+		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
+		animationQueue.push(entry);
+	}
+	else if(animationName == "Need for Speed")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new NFSAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else if(animationName == "Simply Red")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new SimplyRedAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else if(animationName == "Matrix")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new MatrixAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else if(animationName == "Spectrum")
+	{
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new SpectrumAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+	else
+	{ //emergency animation
+		clearQueue();
+		AnimationEntry *entry = new AnimationEntry();
+		entry->animationPtr = new ColorPaletteAnimation(tile);
+		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
+		animationQueue.push(entry);
+	}
+}
+
 void AnimationRunner::run()
 {
 	if(animationTimer.isTimeUp())
 	{
-		currentAnimation++;//next animation
-		if(animationQueue.size() > currentAnimation)	//element available
+		if(repeating == true)
 		{
-			animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
+			animationQueue.push(animationQueue.front()); //put first element to the back
+		}
+		animationQueue.pop();	//remove element
+		if(!animationQueue.empty())	//element available
+		{
+			animationTimer.setTimeStep(animationQueue.front()->animationLength);
 		}
 		else
 		{
-			if(repeating == true)
-			{
-				currentAnimation = 0;
-				animationTimer.setTimeStep(animationQueue.at(currentAnimation)->animationLength);
-			}
-			else
-			{
-				animationQueue.clear();
-				tile->fillScreen(CRGB(0));
-			}
+			tile->fillScreen(CRGB(0));
 		}
 	}
-	if(frameTimer.isTimeUp())
+	if(!animationQueue.empty())
 	{
-		if(animationQueue.size() > currentAnimation)	//if current Element available in Queue
+		if(animationQueue.front()->animationPtr != nullptr)
 		{
-			if(animationQueue.at(currentAnimation)->animationPtr != nullptr)
-			{
-				animationQueue.at(currentAnimation)->animationPtr->run();
-			}
+			animationQueue.front()->animationPtr->run();
 		}
 	}
 }
 
-std::string AnimationRunner::onUserRead(uint8_t channelID)
+void AnimationRunner::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 {
-	return 0;
-}
-void AnimationRunner::onUserWrite(std::string data, uint8_t channelID)
-{
-	UNUSED(data);
-	UNUSED(channelID);
+	String move = doc["move"].as<String>();
 }

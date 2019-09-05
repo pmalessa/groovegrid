@@ -10,15 +10,15 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveGame.h"
-#include "../driver/COMM.h"
 #include "../driver/Timer.h"
 #include "../driver/GridTile.h"
 #include <deque>
+#include "../driver/BluetoothService.h"
 
 struct Coordinate{
-	uint8_t x;
-	uint8_t y;
-	Coordinate(uint8_t x, uint8_t y);
+	int8_t x;
+	int8_t y;
+	Coordinate(int8_t x, int8_t y);
 };
 
 
@@ -30,8 +30,7 @@ public:
 	void start();
 	void stop();
 	void run();
-    std::string onUserRead(uint8_t channelID);
-    void onUserWrite(std::string data, uint8_t channelID);
+	void onCommand(DynamicJsonDocument doc, uint8_t userID);
     GrooveApp* new_instance(GridTile *tile);
 
     uint32_t color = 0xFF0000;

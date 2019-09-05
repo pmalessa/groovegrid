@@ -22,17 +22,18 @@ public:
 	void run();
 	void start();
 	void stop();
-    std::string onUserRead(uint8_t channelID);
-    void onUserWrite(std::string data, uint8_t channelID);
+	void setAnimation(String animationName);
+	void clearQueue();
+	void onCommand(DynamicJsonDocument doc, uint8_t channelID);
     GrooveApp* new_instance(GridTile *tile);
 private:
 
     struct AnimationEntry{
     	GrooveAnimation* animationPtr;
-    	uint32_t animationLength;
+    	int32_t animationLength;
     };
 
-    std::vector<AnimationEntry *> animationQueue;
+    std::queue<AnimationEntry *> animationQueue;
     bool repeating;
     uint8_t currentAnimation;
 	DeltaTimer animationTimer;
