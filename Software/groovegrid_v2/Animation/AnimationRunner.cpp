@@ -40,7 +40,7 @@ void AnimationRunner::start()
 	currentAnimation = 0;
 	if(animationQueue.empty())
 	{
-		setAnimation("Spectrum");
+		setAnimation("Color Palette");
 		animationTimer.setTimeStep(animationQueue.front()->animationLength);
 	}
 }

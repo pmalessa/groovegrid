@@ -75,6 +75,23 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 		gridData["height"] = GRID_HEIGHT;
 		gridData["width"] = GRID_WIDTH;
 	}
+	else if(cmd =="getGames")
+	{
+		JsonArray gameList = rspDoc.createNestedArray("list");
+		gameList.add("Snake");
+		gameList.add("2048");
+		gameList.add("FlappyGroove");
+		gameList.add("Battleship");
+	}
+	else if(cmd =="getAnimations")
+	{
+		JsonArray gameList = rspDoc.createNestedArray("list");
+		gameList.add("Color Palette");
+		gameList.add("Matrix");
+		gameList.add("Need for Speed");
+		gameList.add("Simply Red");
+		gameList.add("Spectrum");
+	}
 	else if(cmd=="connect")
 	{
 
