@@ -146,7 +146,7 @@ void MainLoop::startApp(String appName)
 	{
 		currentApp->runningApp = new Game_2048(currentApp->tile);
 	}
-	else if(appName=="FlappyGroove")
+	else if(appName=="Flappy Groove")
 	{
 		currentApp->runningApp = new FlappyGroove(currentApp->tile);
 	}

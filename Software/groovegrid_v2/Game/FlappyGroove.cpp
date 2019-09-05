@@ -202,6 +202,7 @@ void FlappyGroove::restart()
 			{
 				tile->writeLine(i, 0, i, gameState->ymax, CRGB(255, 0, 0));
 				tile->endWrite();
+
 				i++;
 			}
 			else
