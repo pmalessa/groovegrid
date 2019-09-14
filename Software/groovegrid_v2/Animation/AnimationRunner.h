@@ -10,8 +10,17 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveAnimation.h"
-#include "../utils/GrooveApp.h"
 #include <queue>
+
+#include "BootTransition.h"
+#include "RandomLineAnimation.h"
+#include "RandomPixelAnimation.h"
+#include "RandomRectAnimation.h"
+#include "ColorPaletteAnimation.h"
+#include "NFSAnimation.h"
+#include "SimplyRedAnimation.h"
+#include "MatrixAnimation.h"
+#include "SpectrumAnimation.h"
 
 
 class AnimationRunner: public GrooveApp
@@ -37,6 +46,17 @@ private:
     bool repeating;
     uint8_t currentAnimation;
 	DeltaTimer animationTimer;
+	std::map<String, std::function<GrooveAnimation*(GridTile*)>> animationMap = {
+		{"Color Palette"		,[](GridTile *tile){return new ColorPaletteAnimation(tile);}},
+		{"Simply Red"			,[](GridTile *tile){return new SimplyRedAnimation(tile);}},
+		{"Dancefloor"			,[](GridTile *tile){return new RandomRectAnimation(tile);}},
+		{"Matrix"				,[](GridTile *tile){return new MatrixAnimation(tile);}},
+		{"Need for Speed"		,[](GridTile *tile){return new NFSAnimation(tile);}},
+		{"Spectrum"				,[](GridTile *tile){return new SpectrumAnimation(tile);}}
+	};
+
+	#define DEFAULT_ANIMATION "Color Palette"
+	#define ANIMATION_RUNTIME_MS 10000
 };
 
 

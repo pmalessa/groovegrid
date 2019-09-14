@@ -9,8 +9,6 @@
 #define MAINLOOP_H_
 
 #include "PLATFORM.h"
-#include <map>
-#include <functional>
 
 #include "driver/GridTile.h"
 #include "driver/Timer.h"

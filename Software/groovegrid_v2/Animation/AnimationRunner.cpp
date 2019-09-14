@@ -7,18 +7,6 @@
 
 #include "AnimationRunner.h"
 
-#include "BootTransition.h"
-#include "RandomLineAnimation.h"
-#include "RandomPixelAnimation.h"
-#include "RandomRectAnimation.h"
-#include "ColorPaletteAnimation.h"
-#include "NFSAnimation.h"
-#include "SimplyRedAnimation.h"
-#include "MatrixAnimation.h"
-#include "SpectrumAnimation.h"
-
-#define ANIMATION_RUNTIME_MS 10000
-
 AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 {
 	currentAnimation = 0;
@@ -40,7 +28,7 @@ void AnimationRunner::start()
 	currentAnimation = 0;
 	if(animationQueue.empty())
 	{
-		setAnimation("Color Palette");
+		setAnimation(DEFAULT_ANIMATION);
 		animationTimer.setTimeStep(animationQueue.front()->animationLength);
 	}
 }
@@ -61,69 +49,17 @@ void AnimationRunner::clearQueue()
 
 void AnimationRunner::setAnimation(String animationName)
 {
-	if(animationName == "Color Palette")
+	if(animationMap.find(animationName) != animationMap.end())
 	{
 		clearQueue();
 		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = new ColorPaletteAnimation(tile);
-		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
-		animationQueue.push(entry);
-	}
-	else if(animationName == "Dancefloor")
-	{
-		clearQueue();
-		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = new RandomRectAnimation(tile);
-		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
-		animationQueue.push(entry);
-		entry = new AnimationEntry();
-		entry->animationPtr = new RandomLineAnimation(tile);
-		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
-		animationQueue.push(entry);
-		entry = new AnimationEntry();
-		entry->animationPtr = new RandomPixelAnimation(tile);
-		entry->animationLength = 15000;//ANIMATION_RUNTIME_MS;
-		animationQueue.push(entry);
-	}
-	else if(animationName == "Need for Speed")
-	{
-		clearQueue();
-		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = new NFSAnimation(tile);
-		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
-		animationQueue.push(entry);
-	}
-	else if(animationName == "Simply Red")
-	{
-		clearQueue();
-		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = new SimplyRedAnimation(tile);
-		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
-		animationQueue.push(entry);
-	}
-	else if(animationName == "Matrix")
-	{
-		clearQueue();
-		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = new MatrixAnimation(tile);
-		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
-		animationQueue.push(entry);
-	}
-	else if(animationName == "Spectrum")
-	{
-		clearQueue();
-		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = new SpectrumAnimation(tile);
+		entry->animationPtr = animationMap.at(animationName).operator()(tile);
 		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
 		animationQueue.push(entry);
 	}
 	else
-	{ //emergency animation
-		clearQueue();
-		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = new ColorPaletteAnimation(tile);
-		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
-		animationQueue.push(entry);
+	{
+		return;
 	}
 }
 
