@@ -16,11 +16,6 @@
 
 	}
 
-	GrooveApp* SimplyRedAnimation::new_instance(GridTile *tile)
-	{
-		return new SimplyRedAnimation(tile);
-	}
-
 	void SimplyRedAnimation::start()
 	{
 

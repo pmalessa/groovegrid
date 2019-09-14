@@ -16,6 +16,7 @@
 
 #define FRAMERATE_MS 33	//33ms per frame -> 30fps
 
+
 #if defined(DOOR16)
 	#define GRID_WIDTH 4
 	#define GRID_HEIGHT 4

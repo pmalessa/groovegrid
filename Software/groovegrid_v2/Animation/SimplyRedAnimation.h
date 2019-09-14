@@ -18,7 +18,6 @@ public:
 	void run();
 	void start();
 	void stop();
-    GrooveApp* new_instance(GridTile *tile);
 private:
 	uint32_t genFlashInterval();
 

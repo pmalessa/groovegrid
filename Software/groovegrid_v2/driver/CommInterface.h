@@ -9,7 +9,7 @@
 #define DRIVER_COMMINTERFACE_H_
 
 #include "../PLATFORM.h"
-#include "BluetoothService.h"
+#include "ArduinoJson/ArduinoJson.h"
 
 class CommInterface
 {

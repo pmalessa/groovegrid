@@ -7,6 +7,13 @@
 
 #include "MainLoop.h"
 
+std::map<String, std::function<GrooveApp*(GridTile*)>> AppMap::appMap = {
+		{"AnimationRunner"	,[](GridTile *tile){return new AnimationRunner(tile);}},
+		{"2048"				,[](GridTile *tile){return new Game_2048(tile);}},
+		{"Flappy Groove"	,[](GridTile *tile){return new FlappyGroove(tile);}},
+		{"Snake"			,[](GridTile *tile){return new SnakeGame(tile);}}
+	};
+
 MainLoop& MainLoop::getInstance()
 {
 	static MainLoop _instance;
@@ -25,7 +32,7 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 	if(cmd=="start")
 	{
 		String appName = doc["app"].as<String>();
-		if(appMap.find(appName) != appMap.end())	//if name inside map
+		if(AppMap::appMap.find(appName) != AppMap::appMap.end())	//if name inside map
 		{
 			stopApp();
 			startApp(appName);
@@ -66,7 +73,7 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 	else if(cmd =="getGames")
 	{
 		JsonArray gameList = rspDoc.createNestedArray("list");
-		for ( const auto &p : appMap )	//iterate through map
+		for ( const auto &p : AppMap::appMap )	//iterate through map
 		{
 		   gameList.add(p.first);
 		}
@@ -126,9 +133,9 @@ void MainLoop::startApp(String appName)
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static BluetoothService& btService = BluetoothService::getInstance();
 
-	if(appMap.find(appName) != appMap.end())
+	if(AppMap::appMap.find(appName) != AppMap::appMap.end())
 	{
-		currentApp->runningApp = appMap.at(appName).operator()(currentApp->tile);	//create new instance
+		currentApp->runningApp = AppMap::appMap.at(appName).operator()(currentApp->tile);	//create new instance
 	}
 	else
 	{

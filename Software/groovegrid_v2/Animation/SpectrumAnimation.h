@@ -16,7 +16,6 @@ class SpectrumAnimation : public GrooveAnimation
 public:
 	SpectrumAnimation(GridTile *tile);
 	void run();
-	GrooveApp* new_instance(GridTile *tile);
 	void generateBars();
 	void drawBars();
 private:

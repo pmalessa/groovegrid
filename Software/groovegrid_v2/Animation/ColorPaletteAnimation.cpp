@@ -18,11 +18,6 @@ ColorPaletteAnimation::~ColorPaletteAnimation()
 
 }
 
-GrooveApp* ColorPaletteAnimation::new_instance(GridTile *tile)
-{
-	return new ColorPaletteAnimation(tile);
-}
-
 void ColorPaletteAnimation::run()
 {
 	if(frameTimer.isTimeUp())

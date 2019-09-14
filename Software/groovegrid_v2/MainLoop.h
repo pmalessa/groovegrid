@@ -10,7 +10,6 @@
 
 #include "PLATFORM.h"
 
-#include "driver/GridTile.h"
 #include "driver/Timer.h"
 #include "utils/TaskScheduler.h"
 #include "driver/BluetoothService.h"
@@ -26,7 +25,6 @@ public:
 	static MainLoop& getInstance();
 	~MainLoop(void);
 	void loop();
-
 private:
 	class AppEntry{
 	public:
@@ -44,14 +42,16 @@ private:
 	MainLoop & operator = (const MainLoop &);
 
 	AppEntry *currentApp;
-	std::map<String, std::function<GrooveApp*(GridTile*)>> appMap = {
-		{"AnimationRunner"	,[](GridTile *tile){return new AnimationRunner(tile);}},
-		{"2048"				,[](GridTile *tile){return new Game_2048(tile);}},
-		{"Flappy Groove"	,[](GridTile *tile){return new FlappyGroove(tile);}},
-		{"Snake"			,[](GridTile *tile){return new SnakeGame(tile);}}
-	};
 
 };
 
+class AppMap{
+public:
+	static std::map<String, std::function<GrooveApp*(GridTile*)>> appMap;
+	static void add(String appName, std::function<GrooveApp*(GridTile*)> returnObjectFunction)
+	{
+		appMap.emplace(appName,returnObjectFunction);
+	};
+};
 
 #endif /* MAINLOOP_H_ */

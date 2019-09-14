@@ -21,11 +21,6 @@ RandomRectAnimation::~RandomRectAnimation()
 {
 }
 
-GrooveApp* RandomRectAnimation::new_instance(GridTile *tile)
-{
-	return new RandomRectAnimation(tile);
-}
-
 void RandomRectAnimation::run()
 {
 	//static uint8_t i = 0,j = 0, on = 1;

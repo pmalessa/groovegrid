@@ -20,7 +20,6 @@ public:
 	MatrixAnimation(GridTile* gridTile);
 	~MatrixAnimation();
 	void run();
-	GrooveApp* new_instance(GridTile *tile);
 private:
 	uint32_t animationSpeed;
 	typedef struct{

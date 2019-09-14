@@ -26,11 +26,6 @@ NFSAnimation::~NFSAnimation()
 	delete screenBuffer;
 }
 
-GrooveApp* NFSAnimation::new_instance(GridTile *tile)
-{
-	return new NFSAnimation(tile);
-}
-
 void NFSAnimation::run()
 {
 	if(frameTimer.isTimeUp())

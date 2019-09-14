@@ -17,7 +17,6 @@ public:
 	ColorPaletteAnimation(GridTile* gridTile);
 	~ColorPaletteAnimation();
 	void run();
-	GrooveApp* new_instance(GridTile *tile);
 private:
 	void FillLEDsFromPaletteColors( uint8_t colorIndex);
 	void ChangePalettePeriodically();

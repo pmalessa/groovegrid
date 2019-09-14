@@ -16,11 +16,6 @@ MatrixAnimation::~MatrixAnimation()
 {
 }
 
-GrooveApp* MatrixAnimation::new_instance(GridTile *tile)
-{
-	return new MatrixAnimation(tile);
-}
-
 void MatrixAnimation::run()
 {
 	if(frameTimer.isTimeUp())

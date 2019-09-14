@@ -17,11 +17,6 @@ RandomLineAnimation::~RandomLineAnimation()
 
 }
 
-GrooveApp* RandomLineAnimation::new_instance(GridTile *tile)
-{
-	return new RandomLineAnimation(tile);
-}
-
 void RandomLineAnimation::run()
 {
 	static uint32_t wait = 0;

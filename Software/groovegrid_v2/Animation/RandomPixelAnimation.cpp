@@ -19,11 +19,6 @@ RandomPixelAnimation::~RandomPixelAnimation()
 
 }
 
-GrooveApp* RandomPixelAnimation::new_instance(GridTile *tile)
-{
-	return new RandomPixelAnimation(tile);
-}
-
 void RandomPixelAnimation::run()
 {
 	static uint32_t wait = 0;

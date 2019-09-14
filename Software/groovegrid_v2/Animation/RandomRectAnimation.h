@@ -11,7 +11,6 @@ public:
 	RandomRectAnimation(GridTile* gridTile);
 	~RandomRectAnimation();
 	void run();
-	GrooveApp* new_instance(GridTile *tile);
 private:
 	void generateNewRect();
 

@@ -17,7 +17,6 @@ public:
 	NFSAnimation(GridTile* gridTile);
 	~NFSAnimation();
 	void run();
-	GrooveApp* new_instance(GridTile *tile);
 private:
 	uint32_t animationSpeed;
 	uint8_t **screenBuffer;

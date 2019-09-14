@@ -9,7 +9,7 @@
 #define ANIMATION_ANIMATIONRUNNER_H_
 
 #include "../PLATFORM.h"
-#include "../utils/GrooveAnimation.h"
+#include "../utils/GrooveApp.h"
 #include <queue>
 
 #include "BootTransition.h"
