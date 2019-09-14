@@ -7,6 +7,15 @@
 
 #include "AnimationRunner.h"
 
+std::map<String, std::function<GrooveAnimation*(GridTile*)>> AnimationMap::animationMap = {
+	{"Color Palette"		,[](GridTile *tile){return new ColorPaletteAnimation(tile);}},
+	{"Simply Red"			,[](GridTile *tile){return new SimplyRedAnimation(tile);}},
+	{"Dancefloor"			,[](GridTile *tile){return new RandomRectAnimation(tile);}},
+	{"Matrix"				,[](GridTile *tile){return new MatrixAnimation(tile);}},
+	{"Need for Speed"		,[](GridTile *tile){return new NFSAnimation(tile);}},
+	{"Spectrum"				,[](GridTile *tile){return new SpectrumAnimation(tile);}}
+};
+
 AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 {
 	currentAnimation = 0;
@@ -49,11 +58,11 @@ void AnimationRunner::clearQueue()
 
 void AnimationRunner::setAnimation(String animationName)
 {
-	if(animationMap.find(animationName) != animationMap.end())
+	if(AnimationMap::animationMap.find(animationName) != AnimationMap::animationMap.end())
 	{
 		clearQueue();
 		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = animationMap.at(animationName).operator()(tile);
+		entry->animationPtr = AnimationMap::animationMap.at(animationName).operator()(tile);
 		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
 		animationQueue.push(entry);
 	}

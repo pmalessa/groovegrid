@@ -46,17 +46,18 @@ private:
     bool repeating;
     uint8_t currentAnimation;
 	DeltaTimer animationTimer;
-	std::map<String, std::function<GrooveAnimation*(GridTile*)>> animationMap = {
-		{"Color Palette"		,[](GridTile *tile){return new ColorPaletteAnimation(tile);}},
-		{"Simply Red"			,[](GridTile *tile){return new SimplyRedAnimation(tile);}},
-		{"Dancefloor"			,[](GridTile *tile){return new RandomRectAnimation(tile);}},
-		{"Matrix"				,[](GridTile *tile){return new MatrixAnimation(tile);}},
-		{"Need for Speed"		,[](GridTile *tile){return new NFSAnimation(tile);}},
-		{"Spectrum"				,[](GridTile *tile){return new SpectrumAnimation(tile);}}
-	};
 
 	#define DEFAULT_ANIMATION "Color Palette"
 	#define ANIMATION_RUNTIME_MS 10000
+};
+
+class AnimationMap{
+public:
+	static std::map<String, std::function<GrooveAnimation*(GridTile*)>> animationMap;
+	static void add(String animationName, std::function<GrooveAnimation*(GridTile*)> returnObjectFunction)
+	{
+		animationMap.emplace(animationName,returnObjectFunction);
+	};
 };
 
 
