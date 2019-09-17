@@ -80,12 +80,11 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 	}
 	else if(cmd =="getAnimations")
 	{
-		JsonArray gameList = rspDoc.createNestedArray("list");
-		gameList.add("Color Palette");
-		gameList.add("Matrix");
-		gameList.add("Need for Speed");
-		gameList.add("Simply Red");
-		gameList.add("Spectrum");
+		JsonArray animationList = rspDoc.createNestedArray("list");
+		for ( const auto &p : AnimationMap::animationMap )	//iterate through map
+		{
+		   animationList.add(p.first);
+		}
 	}
 	else if(cmd=="connect")
 	{
