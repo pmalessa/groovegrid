@@ -11,7 +11,6 @@
 #include "PLATFORM.h"
 
 #include "driver/Timer.h"
-#include "utils/TaskScheduler.h"
 #include "driver/BluetoothService.h"
 
 #include "Animation/AnimationRunner.h"
@@ -19,12 +18,12 @@
 #include "Game/FlappyGroove.h"
 #include "Game/Snake.h"
 
-class MainLoop : private CommInterface
+class MainLoop : public Task, private CommInterface
 {
 public:
 	static MainLoop& getInstance();
 	~MainLoop(void);
-	void loop();
+	void run();
 private:
 	class AppEntry{
 	public:

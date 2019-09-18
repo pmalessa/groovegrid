@@ -6,6 +6,7 @@ Coordinate::Coordinate(int8_t x, int8_t y) {
 }
 
 SnakeGame::SnakeGame(GridTile *tile): GrooveGame(tile) {
+	tag = "Snake";
 	frameTimer.setTimeStep(FRAMERATE_MS*frameDelay);
 	initialize();
 }
@@ -30,10 +31,11 @@ void SnakeGame::initialize() {
 
 void SnakeGame::start() {
 	tile->fillScreen(CRGB(0));
+	Task::start();
 }
 
 void SnakeGame::stop() {
-
+	Task::stop();
 }
 
 void SnakeGame::onCommand(DynamicJsonDocument doc, uint8_t userID)
@@ -60,13 +62,15 @@ void SnakeGame::onCommand(DynamicJsonDocument doc, uint8_t userID)
 }
 
 void SnakeGame::run() {
-	if (frameTimer.isTimeUp()) {
+	while(1)
+	{
 		move();
 		wrapAroundBorder();
 		if (detectCollision()) {
 			direction = none;
 		}
 		draw();
+		vTaskDelay(FRAMERATE_TICKS);
 	}
 }
 

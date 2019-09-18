@@ -9,6 +9,7 @@
 
 FlappyGroove::FlappyGroove(GridTile *tile):GrooveGame(tile)
 {
+	tag = "Flappy Groove";
 	gameSpeed = 1;		 //new gameFrame after X frames
 	worldMoveSpeed = 5; //move world after X gameFrames
 	wallProbability = 15; //percent
@@ -49,7 +50,8 @@ GrooveApp* FlappyGroove::new_instance(GridTile *tile)
 void FlappyGroove::run()
 {
 	static uint8_t worldMoveCounter = worldMoveSpeed;
-	if(frameTimer.isTimeUp())
+
+	while(1)
 	{
 		updatePlayer();
 		drawBoard();
@@ -66,6 +68,7 @@ void FlappyGroove::run()
 		{
 			restart();
 		}
+		vTaskDelay(FRAMERATE_TICKS);
 	}
 }
 
@@ -182,10 +185,11 @@ void FlappyGroove::updatePlayer()
 void FlappyGroove::start()
 {
 	tile->fillScreen(CRGB(0, 0, 0));
+	Task::start();
 }
 void FlappyGroove::stop()
 {
-
+	Task::stop();
 }
 
 void FlappyGroove::restart()
@@ -196,39 +200,35 @@ void FlappyGroove::restart()
 	position = 0;
 	while(!restartDone)
 	{
-		if(frameTimer.isTimeUp())
+		if(i <= gameState->xmax)
 		{
-			if(i <= gameState->xmax)
-			{
-				tile->writeLine(i, 0, i, gameState->ymax, CRGB(255, 0, 0));
-				tile->endWrite();
+			tile->writeLine(i, 0, i, gameState->ymax, CRGB(255, 0, 0));
+			tile->endWrite();
 
-				i++;
-			}
-			else
-			{
-				restartDone = 1;
-			}
+			i++;
 		}
+		else
+		{
+			restartDone = 1;
+		}
+		vTaskDelay(FRAMERATE_MS*gameSpeed);
 	}
 	restartDone = 0;
 	i=0;
 	while(!restartDone)
 	{
-		if(frameTimer.isTimeUp())
+		if(i <= gameState->xmax)
 		{
-			if(i <= gameState->xmax)
-			{
-				tile->writeLine(i, 0, i, gameState->ymax-1, CRGB(0, 0, 0));
-				tile->writePixel(i, gameState->ymax, CRGB(40, 125, 84));
-				tile->endWrite();
-				i++;
-			}
-			else
-			{
-				restartDone = 1;
-			}
+			tile->writeLine(i, 0, i, gameState->ymax-1, CRGB(0, 0, 0));
+			tile->writePixel(i, gameState->ymax, CRGB(40, 125, 84));
+			tile->endWrite();
+			i++;
 		}
+		else
+		{
+			restartDone = 1;
+		}
+		vTaskDelay(FRAMERATE_MS*gameSpeed);
 	}
 }
 

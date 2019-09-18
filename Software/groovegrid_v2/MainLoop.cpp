@@ -105,11 +105,11 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static BluetoothService& btService = BluetoothService::getInstance();
 
+	tag = "MainLoop";
 	Timer::start();
-	tsched.Attach(&btService);
+	btService.start();
 
 	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface
 
@@ -121,15 +121,12 @@ MainLoop::MainLoop()
 
 void MainLoop::stopApp()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	currentApp->runningApp->stop();
-	tsched.Detach(currentApp->runningApp);
 	delete currentApp->runningApp;
 }
 
 void MainLoop::startApp(String appName)
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static BluetoothService& btService = BluetoothService::getInstance();
 
 	if(AppMap::appMap.find(appName) != AppMap::appMap.end())
@@ -141,27 +138,25 @@ void MainLoop::startApp(String appName)
 		return;
 	}
 	currentApp->runningApp->start();
-	tsched.Attach(currentApp->runningApp);
 	btService.Attach(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
 	btService.Attach(currentApp->runningApp, CHANNEL_USER2);
 }
 
 void MainLoop::resetApp()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-
-	tsched.Detach(currentApp->runningApp);
 	GrooveApp *newApp = currentApp->runningApp->new_instance(currentApp->tile);
+	currentApp->runningApp->stop();
 	delete currentApp->runningApp;
 	currentApp->runningApp = newApp;
 	currentApp->runningApp->start();
-	tsched.Attach(currentApp->runningApp);
 }
 
-void MainLoop::loop()
+void MainLoop::run()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	tsched.handleTasks();
-	static Grid& grid = Grid::getInstance();
-	grid.endWrite();
+	while(1)
+	{
+		static Grid& grid = Grid::getInstance();
+		grid.endWrite();
+		vTaskDelay(FRAMERATE_TICKS);
+	}
 }
