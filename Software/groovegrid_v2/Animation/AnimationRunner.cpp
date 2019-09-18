@@ -25,7 +25,7 @@ AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 
 AnimationRunner::~AnimationRunner()
 {
-
+	Serial.println("Ani kill");
 }
 
 GrooveApp* AnimationRunner::new_instance(GridTile *tile)
@@ -47,6 +47,7 @@ void AnimationRunner::start()
 
 void AnimationRunner::stop()
 {
+	Serial.println("Ani Stop");
 	Task::stop();
 }
 
@@ -85,6 +86,11 @@ void AnimationRunner::run()
 			if(repeating == true)
 			{
 				animationQueue.push(animationQueue.front()); //put first element to the back
+			}
+			else
+			{	//delete element
+				delete animationQueue.front()->animationPtr;
+				delete animationQueue.front();
 			}
 			animationQueue.pop();	//remove element
 			if(!animationQueue.empty())	//element available

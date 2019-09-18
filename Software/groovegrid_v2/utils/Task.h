@@ -17,6 +17,9 @@ public:
 	#define DEFAULT_PRIORITY 1
 	virtual ~Task()
 	{
+		Serial.print("Task ");
+		Serial.print(tag);
+		Serial.println(" kill");
 		stop();
 	}
 	virtual void run() = 0;	//is called endlessly by the TaskScheduler
@@ -26,9 +29,9 @@ public:
 		if(taskHandle == NULL)
 		{ //thunfisch
 			if(tag == NULL)tag="Unnamed";
-			Serial.print("Task");
+			Serial.print("Task ");
 			Serial.print(tag);
-			Serial.println("start");
+			Serial.println(" start");
 			xTaskCreate(runWrapper, (const char*)tag, stackDepth, this, priority, &taskHandle);
 		}
 	};
@@ -36,7 +39,11 @@ public:
 	{
 		if(taskHandle != NULL)
 		{
+			Serial.print("Task ");
+			Serial.print(tag);
+			Serial.println(" stop");
 			vTaskDelete(taskHandle);
+			taskHandle = NULL;
 		}
 	};
 protected:
@@ -45,7 +52,6 @@ protected:
 	unsigned int priority = DEFAULT_PRIORITY;
 private:
 	xTaskHandle taskHandle = NULL;
-
 };
 
 

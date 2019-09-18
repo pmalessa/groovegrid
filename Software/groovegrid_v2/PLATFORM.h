@@ -15,8 +15,8 @@
 #include <functional>
 
 #define FRAMERATE_MS 33	//33ms per frame -> 30fps
-#define FRAMERATE_TICKS (FRAMERATE_MS*0.1)
-#define MS_TO_TICKS (0.1)
+#define FRAMERATE_TICKS (FRAMERATE_MS*1)	//1000Hz Freertos Tick rate
+#define MS_TO_TICKS (1)
 
 
 #if defined(DOOR16)
