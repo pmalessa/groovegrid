@@ -27,6 +27,7 @@ typedef struct{
     CommInterface *commInterface;
 	BLECharacteristic *rxCharacteristic, *txCharacteristic;
 	BLEService *attachedService;
+	BLE2902 *rxdescriptor, *txdescriptor;
 }CommChannel;
 
 enum ChannelID{

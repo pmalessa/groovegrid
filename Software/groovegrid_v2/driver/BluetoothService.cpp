@@ -98,6 +98,12 @@ BluetoothService::BluetoothService()
 		ch->txCharacteristic = ch->attachedService->createCharacteristic(*ch->txUUID,BLECharacteristic::PROPERTY_WRITE);
 		ch->rxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
 		ch->txCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
+		ch->txdescriptor = new BLE2902();
+		ch->txdescriptor->setNotifications(1);
+		ch->txCharacteristic->addDescriptor(ch->txdescriptor);
+		ch->rxdescriptor = new BLE2902();
+		ch->rxdescriptor->setNotifications(1);
+		ch->rxCharacteristic->addDescriptor(ch->rxdescriptor);
 		ch->attachedService->start();
 		BluetoothAdvertiser->addServiceUUID(*ch->serviceUUID);
 	}
@@ -128,12 +134,13 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 	Serial.println(data.c_str());
 
 	DeserializationError error = deserializeJson(doc, data);
-	if (error) {
-	Serial.print(F("deserializeJson() failed: "));
-	Serial.println(error.c_str());
-	rspDoc["error"]= error.c_str();				//add error
-	//sendResponse(rspDoc, channelID);			//send Response
-	return;										//leave if error
+	if (error)
+	{
+		Serial.print(F("deserializeJson() failed: "));
+		Serial.println(error.c_str());
+		rspDoc["error"]= error.c_str();				//add error
+		sendResponse(rspDoc, channelID);			//send Response
+		return;										//leave if error
 	}
 
 	//----------BLE Command Parsing---------------
@@ -237,8 +244,8 @@ void BluetoothService::sendResponse(DynamicJsonDocument doc, uint8_t channelID)
 {
 	String Output;
 	serializeJson(doc, Output);
-	channelList[channelID]->txCharacteristic->setValue(Output.c_str());
-	channelList[channelID]->txCharacteristic->notify(true);
+	channelList[channelID]->rxCharacteristic->setValue(Output.c_str());
+	channelList[channelID]->rxCharacteristic->notify(true);
 }
 
 void BluetoothService::run()
