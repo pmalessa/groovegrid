@@ -30,7 +30,6 @@ BluetoothService& BluetoothService::getInstance()
 BluetoothService::~BluetoothService(){}
 BluetoothService::BluetoothService()
 {
-	tag = "BluetoothService";
 	CommChannel *ch;
 	Serial.begin(115200);
 	Serial.print("Hey!\n");
@@ -244,8 +243,4 @@ void BluetoothService::sendResponse(DynamicJsonDocument doc, uint8_t channelID)
 
 void BluetoothService::run()
 {
-	while(1)
-	{
-		vTaskDelay(100*MS_TO_TICKS);
-	}
 }

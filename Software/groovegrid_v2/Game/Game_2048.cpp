@@ -8,7 +8,6 @@
 
 Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 {
-	tag = "2048";
 	gameSpeed = 5;
 	tile->fillScreen(CRGB(0, 0, 0));	//fill grid black
 	if(tile->getWidth() <= tile->getHeight())	//make board square
@@ -36,12 +35,10 @@ GrooveApp* Game_2048::new_instance(GridTile *tile)
 void Game_2048::start()
 {
 	DrawBoard(gameState->board);
-	Task::start();
 }
 
 void Game_2048::stop()
 {
-	Task::stop();
 }
 
 void Game_2048::onCommand(DynamicJsonDocument doc, uint8_t userID)
@@ -104,8 +101,7 @@ void Game_2048::run()
 {
 	static uint16_t wait = 0;
 	static uint8_t move_possible = 0;
-
-	while(1)
+	if(frameTimer.isTimeUp())
 	{
 		if(wait == 0)
 		{
@@ -133,7 +129,6 @@ void Game_2048::run()
 		{
 			wait--;
 		}
-		vTaskDelay(FRAMERATE_TICKS);
 	}
 }
 

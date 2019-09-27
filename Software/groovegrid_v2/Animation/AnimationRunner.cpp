@@ -20,7 +20,6 @@ AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 {
 	currentAnimation = 0;
 	repeating = true;
-	tag = "AnimationRunner";
 }
 
 AnimationRunner::~AnimationRunner()
@@ -41,13 +40,10 @@ void AnimationRunner::start()
 		setAnimation(DEFAULT_ANIMATION);
 		animationTimer.setTimeStep(animationQueue.front()->animationLength);
 	}
-	Serial.println("Ani Start");
-	Task::start();
 }
 
 void AnimationRunner::stop()
 {
-	Task::stop();
 }
 
 void AnimationRunner::clearQueue()
@@ -78,32 +74,28 @@ void AnimationRunner::setAnimation(String animationName)
 
 void AnimationRunner::run()
 {
-	while(1)
+	if(animationTimer.isTimeUp())
 	{
-		if(animationTimer.isTimeUp())
+		if(repeating == true)
 		{
-			if(repeating == true)
-			{
-				animationQueue.push(animationQueue.front()); //put first element to the back
-			}
-			animationQueue.pop();	//remove element
-			if(!animationQueue.empty())	//element available
-			{
-				animationTimer.setTimeStep(animationQueue.front()->animationLength);
-			}
-			else
-			{
-				tile->fillScreen(CRGB(0));
-			}
+			animationQueue.push(animationQueue.front()); //put first element to the back
 		}
-		if(!animationQueue.empty())
+		animationQueue.pop();	//remove element
+		if(!animationQueue.empty())	//element available
 		{
-			if(animationQueue.front()->animationPtr != nullptr)
-			{
-				animationQueue.front()->animationPtr->run();
-			}
+			animationTimer.setTimeStep(animationQueue.front()->animationLength);
 		}
-		vTaskDelay(FRAMERATE_TICKS);
+		else
+		{
+			tile->fillScreen(CRGB(0));
+		}
+	}
+	if(!animationQueue.empty())
+	{
+		if(animationQueue.front()->animationPtr != nullptr)
+		{
+			animationQueue.front()->animationPtr->run();
+		}
 	}
 }
 
