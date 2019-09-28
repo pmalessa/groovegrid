@@ -21,7 +21,7 @@ public:
 	virtual ~GrooveAnimation(){};
 	void start(){};	//stub start
 	void stop(){};	//stub stop
-	void onCommand(DynamicJsonDocument doc, uint8_t userID){};	//can be overridden
+	void onCommand(CommandMsg *msg){};	//can be overridden
 	virtual void run() = 0;					//has to be overridden by Animation loop
 protected:
 	GridTile* tile;							//has to be initialized

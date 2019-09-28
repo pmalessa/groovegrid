@@ -35,7 +35,7 @@ private:
 	void startApp(String appName);
 	void stopApp();
 	void resetApp();
-	void onCommand(DynamicJsonDocument doc, uint8_t channelID);
+	void onCommand(CommandMsg *msg);
 
 	MainLoop();
 	MainLoop(const MainLoop&);

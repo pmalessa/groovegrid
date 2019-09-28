@@ -41,10 +41,9 @@ void Game_2048::stop()
 {
 }
 
-void Game_2048::onCommand(DynamicJsonDocument doc, uint8_t userID)
+void Game_2048::onCommand(CommandMsg *msg)
 {
-	UNUSED(userID);
-	String moveCmd = doc["move"].as<String>();
+	String moveCmd = (*msg->doc)["move"].as<String>();
 
 	if(moveCmd=="up")
 	{

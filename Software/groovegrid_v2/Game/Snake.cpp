@@ -36,10 +36,9 @@ void SnakeGame::stop() {
 
 }
 
-void SnakeGame::onCommand(DynamicJsonDocument doc, uint8_t userID)
+void SnakeGame::onCommand(CommandMsg *msg)
 {
-	UNUSED(userID);
-	String move = doc["move"].as<String>();
+	String move = (*msg->doc)["move"].as<String>();
 
 	if(move=="up")
 	{

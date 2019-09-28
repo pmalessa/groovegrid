@@ -20,25 +20,22 @@ MainLoop& MainLoop::getInstance()
 	return _instance;
 }
 
-void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
+void MainLoop::onCommand(CommandMsg *msg)
 {
 	static BluetoothService& btService = BluetoothService::getInstance();
-	DynamicJsonDocument rspDoc(200);
 	uint8_t errorCode = 0;
-	rspDoc["rspID"] = doc["cmdID"];	//send cmdID back as rspID
 
-	String cmd = doc["cmd"].as<String>();
-
+	String cmd = (*msg->doc)["cmd"].as<String>();
 	if(cmd=="start")
 	{
-		String appName = doc["app"].as<String>();
+		String appName = (*msg->doc)["app"].as<String>();
 		if(AppMap::appMap.find(appName) != AppMap::appMap.end())	//if name inside map
 		{
 			stopApp();
 			startApp(appName);
 			if(appName=="AnimationRunner")
 			{
-				String animation = doc["options"]["animation"].as<String>();
+				String animation = (*msg->doc)["options"]["animation"].as<String>();
 				if(animation!="")	//pass first animation to AnimationRunner
 				{
 					AnimationRunner *app = (AnimationRunner*) currentApp->runningApp;
@@ -57,22 +54,22 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 	}
 	else if(cmd=="load")
 	{
-		currentApp->runningApp->load(&doc); //put Savegame
+		currentApp->runningApp->load(msg->doc); //put Savegame
 	}
 	else if(cmd=="save")
 	{
-		rspDoc["name"] = currentApp->appName;
-		currentApp->runningApp->save(&rspDoc);	//get Savegame
+		(*msg->rspdoc)["name"] = currentApp->appName;
+		currentApp->runningApp->save(msg->rspdoc);	//get Savegame
 	}
 	else if(cmd=="getGridData")
 	{
-		JsonObject gridData = rspDoc.createNestedObject("data");
+		JsonObject gridData = (*msg->rspdoc).createNestedObject("data");
 		gridData["height"] = GRID_HEIGHT;
 		gridData["width"] = GRID_WIDTH;
 	}
 	else if(cmd =="getGames")
 	{
-		JsonArray gameList = rspDoc.createNestedArray("list");
+		JsonArray gameList = (*msg->rspdoc).createNestedArray("list");
 		for ( const auto &p : AppMap::appMap )	//iterate through map
 		{
 		   gameList.add(p.first);
@@ -80,7 +77,7 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 	}
 	else if(cmd =="getAnimations")
 	{
-		JsonArray animationList = rspDoc.createNestedArray("list");
+		JsonArray animationList = (*msg->rspdoc).createNestedArray("list");
 		for ( const auto &p : AnimationMap::animationMap )	//iterate through map
 		{
 		   animationList.add(p.first);
@@ -98,8 +95,7 @@ void MainLoop::onCommand(DynamicJsonDocument doc, uint8_t channelID)
 	{
 		errorCode = 1;
 	}
-	rspDoc["error"]= errorCode;					//add errorCode
-	btService.sendResponse(rspDoc, channelID);	//send Response
+	(*msg->rspdoc)["error"]= errorCode;					//add errorCode
 }
 
 MainLoop::~MainLoop(){}

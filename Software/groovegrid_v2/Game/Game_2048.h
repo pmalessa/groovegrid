@@ -73,7 +73,7 @@ public:
 	void start();
 	void stop();
 	void run();
-	void onCommand(DynamicJsonDocument doc, uint8_t userID);
+	void onCommand(CommandMsg *msg);
     GrooveApp* new_instance(GridTile *tile);
     void load(DynamicJsonDocument *doc);
     void save(DynamicJsonDocument *doc);

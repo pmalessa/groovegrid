@@ -14,8 +14,13 @@
 class CommInterface
 {
 public:
+	typedef struct{
+		DynamicJsonDocument *doc;
+		DynamicJsonDocument *rspdoc;
+		uint8_t channelID;
+	}CommandMsg;
 	virtual ~CommInterface(){};
-    virtual void onCommand(DynamicJsonDocument doc, uint8_t channelID) = 0;
+    virtual void onCommand(CommandMsg *msg) = 0;
 private:
 };
 
