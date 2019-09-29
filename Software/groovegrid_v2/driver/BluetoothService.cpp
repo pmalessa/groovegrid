@@ -142,7 +142,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 		Serial.print(F("deserializeJson() failed: "));
 		Serial.println(error.c_str());
 		rspDoc["error"]= error.c_str();				//add error
-		sendResponse(rspDoc, channelID);			//send Response
+		sendResponse(&rspDoc, channelID);			//send Response
 		return;										//leave if error
 	}
 
@@ -225,7 +225,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 		}
 		*/
 	}
-	sendResponse(rspDoc, channelID);			//send Error Response
+	sendResponse(&rspDoc, channelID);			//send Error Response
 }
 
 void BluetoothService::Attach(CommInterface *callbackPointer, ChannelID channelID)
@@ -238,10 +238,10 @@ void BluetoothService::Attach(CommInterface *callbackPointer, ChannelID channelI
     }
 }
 
-void BluetoothService::sendResponse(DynamicJsonDocument doc, uint8_t channelID)
+void BluetoothService::sendResponse(DynamicJsonDocument *doc, uint8_t channelID)
 {
 	String Output;
-	serializeJson(doc, Output);
+	serializeJson(*doc, Output);
 	channelList[channelID]->rxCharacteristic->setValue(Output.c_str());
 	channelList[channelID]->rxCharacteristic->notify(true);
 }

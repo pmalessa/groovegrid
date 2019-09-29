@@ -59,7 +59,7 @@ class BluetoothService : public Task{
  public:
 	static BluetoothService& getInstance();
 	virtual ~BluetoothService(void);
-	void sendResponse(DynamicJsonDocument doc, uint8_t channelID);
+	void sendResponse(DynamicJsonDocument *doc, uint8_t channelID);
 	bool isConnected();
 	void run();
 	void Attach(CommInterface *callback, ChannelID channelID);
