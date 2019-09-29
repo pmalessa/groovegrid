@@ -10,7 +10,7 @@
 
 #include "../PLATFORM.h"
 #include <driver/i2s.h>
-#include "arduinoFFT.h"
+//#include "arduinoFFT.h"
 
 class Microphone {
 
@@ -38,7 +38,7 @@ bool initialized = false, fftAvailable = false;
 const double samplingFrequency = 100; //Hz, must be less than 10000 due to ADC
 double vReal[SAMPLES];
 double vImag[SAMPLES];
-arduinoFFT *fft;
+//arduinoFFT *fft;
 };
 
 
