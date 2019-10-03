@@ -6,3 +6,5 @@
 *.s#*
 *.b#*
 Software/groovegrid_v2/CONFIG.h
+Software/gridOS/.vscode/
+*.DS_Store
