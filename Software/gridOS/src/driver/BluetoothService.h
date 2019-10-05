@@ -90,19 +90,25 @@ class BluetoothService : public Task{
 		BluetoothService *commPtr;
 	};
 
-	class CommCharacteristicCallback : public BLECharacteristicCallbacks
+	class CommCharacteristicReadCallback : public BLECharacteristicCallbacks
 	{
 	public:
-		CommCharacteristicCallback(BluetoothService *commPtr, uint8_t channelID){this->commPtr = commPtr; this->channelID = channelID;};
+		CommCharacteristicReadCallback(BluetoothService *commPtr, uint8_t channelID){this->commPtr = commPtr; this->channelID = channelID;};
 	    void onRead(BLECharacteristic* pCharacteristic)
 	    {
-	    	std::string res = commPtr->onRead(channelID); //call COMM passUp function here
-	    	pCharacteristic->setValue(res);
+	    	pCharacteristic->setValue(commPtr->onRead(channelID));
 	    }
+	private:
+	    BluetoothService *commPtr;
+	    uint8_t channelID;
+	};
+	class CommCharacteristicWriteCallback : public BLECharacteristicCallbacks
+	{
+	public:
+		CommCharacteristicWriteCallback(BluetoothService *commPtr, uint8_t channelID){this->commPtr = commPtr; this->channelID = channelID;};
 	    void onWrite(BLECharacteristic* pCharacteristic)
 	    {
-	    	std::string res = pCharacteristic->getValue();
-	    	commPtr->onWrite(res, channelID);//call COMM passUp function here
+	    	commPtr->onWrite(pCharacteristic->getValue(), channelID);//call COMM passUp function here
 	    }
 	private:
 	    BluetoothService *commPtr;

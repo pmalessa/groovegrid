@@ -95,8 +95,8 @@ BluetoothService::BluetoothService()
 		ch->attachedService = BluetoothServer->createService(*ch->serviceUUID);
 		ch->rxCharacteristic = ch->attachedService->createCharacteristic(*ch->rxUUID,BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_NOTIFY);
 		ch->txCharacteristic = ch->attachedService->createCharacteristic(*ch->txUUID,BLECharacteristic::PROPERTY_WRITE);
-		ch->rxCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
-		ch->txCharacteristic->setCallbacks(new CommCharacteristicCallback(this, ch->channelID));
+		ch->rxCharacteristic->setCallbacks(new CommCharacteristicReadCallback(this,ch->channelID));
+		ch->txCharacteristic->setCallbacks(new CommCharacteristicWriteCallback(this,ch->channelID));
 		ch->txdescriptor = new BLE2902();
 		ch->txdescriptor->setNotifications(1);
 		ch->txCharacteristic->addDescriptor(ch->txdescriptor);
@@ -120,92 +120,120 @@ std::string BluetoothService::onRead(uint8_t channelID)
 	return "0";
 }
 
+void free_msg(CommInterface::CommandMsg *msg)
+{
+	if(msg->doc != nullptr)delete(msg->doc);
+	if(msg->rspdoc != nullptr)delete(msg->rspdoc);
+	if(msg != nullptr)delete(msg);
+}
+
 void BluetoothService::onWrite(std::string data, uint8_t channelID)
 {
-	DynamicJsonDocument doc(200), rspDoc(200);
-	CommInterface::CommandMsg msg;
-	msg.channelID = channelID;
-	msg.doc = &doc;
-	msg.rspdoc = &rspDoc;
+	ESP_LOGD(tag,"Heap: %i",xPortGetFreeHeapSize());
+	if(data.empty())
+	{
+		return;
+	}
+	CommInterface::CommandMsg *msg = new CommInterface::CommandMsg;
+	msg->channelID = channelID;
+	msg->doc = new DynamicJsonDocument(200);
+	msg->rspdoc = new DynamicJsonDocument(200);
+
+	if(msg == nullptr)
+	{
+		free_msg(msg);
+		return;
+	}
+	if(msg->doc == nullptr)
+	{
+		free_msg(msg);
+		return;
+	}
+	if(msg->rspdoc == nullptr)
+	{
+		free_msg(msg);
+		return;
+	}
 
 	ESP_LOGD(tag,"Write on Channel %i: %s",channelID,data.c_str());
 
-	DeserializationError error = deserializeJson(doc, data);
+	DeserializationError error = deserializeJson((*msg->doc), data);
 	if (error)
 	{
-		ESP_LOGE(tag,"deserializeJson() failed: %s",error.c_str());
-		rspDoc["error"]= error.c_str();				//add error
-		sendResponse(&rspDoc, channelID);			//send Response
+		ESP_LOGD(tag,"deserializeJson() failed: %s",error.c_str());
+		(*msg->rspdoc)["error"]= error.c_str();				//add error
+		sendResponse(msg->rspdoc, channelID);			//send Response
+		free_msg(msg);
 		return;										//leave if error
 	}
 
 	//----------BLE Command Parsing---------------
-	rspDoc["rspID"] = doc["cmdID"];	//send cmdID back as rspID
+	(*msg->rspdoc)["rspID"] = (*msg->doc)["cmdID"];	//send cmdID back as rspID
 
 	//CONNECT CMD
-	if(doc["cmd"] == "connect")
+	if((*msg->doc)["cmd"] == "connect")
 	{
-		uint8_t userID = doc["userID"];
+		uint8_t userID = (*msg->doc)["userID"];
 		if(userID < MAX_USERS)
 		{
 			if(connectedUsers[userID] != true)
 			{
 				connectedUsers[userID] = true; //slot is free, connect allowed
-				channelList.at(userID+1)->commInterface->onCommand(&msg);	//channelID= userID+1, notify game
+				channelList.at(userID+1)->commInterface->onCommand(msg);	//channelID= userID+1, notify game
 			}
 			else
 			{
-				rspDoc["error"]= 1;//send error response
+				(*msg->rspdoc)["error"]= 1;//send error response
 			}
 		}
 		else
 		{
-			rspDoc["error"]= 2;//send error response
+			(*msg->rspdoc)["error"]= 2;//send error response
 		}
 	}
 	//DISCONNECT CMD
-	else if(doc["cmd"] == "disconnect")
+	else if((*msg->doc)["cmd"] == "disconnect")
 	{
-		uint8_t userID = doc["userID"];
+		uint8_t userID = (*msg->doc)["userID"];
 		if(userID < MAX_USERS)
 		{
 			if(connectedUsers[userID] == true)
 			{
 				connectedUsers[userID] = false; //slot is used, disconnect allowed
-				channelList.at(userID+1)->commInterface->onCommand(&msg);	//channelID= userID+1, notify game
+				channelList.at(userID+1)->commInterface->onCommand(msg);	//channelID= userID+1, notify game
 			}
 			else
 			{
-				rspDoc["error"]= 1;//send error response
+				(*msg->rspdoc)["error"]= 1;//send error response
 			}
 		}
 		else
 		{
-			rspDoc["error"]= 2;//send error response
+			(*msg->rspdoc)["error"]= 2;//send error response
 		}
 	}
 	//GET USER IDs CMD
-	else if(doc["cmd"] == "getUserIDs")
+	else if((*msg->doc)["cmd"] == "getUserIDs")
 	{
 		//send userIDs
-		JsonArray usersArray = rspDoc.createNestedArray("userIDs");
+		JsonArray usersArray = (*msg->rspdoc).createNestedArray("userIDs");
 		for(uint8_t i=0;i<MAX_USERS;i++)
 		{
 			usersArray.add(connectedUsers[i]);
 		}
-		rspDoc["error"]= 0;
+		(*msg->rspdoc)["error"]= 0;
 	}
 	//OTHER CMDs
 	else
 	{
 		if(channelID == 0)	//if control channel
 		{
-			channelList.at(channelID)->commInterface->onCommand(&msg);	//parse doc to app
+			channelList.at(channelID)->commInterface->onCommand(msg);	//parse doc to app
 		}
 		else
 		{
 			//remove later
-			channelList.at(channelID)->commInterface->onCommand(&msg);	//parse doc to app
+			channelList.at(channelID)->commInterface->onCommand(msg);	//parse doc to app
 		}
 		/*
 		else if(connectedUsers[channelID-1] == true)	//if user channel is connected
@@ -218,7 +246,8 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 		}
 		*/
 	}
-	sendResponse(&rspDoc, channelID);			//send Error Response
+	sendResponse(msg->rspdoc, channelID);			//send Error Response
+	free_msg(msg);
 }
 
 void BluetoothService::Attach(CommInterface *callbackPointer, ChannelID channelID)
