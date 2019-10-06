@@ -58,6 +58,7 @@ void NFSAnimation::run()
 				}
 			}
 		}
+		tile->endWrite();
 	}
 }
 

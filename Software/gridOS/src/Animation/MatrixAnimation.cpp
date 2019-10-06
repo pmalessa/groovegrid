@@ -52,6 +52,7 @@ void MatrixAnimation::run()
 				snakeList.erase(it);	//remove snake
 			}
 		}
+		tile->endWrite();
 	}
 }
 
