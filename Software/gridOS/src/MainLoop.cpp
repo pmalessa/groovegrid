@@ -158,6 +158,7 @@ void MainLoop::loop()
 {
 	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	tsched.handleTasks();
-	static Grid& grid = Grid::getInstance();
-	grid.endWrite();
+	vTaskDelay(1);
+	//static Grid& grid = Grid::getInstance();
+	//grid.endWrite();
 }

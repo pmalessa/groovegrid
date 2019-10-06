@@ -13,11 +13,13 @@ bool BluetoothService::isConnected()
 
 void BluetoothService::onConnect()
 {
+	ESP_LOGI(tag,"Connected");
 	connected = true;
 }
 
 void BluetoothService::onDisconnect()
 {
+	ESP_LOGI(tag,"Disconnected");
 	connected = false;
 }
 
@@ -32,6 +34,9 @@ BluetoothService::BluetoothService()
 {
 	CommChannel *ch;
 	ESP_LOGI(tag,"Hey!\n");
+	ESP_LOGI(tag,"Heap: %i",xPortGetFreeHeapSize());
+
+	debugTimer.setTimeStep(1000);
 
 	for(uint8_t i=0;i<MAX_USERS;i++)
 	{
@@ -129,7 +134,7 @@ void free_msg(CommInterface::CommandMsg *msg)
 
 void BluetoothService::onWrite(std::string data, uint8_t channelID)
 {
-	ESP_LOGD(tag,"Heap: %i",xPortGetFreeHeapSize());
+	ESP_LOGI(tag,"OnWrite");
 	if(data.empty())
 	{
 		return;
@@ -155,12 +160,12 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 		return;
 	}
 
-	ESP_LOGD(tag,"Write on Channel %i: %s",channelID,data.c_str());
+	ESP_LOGI(tag,"Write on Channel %i: %s",channelID,data.c_str());
 
 	DeserializationError error = deserializeJson((*msg->doc), data);
 	if (error)
 	{
-		ESP_LOGD(tag,"deserializeJson() failed: %s",error.c_str());
+		ESP_LOGI(tag,"deserializeJson() failed: %s",error.c_str());
 		(*msg->rspdoc)["error"]= error.c_str();				//add error
 		sendResponse(msg->rspdoc, channelID);			//send Response
 		free_msg(msg);
@@ -270,4 +275,8 @@ void BluetoothService::sendResponse(DynamicJsonDocument *doc, uint8_t channelID)
 
 void BluetoothService::run()
 {
+	if(debugTimer.isTimeUp())
+	{
+		ESP_LOGI(tag,"Heap: %i",xPortGetFreeHeapSize());
+	}
 }

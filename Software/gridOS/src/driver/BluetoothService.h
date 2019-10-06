@@ -13,6 +13,7 @@
 #include "../utils/Task.h"
 #include "ArduinoJson.h"
 #include "CommInterface.h"
+#include "DeltaTimer.h"
 
 #define MAX_CHANNEL_NUM 10
 #define MAX_USERS 4
@@ -79,6 +80,7 @@ class BluetoothService : public Task{
 	bool connectedUsers[MAX_USERS];
 
 	const char* tag = "BluetoothService";
+	DeltaTimer debugTimer;
 
 	class CommServerCallback : public BLEServerCallbacks
 	{

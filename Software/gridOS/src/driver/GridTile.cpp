@@ -55,8 +55,8 @@ void GridTile::fillScreenBuffer(CRGB color) {
 
 void GridTile::endWrite()
 {
-	static Grid& grid = Grid::getInstance();
-	grid.endWrite();
+	//static Grid& grid = Grid::getInstance();
+	//grid.endWrite();
 }
 
 void GridTile::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
