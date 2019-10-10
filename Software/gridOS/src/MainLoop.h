@@ -23,7 +23,6 @@ class MainLoop : private CommInterface
 public:
 	static MainLoop& getInstance();
 	~MainLoop(void);
-	void loop();
 private:
 	class AppEntry{
 	public:
@@ -34,7 +33,6 @@ private:
 	};
 	void startApp(std::string appName);
 	void stopApp();
-	void resetApp();
 	void onCommand(CommandMsg *msg);
 	void appTask();
 

@@ -49,7 +49,7 @@ void MainLoop::onCommand(CommandMsg *msg)
 	}
 	else if(cmd=="reset")
 	{
-		resetApp();
+		startApp(currentApp->appName);
 	}
 	else if(cmd=="load")
 	{
@@ -137,26 +137,16 @@ void MainLoop::startApp(std::string appName)
 	if(AppMap::appMap.find(appName) != AppMap::appMap.end())
 	{
 		currentApp->runningApp = AppMap::appMap.at(appName).operator()(currentApp->tile);	//create new instance
+		currentApp->runningApp->start();
+		currentApp->isRunning = true;
+		currentApp->appName = appName;
+		btService.Attach(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
+		btService.Attach(currentApp->runningApp, CHANNEL_USER2);
 	}
 	else
 	{
 		return;
 	}
-	currentApp->runningApp->start();
-	currentApp->isRunning = true;
-	btService.Attach(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
-	btService.Attach(currentApp->runningApp, CHANNEL_USER2);
-}
-
-void MainLoop::resetApp()
-{
-	currentApp->isRunning = false;
-	currentApp->runningApp->stop();
-	GrooveApp *newApp = currentApp->runningApp->new_instance(currentApp->tile);
-	delete currentApp->runningApp;
-	currentApp->runningApp = newApp;
-	currentApp->runningApp->start();
-	currentApp->isRunning = true;
 }
 
 void MainLoop::appTask()
