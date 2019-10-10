@@ -384,6 +384,10 @@ void BLECharacteristic::handleGATTServerEvent(
 						}
 					} else { // read.is_long == false
 
+						if (m_pCallbacks != nullptr) {  // If is.long is false then this is the first (or only) request to read data, so invoke the callback
+							m_pCallbacks->onRead(this);   // Invoke the read callback.
+						}
+						
 						std::string value = m_value.getValue();
 
 						if (value.length() + 1 > maxOffset) {
@@ -399,9 +403,6 @@ void BLECharacteristic::handleGATTServerEvent(
 							memcpy(rsp.attr_value.value, value.data(), rsp.attr_value.len);
 						}
 
-						if (m_pCallbacks != nullptr) {  // If is.long is false then this is the first (or only) request to read data, so invoke the callback
-							m_pCallbacks->onRead(this);   // Invoke the read callback.
-						}
 					}
 					rsp.attr_value.handle   = param->read.handle;
 					rsp.attr_value.auth_req = ESP_GATT_AUTH_REQ_NONE;

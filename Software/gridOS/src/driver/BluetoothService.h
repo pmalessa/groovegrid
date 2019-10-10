@@ -78,7 +78,7 @@ class BluetoothService{
 	BLEAdvertising *BluetoothAdvertiser;
 	bool connectedUsers[MAX_USERS];
 
-	const char* tag = "BluetoothService";
+	const char* tag = "btService";
 	DeltaTimer debugTimer;
 	xTaskHandle btTask;
 
