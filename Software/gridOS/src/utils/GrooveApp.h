@@ -5,11 +5,10 @@
 
 #include "../PLATFORM.h"
 #include "../driver/BluetoothService.h"
-#include "Task.h"
 #include "../driver/GridTile.h"
 #include "../driver/DeltaTimer.h"
 
-class GrooveApp : public Task, public CommInterface
+class GrooveApp : public CommInterface
 {
 public:
 	GrooveApp(GridTile* tile){this->tile = tile; frameTimer.setTimeStep(FRAMERATE_MS);};

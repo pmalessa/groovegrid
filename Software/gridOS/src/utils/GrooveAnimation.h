@@ -10,11 +10,10 @@
 
 #include "../PLATFORM.h"
 #include "../driver/DeltaTimer.h"
-#include "Task.h"
 #include "../driver/CommInterface.h"
 #include "../driver/GridTile.h"
 
-class GrooveAnimation: public Task, public CommInterface
+class GrooveAnimation: public CommInterface
 {
 public:
 	GrooveAnimation(GridTile *tile){this->tile = tile; frameTimer.setTimeStep(FRAMERATE_MS);};

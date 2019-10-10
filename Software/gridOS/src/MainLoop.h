@@ -11,7 +11,6 @@
 #include "PLATFORM.h"
 
 #include "driver/Timer.h"
-#include "utils/TaskScheduler.h"
 #include "driver/BluetoothService.h"
 
 #include "Animation/AnimationRunner.h"
@@ -31,17 +30,21 @@ private:
 		std::string appName;
 		GridTile *tile;
 		GrooveApp *runningApp;
+		bool isRunning;
 	};
 	void startApp(std::string appName);
 	void stopApp();
 	void resetApp();
 	void onCommand(CommandMsg *msg);
+	void appTask();
 
 	MainLoop();
 	MainLoop(const MainLoop&);
 	MainLoop & operator = (const MainLoop &);
+	static void appTaskWrapper(void* _this){((MainLoop*)_this)->appTask();}
 
 	AppEntry *currentApp;
+	xTaskHandle appTaskHandle;
 
 };
 

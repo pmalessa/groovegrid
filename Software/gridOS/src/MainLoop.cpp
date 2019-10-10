@@ -22,7 +22,6 @@ MainLoop& MainLoop::getInstance()
 
 void MainLoop::onCommand(CommandMsg *msg)
 {
-	static BluetoothService& btService = BluetoothService::getInstance();
 	uint8_t errorCode = 0;
 
 	std::string cmd = (*msg->doc)["cmd"].as<std::string>();
@@ -101,32 +100,39 @@ void MainLoop::onCommand(CommandMsg *msg)
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static BluetoothService& btService = BluetoothService::getInstance();
 
 	Timer::start();
-	//tsched.Attach(&btService);
 
 	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface
+
+	xTaskCreate(appTaskWrapper,"appTask",2048,this,1,&appTaskHandle);
 
 	//Start initial App
 	currentApp = new AppEntry();
 	currentApp->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+	currentApp->isRunning = false;
 	startApp("AnimationRunner");
 }
 
 void MainLoop::stopApp()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	currentApp->runningApp->stop();
-	tsched.Detach(currentApp->runningApp);
-	delete currentApp->runningApp;
+	if(currentApp->runningApp != nullptr)
+	{
+		currentApp->runningApp->stop();
+		currentApp->isRunning = false;	//TODO: this is maybe not thread safe! currentApp could be running while deleting it
+		delete currentApp->runningApp;
+	}
 }
 
 void MainLoop::startApp(std::string appName)
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
 	static BluetoothService& btService = BluetoothService::getInstance();
+
+	if(currentApp->isRunning == true)
+	{
+		stopApp();
+	}
 
 	if(AppMap::appMap.find(appName) != AppMap::appMap.end())
 	{
@@ -137,26 +143,33 @@ void MainLoop::startApp(std::string appName)
 		return;
 	}
 	currentApp->runningApp->start();
-	tsched.Attach(currentApp->runningApp);
+	currentApp->isRunning = true;
 	btService.Attach(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
 	btService.Attach(currentApp->runningApp, CHANNEL_USER2);
 }
 
 void MainLoop::resetApp()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-
-	tsched.Detach(currentApp->runningApp);
+	currentApp->isRunning = false;
+	currentApp->runningApp->stop();
 	GrooveApp *newApp = currentApp->runningApp->new_instance(currentApp->tile);
 	delete currentApp->runningApp;
 	currentApp->runningApp = newApp;
 	currentApp->runningApp->start();
-	tsched.Attach(currentApp->runningApp);
+	currentApp->isRunning = true;
 }
 
-void MainLoop::loop()
+void MainLoop::appTask()
 {
-	static TaskScheduler& tsched = TaskScheduler::getInstance();
-	tsched.handleTasks();
-	vTaskDelay(1);
+	while(1)
+	{
+		if(currentApp->isRunning)
+		{
+			if(currentApp->runningApp != nullptr)
+			{
+				currentApp->runningApp->run();
+			}
+		}
+		vTaskDelay(1);
+	}
 }

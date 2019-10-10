@@ -7,8 +7,10 @@ extern "C" void app_main()
 {
 	delay(3000);
 	static MainLoop& mainLoop = MainLoop::getInstance();
+	UNUSED(mainLoop);
 	while(1)
 	{
-		mainLoop.loop();
+		//Idle Task, print running tasks here
+		vTaskDelay(3000);
 	}
 }
