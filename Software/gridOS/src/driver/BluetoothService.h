@@ -45,7 +45,7 @@ enum ChannelID{
  */
 
 
-class BluetoothService : public Task{
+class BluetoothService{
 
 //randomly generated
 // https://www.uuidgenerator.net/
@@ -62,9 +62,9 @@ class BluetoothService : public Task{
 	virtual ~BluetoothService(void);
 	void sendResponse(DynamicJsonDocument *doc, uint8_t channelID);
 	bool isConnected();
-	void run();
 	void Attach(CommInterface *callback, ChannelID channelID);
-
+	void run();
+	
  private:
 	BluetoothService();
 	BluetoothService(const BluetoothService&);
@@ -81,6 +81,9 @@ class BluetoothService : public Task{
 
 	const char* tag = "BluetoothService";
 	DeltaTimer debugTimer;
+	xTaskHandle btTask;
+
+	static void runWrapper(void* _this){((BluetoothService*)_this)->run();}
 
 	class CommServerCallback : public BLEServerCallbacks
 	{

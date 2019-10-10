@@ -102,6 +102,7 @@ BluetoothService::BluetoothService()
 		ch->txCharacteristic = ch->attachedService->createCharacteristic(*ch->txUUID,BLECharacteristic::PROPERTY_WRITE);
 		ch->rxCharacteristic->setCallbacks(new CommCharacteristicReadCallback(this,ch->channelID));
 		ch->txCharacteristic->setCallbacks(new CommCharacteristicWriteCallback(this,ch->channelID));
+		ch->txCharacteristic->setWriteNoResponseProperty(false);
 		ch->txdescriptor = new BLE2902();
 		ch->txdescriptor->setNotifications(1);
 		ch->txCharacteristic->addDescriptor(ch->txdescriptor);
@@ -117,6 +118,7 @@ BluetoothService::BluetoothService()
 	BluetoothAdvertiser->setMinPreferred(0x12);
 	BLEDevice::startAdvertising();
 
+	xTaskCreate(runWrapper,"btTask", 2048, this,1,&btTask);
 }
 
 std::string BluetoothService::onRead(uint8_t channelID)
@@ -275,8 +277,12 @@ void BluetoothService::sendResponse(DynamicJsonDocument *doc, uint8_t channelID)
 
 void BluetoothService::run()
 {
-	if(debugTimer.isTimeUp())
+	while(1)
 	{
-		ESP_LOGI(tag,"Heap: %i",xPortGetFreeHeapSize());
+		if(debugTimer.isTimeUp())
+		{
+			ESP_LOGI(tag,"Heap: %i",xPortGetFreeHeapSize());
+		}
+		vTaskDelay(100);
 	}
 }

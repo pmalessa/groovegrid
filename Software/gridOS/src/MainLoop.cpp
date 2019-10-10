@@ -105,7 +105,7 @@ MainLoop::MainLoop()
 	static BluetoothService& btService = BluetoothService::getInstance();
 
 	Timer::start();
-	tsched.Attach(&btService);
+	//tsched.Attach(&btService);
 
 	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface
 
