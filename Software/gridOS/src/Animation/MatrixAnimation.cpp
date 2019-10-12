@@ -18,41 +18,45 @@ MatrixAnimation::~MatrixAnimation()
 
 void MatrixAnimation::run()
 {
+	static MatrixSnake newsnake;
 	if(frameTimer.isTimeUp())
 	{
 		tile->fillScreenBuffer(CRGB(0,0,0));
-		//generate new snake
+		//generate new MatrixSnake
 		if(esp_random()%100 <= MATRIX_NEW_SNAKE_PROB)
 		{
-			snake *newsnake = new snake;
-			newsnake->x = tile->getWidth()-1;
-			newsnake->y = esp_random()%tile->getHeight();
-			newsnake->length = esp_random()%tile->getWidth();
+			newsnake.x = tile->getWidth()-1;
+			newsnake.y = esp_random()%tile->getHeight();
+			newsnake.length = esp_random()%tile->getWidth();
 			snakeList.push_back(newsnake);
 		}
 
 		//move snakes further
-		for(std::list<snake*>::iterator it = snakeList.begin();it != snakeList.end(); ++it)
+		if(!snakeList.empty())	//if list is empty, leave
 		{
-			//draw snakes
-			snake* curSnake = *it;
-			uint16_t x2 = std::min(curSnake->x+curSnake->length,tile->getWidth()-1);	//limit width
-			tile->writeLine(curSnake->x, curSnake->y, x2, curSnake->y, CRGB(0,255,0));
-			if(curSnake->x > 0)
+			std::list<MatrixSnake>::iterator it = snakeList.begin();
+			do
 			{
-				curSnake->x--;
-			}
-			else if(curSnake->length > 0)
-			{
-				curSnake->length--;
-			}
-			else
-			{
-				delete curSnake;
-				snakeList.erase(it);	//remove snake
-			}
+				//draw snakes
+				uint16_t x2 = std::min(it->x + it->length,tile->getWidth()-1);	//limit width
+				tile->writeLine(it->x, it->y, x2, it->y, CRGB(0,255,0));
+				if(it->x > 0)	//if head not yet at the end, move further
+				{
+					it->x--;
+					it++;
+				}
+				else if(it->length > 0)	//if head passed the end, but the body is still in frame, shorten length
+				{
+					it->length--;
+					it++;
+				}
+				else
+				{
+					it = snakeList.erase(it);	//else remove MatrixSnake, save new iterator pointing to next element
+				}
+			}while(it != snakeList.end());
+			tile->endWrite();
 		}
-		tile->endWrite();
 	}
 }
 

@@ -26,9 +26,9 @@ private:
 		uint16_t x;
 		uint16_t y;
 		uint16_t length;
-	}snake;
+	}MatrixSnake;
 
-	std::list<snake*> snakeList;
+	std::list<MatrixSnake> snakeList;
 };
 
 
