@@ -44,19 +44,19 @@ Microphone::Microphone()
 	// This function must be called before any I2S driver read/write operations.
 	err = i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
 	if (err != ESP_OK) {
-	Serial.printf("Failed installing driver: %d\n", err);
+	ESP_LOGE("Mic","Failed installing driver: %d\n", err);
 	return;
 	}
 	err = i2s_set_pin(I2S_NUM_0, &pin_config);
 	if (err != ESP_OK) {
-	Serial.printf("Failed setting pin: %d\n", err);
+	ESP_LOGE("Mic","Failed setting pin: %d\n", err);
 	return;
 	}
-	Serial.println("I2S driver installed.");
+	ESP_LOGI("I2S driver installed.");
 	initialized = true;
 
-	fft = new arduinoFFT(vReal, vImag, SAMPLES, samplingFrequency);
-	fft->Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
+	//fft = new arduinoFFT(vReal, vImag, SAMPLES, samplingFrequency);
+	//fft->Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
 }
 
 bool Microphone::isFFTAvailable()
@@ -81,8 +81,8 @@ void Microphone::computeFFT()
 				return;
 			}
 		}
-		fft->Compute(FFT_FORWARD); /* Compute FFT */
-		fft->ComplexToMagnitude(); /* Compute magnitudes */
+		//fft->Compute(FFT_FORWARD); /* Compute FFT */
+		//fft->ComplexToMagnitude(); /* Compute magnitudes */
 		fftAvailable = true;
 	}
 }
@@ -93,12 +93,12 @@ void Microphone::printFFT()
 	  {
 	    double abscissa = ((i * 1.0 * samplingFrequency) / SAMPLES);
 
-	    Serial.print(abscissa, 6);
-	    Serial.print("Hz");
-	    Serial.print(" ");
-	    Serial.println(vReal[i], 4);
+	    //Serial.print(abscissa, 6);
+	    //Serial.print("Hz");
+	    //Serial.print(" ");
+	    //Serial.println(vReal[i], 4);
 	  }
-	  Serial.println();
+	  //Serial.println();
 }
 
 int32_t Microphone::getCurrentSoundLevel()

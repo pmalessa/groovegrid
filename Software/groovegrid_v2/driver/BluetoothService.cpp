@@ -31,8 +31,7 @@ BluetoothService::~BluetoothService(){}
 BluetoothService::BluetoothService()
 {
 	CommChannel *ch;
-	Serial.begin(115200);
-	Serial.print("Hey!\n");
+	ESP_LOGI(tag,"Hey!\n");
 
 	for(uint8_t i=0;i<MAX_USERS;i++)
 	{
@@ -117,9 +116,7 @@ BluetoothService::BluetoothService()
 
 std::string BluetoothService::onRead(uint8_t channelID)
 {
-	Serial.print("Read on Channel ");
-	Serial.println(channelID);
-
+	ESP_LOGD(tag,"Read on Channel %i", channelID);
 	return "0";
 }
 
@@ -158,16 +155,12 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 		return;
 	}
 
-	Serial.print("Write on Channel ");
-	Serial.print(channelID);
-	Serial.print(": ");
-	Serial.println(data.c_str());
+	ESP_LOGD(tag,"Write on Channel %i: %s",channelID,data.c_str());
 
 	DeserializationError error = deserializeJson((*msg->doc), data);
 	if (error)
 	{
-		Serial.print(F("deserializeJson() failed: "));
-		Serial.println(error.c_str());
+		ESP_LOGE(tag,"deserializeJson() failed: %s",error.c_str());
 		(*msg->rspdoc)["error"]= error.c_str();				//add error
 		sendResponse(msg->rspdoc, channelID);			//send Response
 		free_msg(msg);

@@ -1,0 +1,13 @@
+{
+  "name": "FastLED",
+  "keywords": "led",
+  "description": "FastLED",
+  "frameworks": "espidf",
+  "platforms": "espressif32",
+  "build" : {
+    "flags": [
+      "-I include"
+    ],
+    "libArchive": false
+  }
+}

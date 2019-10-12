@@ -78,6 +78,7 @@ class BluetoothService : public Task{
 	BLEAdvertising *BluetoothAdvertiser;
 	bool connectedUsers[MAX_USERS];
 
+	const char* tag = "BluetoothService";
 
 	class CommServerCallback : public BLEServerCallbacks
 	{
