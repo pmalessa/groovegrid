@@ -1,12 +1,13 @@
 {
     "name": "gridOS_BLE", 
-    "version": "1.0.1", 
+    "version": "1.0.1_gridOS", 
     "keywords": [
         "communication"
     ], 
     "description": "BLE functions for ESP32", 
     "frameworks": [
-        "arduino"
+        "arduino",
+        "espidf"
     ], 
     "platforms": [
         "espressif32"
