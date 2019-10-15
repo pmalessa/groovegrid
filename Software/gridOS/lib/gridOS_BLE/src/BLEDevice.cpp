@@ -475,9 +475,8 @@ gatts_event_handler BLEDevice::m_customGattsHandler = nullptr;
  * @return A string representation of the nature of this device.
  */
 /* STATIC */ std::string BLEDevice::toString() {
-	std::ostringstream oss;
-	oss << "BD Address: " << getAddress().toString();
-	return oss.str();
+	std::string res = "BD Address: " + getAddress().toString();
+	return res;
 } // toString
 
 
@@ -622,7 +621,7 @@ void BLEDevice::removePeerDevice(uint16_t conn_id, bool _client) {
     esp_bluedroid_deinit();
     esp_bt_controller_disable();
     esp_bt_controller_deinit();
-#ifndef ARDUINO_ARCH_ESP32
+#ifdef ARDUINO_ARCH_ESP32
     if (release_memory) {
         esp_bt_controller_mem_release(ESP_BT_MODE_BTDM);  // <-- require tests because we released classic BT memory and this can cause crash (most likely not, esp-idf takes care of it)
     } else {

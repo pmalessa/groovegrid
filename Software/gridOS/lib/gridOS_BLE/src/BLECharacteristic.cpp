@@ -28,6 +28,7 @@ static const char* LOG_TAG = "BLECharacteristic";
 
 #define NULL_HANDLE (0xffff)
 
+static BLECharacteristicCallbacks defaultCallback; //null-object-pattern
 
 /**
  * @brief Construct a characteristic
@@ -46,7 +47,7 @@ BLECharacteristic::BLECharacteristic(BLEUUID uuid, uint32_t properties) {
 	m_bleUUID    = uuid;
 	m_handle     = NULL_HANDLE;
 	m_properties = (esp_gatt_char_prop_t)0;
-	m_pCallbacks = nullptr;
+	m_pCallbacks = &defaultCallback;
 
 	setBroadcastProperty((properties & PROPERTY_BROADCAST) != 0);
 	setReadProperty((properties & PROPERTY_READ) != 0);
@@ -226,9 +227,7 @@ void BLECharacteristic::handleGATTServerEvent(
 		case ESP_GATTS_EXEC_WRITE_EVT: {
 			if (param->exec_write.exec_write_flag == ESP_GATT_PREP_WRITE_EXEC) {
 				m_value.commit();
-				if (m_pCallbacks != nullptr) {
-					m_pCallbacks->onWrite(this); // Invoke the onWrite callback handler.
-				}
+				m_pCallbacks->onWrite(this); // Invoke the onWrite callback handler.
 			} else {
 				m_value.cancel();
 			}
@@ -313,7 +312,7 @@ void BLECharacteristic::handleGATTServerEvent(
 					}
 				} // Response needed
 
-				if (m_pCallbacks != nullptr && param->write.is_prep != true) {
+				if (param->write.is_prep != true) {
 					m_pCallbacks->onWrite(this); // Invoke the onWrite callback handler.
 				}
 			} // Match on handles.
@@ -384,10 +383,10 @@ void BLECharacteristic::handleGATTServerEvent(
 						}
 					} else { // read.is_long == false
 
-						if (m_pCallbacks != nullptr) {  // If is.long is false then this is the first (or only) request to read data, so invoke the callback
-							m_pCallbacks->onRead(this);   // Invoke the read callback.
-						}
-						
+						// If is.long is false then this is the first (or only) request to read data, so invoke the callback
+						// Invoke the read callback.
+						m_pCallbacks->onRead(this);
+
 						std::string value = m_value.getValue();
 
 						if (value.length() + 1 > maxOffset) {
@@ -487,10 +486,13 @@ void BLECharacteristic::notify(bool is_notification) {
 	assert(getService() != nullptr);
 	assert(getService()->getServer() != nullptr);
 
+	m_pCallbacks->onNotify(this);   // Invoke the notify callback.
+
 	GeneralUtils::hexDump((uint8_t*)m_value.getValue().data(), m_value.getValue().length());
 
 	if (getService()->getServer()->getConnectedCount() == 0) {
 		ESP_LOGD(LOG_TAG, "<< notify: No connected clients.");
+		m_pCallbacks->onStatus(this, BLECharacteristicCallbacks::Status::ERROR_NO_CLIENT, 0);
 		return;
 	}
 
@@ -501,12 +503,14 @@ void BLECharacteristic::notify(bool is_notification) {
 	if(is_notification) {
 		if (p2902 != nullptr && !p2902->getNotifications()) {
 			ESP_LOGD(LOG_TAG, "<< notifications disabled; ignoring");
+			m_pCallbacks->onStatus(this, BLECharacteristicCallbacks::Status::ERROR_NOTIFY_DISABLED, 0);   // Invoke the notify callback.
 			return;
 		}
 	}
 	else{
 		if (p2902 != nullptr && !p2902->getIndications()) {
 			ESP_LOGD(LOG_TAG, "<< indications disabled; ignoring");
+			m_pCallbacks->onStatus(this, BLECharacteristicCallbacks::Status::ERROR_INDICATE_DISABLED, 0);   // Invoke the notify callback.
 			return;
 		}
 	}
@@ -517,7 +521,7 @@ void BLECharacteristic::notify(bool is_notification) {
 		}
 
 		size_t length = m_value.getValue().length();
-		if(!is_notification)
+		if(!is_notification) // is indication
 			m_semaphoreConfEvt.take("indicate");
 		esp_err_t errRc = ::esp_ble_gatts_send_indicate(
 				getService()->getServer()->getGattsIf(),
@@ -526,10 +530,23 @@ void BLECharacteristic::notify(bool is_notification) {
 		if (errRc != ESP_OK) {
 			ESP_LOGE(LOG_TAG, "<< esp_ble_gatts_send_ %s: rc=%d %s",is_notification?"notify":"indicate", errRc, GeneralUtils::errorToString(errRc));
 			m_semaphoreConfEvt.give();
+			m_pCallbacks->onStatus(this, BLECharacteristicCallbacks::Status::ERROR_GATT, errRc);   // Invoke the notify callback.
 			return;
 		}
-		if(!is_notification)
-			m_semaphoreConfEvt.wait("indicate");
+		if(!is_notification){ // is indication
+			if(!m_semaphoreConfEvt.timedWait("indicate", indicationTimeout)){
+				m_pCallbacks->onStatus(this, BLECharacteristicCallbacks::Status::ERROR_INDICATE_TIMEOUT, 0);   // Invoke the notify callback.
+			} else {
+				auto code = (esp_gatt_status_t) m_semaphoreConfEvt.value();
+				if(code == ESP_GATT_OK) {
+					m_pCallbacks->onStatus(this, BLECharacteristicCallbacks::Status::SUCCESS_INDICATE, code);   // Invoke the notify callback.
+				} else {
+					m_pCallbacks->onStatus(this, BLECharacteristicCallbacks::Status::ERROR_INDICATE_FAILURE, code);
+				}
+			}
+		} else {
+			m_pCallbacks->onStatus(this, BLECharacteristicCallbacks::Status::SUCCESS_NOTIFY, 0);   // Invoke the notify callback.
+		}
 	}
 	ESP_LOGD(LOG_TAG, "<< notify");
 } // Notify
@@ -557,9 +574,13 @@ void BLECharacteristic::setBroadcastProperty(bool value) {
  * @param [in] pCallbacks An instance of a callbacks structure used to define any callbacks for the characteristic.
  */
 void BLECharacteristic::setCallbacks(BLECharacteristicCallbacks* pCallbacks) {
-	ESP_LOGD(LOG_TAG, ">> setCallbacks: 0x%x", (uint32_t)pCallbacks);
-	m_pCallbacks = pCallbacks;
-	ESP_LOGD(LOG_TAG, "<< setCallbacks");
+	ESP_LOGV(LOG_TAG, ">> setCallbacks: 0x%x", (uint32_t)pCallbacks);
+	if (pCallbacks != nullptr){
+		m_pCallbacks = pCallbacks;
+	} else {
+		m_pCallbacks = &defaultCallback;
+	}
+	ESP_LOGV(LOG_TAG, "<< setCallbacks");
 } // setCallbacks
 
 
@@ -635,8 +656,10 @@ void BLECharacteristic::setValue(uint8_t* data, size_t length) {
 		ESP_LOGE(LOG_TAG, "Size %d too large, must be no bigger than %d", length, ESP_GATT_MAX_ATTR_LEN);
 		return;
 	}
+	m_semaphoreSetValue.take();  
 	m_value.setValue(data, length);
-	ESP_LOGD(LOG_TAG, "<< setValue");
+	m_semaphoreSetValue.give();  
+	ESP_LOGV(LOG_TAG, "<< setValue");
 } // setValue
 
 
@@ -677,15 +700,13 @@ void BLECharacteristic::setValue(int& data32) {
 } // setValue
 
 void BLECharacteristic::setValue(float& data32) {
-	uint8_t temp[4];
-	*((float*)temp) = data32;
-	setValue(temp, 4);
+	float temp = data32;
+	setValue((uint8_t*)&temp, 4);
 } // setValue
 
 void BLECharacteristic::setValue(double& data64) {
-	uint8_t temp[8];
-	*((double*)temp) = data64;
-	setValue(temp, 8);
+	double temp = data64;
+	setValue((uint8_t*)&temp, 8);
 } // setValue
 
 
@@ -722,17 +743,18 @@ void BLECharacteristic::setWriteProperty(bool value) {
  * @return A string representation of the characteristic.
  */
 std::string BLECharacteristic::toString() {
-	std::stringstream stringstream;
-	stringstream << std::hex << std::setfill('0');
-	stringstream << "UUID: " << m_bleUUID.toString() + ", handle: 0x" << std::setw(2) << m_handle;
-	stringstream << " " <<
-		((m_properties & ESP_GATT_CHAR_PROP_BIT_READ) ? "Read " : "") <<
-		((m_properties & ESP_GATT_CHAR_PROP_BIT_WRITE) ? "Write " : "") <<
-		((m_properties & ESP_GATT_CHAR_PROP_BIT_WRITE_NR) ? "WriteNoResponse " : "") <<
-		((m_properties & ESP_GATT_CHAR_PROP_BIT_BROADCAST) ? "Broadcast " : "") <<
-		((m_properties & ESP_GATT_CHAR_PROP_BIT_NOTIFY) ? "Notify " : "") <<
-		((m_properties & ESP_GATT_CHAR_PROP_BIT_INDICATE) ? "Indicate " : "");
-	return stringstream.str();
+	std::string res = "UUID: " + m_bleUUID.toString() + ", handle : 0x";
+	char hex[5];
+	snprintf(hex, sizeof(hex), "%04x", m_handle);
+	res += hex;
+	res += " ";
+	if (m_properties & ESP_GATT_CHAR_PROP_BIT_READ) res += "Read ";
+	if (m_properties & ESP_GATT_CHAR_PROP_BIT_WRITE) res += "Write ";
+	if (m_properties & ESP_GATT_CHAR_PROP_BIT_WRITE_NR) res += "WriteNoResponse ";
+	if (m_properties & ESP_GATT_CHAR_PROP_BIT_BROADCAST) res += "Broadcast ";
+	if (m_properties & ESP_GATT_CHAR_PROP_BIT_NOTIFY) res += "Notify ";
+	if (m_properties & ESP_GATT_CHAR_PROP_BIT_INDICATE) res += "Indicate ";
+	return res;
 } // toString
 
 
@@ -757,5 +779,28 @@ void BLECharacteristicCallbacks::onWrite(BLECharacteristic* pCharacteristic) {
 	ESP_LOGD("BLECharacteristicCallbacks", ">> onWrite: default");
 	ESP_LOGD("BLECharacteristicCallbacks", "<< onWrite");
 } // onWrite
+
+
+/**
+ * @brief Callback function to support a Notify request.
+ * @param [in] pCharacteristic The characteristic that is the source of the event.
+ */
+void BLECharacteristicCallbacks::onNotify(BLECharacteristic* pCharacteristic) {
+	ESP_LOGD("BLECharacteristicCallbacks", ">> onNotify: default");
+	ESP_LOGD("BLECharacteristicCallbacks", "<< onNotify");
+} // onNotify
+
+
+/**
+ * @brief Callback function to support a Notify/Indicate Status report.
+ * @param [in] pCharacteristic The characteristic that is the source of the event.
+ * @param [in] s Status of the notification/indication
+ * @param [in] code Additional code of underlying errors
+ */
+void BLECharacteristicCallbacks::onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) {
+	ESP_LOGD("BLECharacteristicCallbacks", ">> onStatus: default");
+	ESP_LOGD("BLECharacteristicCallbacks", "<< onStatus");
+} // onStatus
+
 
 #endif /* CONFIG_BT_ENABLED */

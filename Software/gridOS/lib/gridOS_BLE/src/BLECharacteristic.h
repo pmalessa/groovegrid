@@ -90,6 +90,8 @@ public:
 	static const uint32_t PROPERTY_INDICATE  = 1<<4;
 	static const uint32_t PROPERTY_WRITE_NR  = 1<<5;
 
+	static const uint32_t indicationTimeout = 1000;
+
 private:
 
 	friend class BLEServer;
@@ -117,6 +119,7 @@ private:
 	void                 setHandle(uint16_t handle);
 	FreeRTOS::Semaphore m_semaphoreCreateEvt = FreeRTOS::Semaphore("CreateEvt");
 	FreeRTOS::Semaphore m_semaphoreConfEvt   = FreeRTOS::Semaphore("ConfEvt");
+	FreeRTOS::Semaphore m_semaphoreSetValue  = FreeRTOS::Semaphore("SetValue");  
 }; // BLECharacteristic
 
 
@@ -129,9 +132,22 @@ private:
  */
 class BLECharacteristicCallbacks {
 public:
+	typedef enum {
+		SUCCESS_INDICATE,
+		SUCCESS_NOTIFY,
+		ERROR_INDICATE_DISABLED,
+		ERROR_NOTIFY_DISABLED,
+		ERROR_GATT,
+		ERROR_NO_CLIENT,
+		ERROR_INDICATE_TIMEOUT,
+		ERROR_INDICATE_FAILURE
+	}Status;
+
 	virtual ~BLECharacteristicCallbacks();
 	virtual void onRead(BLECharacteristic* pCharacteristic);
 	virtual void onWrite(BLECharacteristic* pCharacteristic);
+	virtual void onNotify(BLECharacteristic* pCharacteristic);
+	virtual void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code);
 };
 #endif /* CONFIG_BT_ENABLED */
 #endif /* COMPONENTS_CPP_UTILS_BLECHARACTERISTIC_H_ */
