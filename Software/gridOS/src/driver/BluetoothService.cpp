@@ -121,9 +121,9 @@ BluetoothService::BluetoothService()
 	xTaskCreate(runWrapper,"btTask", 2048, this,1,&btTask);
 }
 
-std::string BluetoothService::onRead(uint8_t channelID)
+std::string BluetoothService::onRead(uint8_t channelID, uint16_t conn_id)
 {
-	ESP_LOGD(tag,"Read on Channel %i", channelID);
+	ESP_LOGI(tag,"Read on Channel %i, conn_id %i", channelID, conn_id);
 	return "0";
 }
 
@@ -134,9 +134,9 @@ void free_msg(CommInterface::CommandMsg *msg)
 	if(msg != nullptr)delete(msg);
 }
 
-void BluetoothService::onWrite(std::string data, uint8_t channelID)
+void BluetoothService::onWrite(std::string data, uint8_t channelID, uint16_t conn_id)
 {
-	ESP_LOGI(tag,"OnWrite");
+	ESP_LOGI(tag,"Write on Channel %i, conn_id %i", channelID, conn_id);
 	if(data.empty())
 	{
 		return;
@@ -162,7 +162,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID)
 		return;
 	}
 
-	ESP_LOGI(tag,"Write on Channel %i: %s",channelID,data.c_str());
+	ESP_LOGI(tag,"Message: %s",data.c_str());
 
 	DeserializationError error = deserializeJson((*msg->doc), data);
 	if (error)

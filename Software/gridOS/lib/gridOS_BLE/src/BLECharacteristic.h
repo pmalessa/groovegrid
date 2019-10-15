@@ -144,8 +144,8 @@ public:
 	}Status;
 
 	virtual ~BLECharacteristicCallbacks();
-	virtual void onRead(BLECharacteristic* pCharacteristic);
-	virtual void onWrite(BLECharacteristic* pCharacteristic);
+	virtual void onRead(BLECharacteristic* pCharacteristic, uint16_t conn_id);
+	virtual void onWrite(BLECharacteristic* pCharacteristic, uint16_t conn_id);
 	virtual void onNotify(BLECharacteristic* pCharacteristic);
 	virtual void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code);
 };

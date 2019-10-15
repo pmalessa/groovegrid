@@ -227,7 +227,7 @@ void BLECharacteristic::handleGATTServerEvent(
 		case ESP_GATTS_EXEC_WRITE_EVT: {
 			if (param->exec_write.exec_write_flag == ESP_GATT_PREP_WRITE_EXEC) {
 				m_value.commit();
-				m_pCallbacks->onWrite(this); // Invoke the onWrite callback handler.
+				m_pCallbacks->onWrite(this,param->exec_write.conn_id); // Invoke the onWrite callback handler.
 			} else {
 				m_value.cancel();
 			}
@@ -313,7 +313,8 @@ void BLECharacteristic::handleGATTServerEvent(
 				} // Response needed
 
 				if (param->write.is_prep != true) {
-					m_pCallbacks->onWrite(this); // Invoke the onWrite callback handler.
+					
+					m_pCallbacks->onWrite(this,param->write.conn_id); // Invoke the onWrite callback handler.
 				}
 			} // Match on handles.
 			break;
@@ -385,7 +386,7 @@ void BLECharacteristic::handleGATTServerEvent(
 
 						// If is.long is false then this is the first (or only) request to read data, so invoke the callback
 						// Invoke the read callback.
-						m_pCallbacks->onRead(this);
+						m_pCallbacks->onRead(this, param->read.conn_id);
 
 						std::string value = m_value.getValue();
 
@@ -765,7 +766,7 @@ BLECharacteristicCallbacks::~BLECharacteristicCallbacks() {}
  * @brief Callback function to support a read request.
  * @param [in] pCharacteristic The characteristic that is the source of the event.
  */
-void BLECharacteristicCallbacks::onRead(BLECharacteristic* pCharacteristic) {
+void BLECharacteristicCallbacks::onRead(BLECharacteristic* pCharacteristic, uint16_t conn_id) {
 	ESP_LOGD("BLECharacteristicCallbacks", ">> onRead: default");
 	ESP_LOGD("BLECharacteristicCallbacks", "<< onRead");
 } // onRead
@@ -775,7 +776,7 @@ void BLECharacteristicCallbacks::onRead(BLECharacteristic* pCharacteristic) {
  * @brief Callback function to support a write request.
  * @param [in] pCharacteristic The characteristic that is the source of the event.
  */
-void BLECharacteristicCallbacks::onWrite(BLECharacteristic* pCharacteristic) {
+void BLECharacteristicCallbacks::onWrite(BLECharacteristic* pCharacteristic, uint16_t conn_id) {
 	ESP_LOGD("BLECharacteristicCallbacks", ">> onWrite: default");
 	ESP_LOGD("BLECharacteristicCallbacks", "<< onWrite");
 } // onWrite

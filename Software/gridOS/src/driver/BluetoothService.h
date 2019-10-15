@@ -70,8 +70,8 @@ class BluetoothService{
 	BluetoothService& operator = (const BluetoothService&);
 	void onConnect();
 	void onDisconnect();
-	std::string onRead(uint8_t channelID);
-	void onWrite(std::string data, uint8_t channelID);
+	std::string onRead(uint8_t channelID, uint16_t conn_id);
+	void onWrite(std::string data, uint8_t channelID, uint16_t conn_id);
 
 	bool connected = false;
 	BLEServer *BluetoothServer;
@@ -98,9 +98,9 @@ class BluetoothService{
 	{
 	public:
 		CommCharacteristicReadCallback(BluetoothService *commPtr, uint8_t channelID){this->commPtr = commPtr; this->channelID = channelID;};
-	    void onRead(BLECharacteristic* pCharacteristic)
+	    void onRead(BLECharacteristic* pCharacteristic, uint16_t conn_id)
 	    {
-	    	pCharacteristic->setValue(commPtr->onRead(channelID));
+	    	pCharacteristic->setValue(commPtr->onRead(channelID, conn_id));
 	    }
 	private:
 	    BluetoothService *commPtr;
@@ -110,9 +110,9 @@ class BluetoothService{
 	{
 	public:
 		CommCharacteristicWriteCallback(BluetoothService *commPtr, uint8_t channelID){this->commPtr = commPtr; this->channelID = channelID;};
-	    void onWrite(BLECharacteristic* pCharacteristic)
+	    void onWrite(BLECharacteristic* pCharacteristic, uint16_t conn_id)
 	    {
-	    	commPtr->onWrite(pCharacteristic->getValue(), channelID);//call COMM passUp function here
+	    	commPtr->onWrite(pCharacteristic->getValue(), channelID, conn_id);//call COMM passUp function here
 	    }
 	private:
 	    BluetoothService *commPtr;
