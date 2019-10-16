@@ -59,46 +59,29 @@ Response:
 	"error": 0 if okay, else errorCode
 }
 
-connect:
+getUserID:
 {
 	"cmdID": nonce,
-	"cmd": "connect"
-	"userID": userID	//set desired userID
+	"cmd": "getUserID"
 }
 Response:
 {
 	"rspID": cmdID,
+	"userID": 0..3,
 	"error": 0 if okay, else errorCode
 }
 
-getUserIDs:
+getConnectedUsers:
 {
 	"cmdID": nonce,
-	"cmd": "getMyID"
+	"cmd": "getConnectedUsers"
 }
-
 Response:
 {
 	"rspID": cmdID,
-	"usedIDs": [...],
-	"freeIDs": [...]
+	"usedIDs": [0,2,3],
 	"error": 0 if okay, else errorCode
 }
-
-disconnect:
-{
-	"cmdID": nonce,
-	"cmd": "disconnect"
-	"userID": userID
-}
-
-Response:
-{
-	"rspID": cmdID,
-	"error": 0 if okay, else errorCode
-}
-
-
 
 User Channel
 

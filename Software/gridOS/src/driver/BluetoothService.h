@@ -15,7 +15,6 @@
 #include "DeltaTimer.h"
 
 #define MAX_CHANNEL_NUM 10
-#define MAX_USERS 4
 
 #include "BLEDevice.h"
 #include "BLE2902.h"
@@ -29,6 +28,14 @@ typedef struct{
 	BLEService *attachedService;
 	BLE2902 *rxdescriptor, *txdescriptor;
 }CommChannel;
+
+struct ConnectedDevice{
+	std::string deviceName;
+	std::string deviceAddress;
+	uint16_t connectionID;
+	ConnectedDevice(std::string a, uint16_t b){
+		deviceName = ""; deviceAddress = a; connectionID = b;};
+};
 
 enum ChannelID{
 	CHANNEL_CONTROL,
@@ -68,18 +75,17 @@ class BluetoothService{
 	BluetoothService();
 	BluetoothService(const BluetoothService&);
 	BluetoothService& operator = (const BluetoothService&);
-	void onConnect();
-	void onDisconnect();
+	void onConnect(esp_ble_gatts_cb_param_t *param);
+	void onDisconnect(esp_ble_gatts_cb_param_t *param);
 	std::string onRead(uint8_t channelID, uint16_t conn_id);
 	void onWrite(std::string data, uint8_t channelID, uint16_t conn_id);
 
 	bool connected = false;
 	BLEServer *BluetoothServer;
 	BLEAdvertising *BluetoothAdvertiser;
-	bool connectedUsers[MAX_USERS];
 
 	const char* tag = "btService";
-	DeltaTimer debugTimer;
+	DeltaTimer btTaskTimer;
 	xTaskHandle btTask;
 
 	static void runWrapper(void* _this){((BluetoothService*)_this)->run();}
@@ -88,8 +94,8 @@ class BluetoothService{
 	{
 	public:
 		CommServerCallback(BluetoothService *commPtr){		this->commPtr = commPtr;}
-		void onConnect(BLEServer* pServer){		commPtr->onConnect();}			//pass call to COMM
-		void onDisconnect(BLEServer* pServer){	commPtr->onDisconnect();}		//pass call to COMM
+		void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param){		commPtr->onConnect(param);}			//pass call to COMM
+		void onDisconnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param){	commPtr->onDisconnect(param);}		//pass call to COMM
 	private:
 		BluetoothService *commPtr;
 	};
@@ -120,6 +126,7 @@ class BluetoothService{
 	};
 
     std::vector<CommChannel*> channelList;
+	std::vector<ConnectedDevice> connectedDeviceList;
 };
 
 #endif /* BLUETOOTHSERVICE_H_ */

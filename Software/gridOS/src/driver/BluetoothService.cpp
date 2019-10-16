@@ -11,16 +11,37 @@ bool BluetoothService::isConnected()
 	return connected;
 }
 
-void BluetoothService::onConnect()
+void BluetoothService::onConnect(esp_ble_gatts_cb_param_t *param)
 {
-	ESP_LOGI(tag,"Connected");
+	char buf[20];
+	uint8_t* i = param->connect.remote_bda;
+	sprintf(buf,"%X:%X:%X:%X:%X:%X",i[0],i[1],i[2],i[3],i[4],i[5]);
+	std::string str(buf);
+	ESP_LOGI(tag,"Connected, conn_id %i, address: %s",param->connect.conn_id, str.c_str());
+
+	ConnectedDevice dev(str,param->connect.conn_id);
+	connectedDeviceList.push_back(dev);
 	connected = true;
+	BLEDevice::startAdvertising();
 }
 
-void BluetoothService::onDisconnect()
+void BluetoothService::onDisconnect(esp_ble_gatts_cb_param_t *param)
 {
-	ESP_LOGI(tag,"Disconnected");
+	char buf[20];
+	uint8_t* i = param->disconnect.remote_bda;
+	sprintf(buf,"%X:%X:%X:%X:%X:%X",i[0],i[1],i[2],i[3],i[4],i[5]);
+	std::string str(buf);
+	ESP_LOGI(tag,"Disconnected, conn_id %i, address: %s",param->disconnect.conn_id,str.c_str());
 	connected = false;
+	for(uint8_t i = 0; i< connectedDeviceList.size();i++)
+	{
+		if(connectedDeviceList.at(i).connectionID == param->disconnect.conn_id)
+		{
+			ESP_LOGI(tag,"Erased element nr %i",i);
+			connectedDeviceList.erase(connectedDeviceList.begin()+i);
+			return;
+		}
+	}
 }
 
 BluetoothService& BluetoothService::getInstance()
@@ -33,15 +54,7 @@ BluetoothService::~BluetoothService(){}
 BluetoothService::BluetoothService()
 {
 	CommChannel *ch;
-	ESP_LOGI(tag,"Hey!\n");
-	ESP_LOGI(tag,"Heap: %i",xPortGetFreeHeapSize());
-
-	debugTimer.setTimeStep(1000);
-
-	for(uint8_t i=0;i<MAX_USERS;i++)
-	{
-		connectedUsers[i] = false;
-	}
+	btTaskTimer.setTimeStep(3000);
 
 	/*SERVER*/
 	BLEDevice::init("GrooveGrid");
@@ -114,8 +127,6 @@ BluetoothService::BluetoothService()
 	}
 
 	BluetoothAdvertiser->setScanResponse(true);
-	BluetoothAdvertiser->setMinPreferred(0x06);  // functions that help with iPhone connections issue
-	BluetoothAdvertiser->setMinPreferred(0x12);
 	BLEDevice::startAdvertising();
 
 	xTaskCreate(runWrapper,"btTask", 2048, this,1,&btTask);
@@ -137,8 +148,14 @@ void free_msg(CommInterface::CommandMsg *msg)
 void BluetoothService::onWrite(std::string data, uint8_t channelID, uint16_t conn_id)
 {
 	ESP_LOGI(tag,"Write on Channel %i, conn_id %i", channelID, conn_id);
+	if(channelID > 0 && channelID != (conn_id+1))
+	{
+		ESP_LOGI(tag,"wrong channel");
+		return;//each user is only allowed to write on the control channel or its user channel
+	}
 	if(data.empty())
 	{
+		ESP_LOGI(tag,"empty");
 		return;
 	}
 	CommInterface::CommandMsg *msg = new CommInterface::CommandMsg;
@@ -177,57 +194,22 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID, uint16_t con
 	//----------BLE Command Parsing---------------
 	(*msg->rspdoc)["rspID"] = (*msg->doc)["cmdID"];	//send cmdID back as rspID
 
-	//CONNECT CMD
-	if((*msg->doc)["cmd"] == "connect")
+	//GET CONNECTED USERS
+	if((*msg->doc)["cmd"] == "getConnectedUsers")
 	{
-		uint8_t userID = (*msg->doc)["userID"];
-		if(userID < MAX_USERS)
-		{
-			if(connectedUsers[userID] != true)
-			{
-				connectedUsers[userID] = true; //slot is free, connect allowed
-				channelList.at(userID+1)->commInterface->onCommand(msg);	//channelID= userID+1, notify game
-			}
-			else
-			{
-				(*msg->rspdoc)["error"]= 1;//send error response
-			}
-		}
-		else
-		{
-			(*msg->rspdoc)["error"]= 2;//send error response
-		}
-	}
-	//DISCONNECT CMD
-	else if((*msg->doc)["cmd"] == "disconnect")
-	{
-		uint8_t userID = (*msg->doc)["userID"];
-		if(userID < MAX_USERS)
-		{
-			if(connectedUsers[userID] == true)
-			{
-				connectedUsers[userID] = false; //slot is used, disconnect allowed
-				channelList.at(userID+1)->commInterface->onCommand(msg);	//channelID= userID+1, notify game
-			}
-			else
-			{
-				(*msg->rspdoc)["error"]= 1;//send error response
-			}
-		}
-		else
-		{
-			(*msg->rspdoc)["error"]= 2;//send error response
-		}
-	}
-	//GET USER IDs CMD
-	else if((*msg->doc)["cmd"] == "getUserIDs")
-	{
-		//send userIDs
+		//send connectionIDs
 		JsonArray usersArray = (*msg->rspdoc).createNestedArray("userIDs");
-		for(uint8_t i=0;i<MAX_USERS;i++)
+		for(uint8_t i=0;i<connectedDeviceList.size();i++)
 		{
-			usersArray.add(connectedUsers[i]);
+			usersArray.add(connectedDeviceList.at(i).connectionID);
 		}
+		(*msg->rspdoc)["error"]= 0;
+	}
+	//GET USER ID
+	if((*msg->doc)["cmd"] == "getUserID")
+	{
+		//send connectionID
+		(*msg->rspdoc)["userID"]= conn_id;
 		(*msg->rspdoc)["error"]= 0;
 	}
 	//OTHER CMDs
@@ -237,21 +219,10 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID, uint16_t con
 		{
 			channelList.at(channelID)->commInterface->onCommand(msg);	//parse doc to app
 		}
-		else
+		else //send to user channel, conn_id 0..3 -> user_id 1..4
 		{
-			//remove later
-			channelList.at(channelID)->commInterface->onCommand(msg);	//parse doc to app
+			channelList.at(conn_id + 1)->commInterface->onCommand(msg);	//parse doc to app
 		}
-		/*
-		else if(connectedUsers[channelID-1] == true)	//if user channel is connected
-		{
-			channelList.at(channelID)->commInterface->onCommand(doc, channelID);	//parse doc to app
-		}
-		else
-		{
-			errorCode = 3;//error response
-		}
-		*/
 	}
 	sendResponse(msg->rspdoc, channelID);			//send Error Response
 	free_msg(msg);
@@ -279,9 +250,15 @@ void BluetoothService::run()
 {
 	while(1)
 	{
-		if(debugTimer.isTimeUp())
+		if(btTaskTimer.isTimeUp())
 		{
-			ESP_LOGI(tag,"Heap: %i",xPortGetFreeHeapSize());
+			ESP_LOGI(tag,"Connected devices: %i",connectedDeviceList.size());
+			for(uint8_t i = 0; i< connectedDeviceList.size();i++)
+			{
+				std::string str = connectedDeviceList.at(i).deviceAddress;
+				ESP_LOGI(tag,"conn_id %i \t address: %s",connectedDeviceList.at(i).connectionID,str.c_str());
+
+			}
 		}
 		vTaskDelay(100);
 	}

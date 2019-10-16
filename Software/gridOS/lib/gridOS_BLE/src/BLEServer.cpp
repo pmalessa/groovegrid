@@ -214,6 +214,7 @@ void BLEServer::handleGATTServerEvent(esp_gatts_cb_event_t event, esp_gatt_if_t 
 			m_connectedCount--;                          // Decrement the number of connected devices count.
 			if (m_pServerCallbacks != nullptr) {         // If we have callbacks, call now.
 				m_pServerCallbacks->onDisconnect(this);
+				m_pServerCallbacks->onDisconnect(this, param);
 			}
 			startAdvertising(); //- do this with some delay from the loop()
 			removePeerDevice(param->disconnect.conn_id, false);
