@@ -47,6 +47,7 @@ void SwipeMaster::onCommand(CommandMsg *msg)
 }
 
 void SwipeMaster::draw(){
+	tile->fillScreenBuffer(CRGB(0));
 	if(position < middle)
 	{
 		tile->writeFilledRect(position,0,middle-position,tile->getHeight(),CRGB(0xFF0000));

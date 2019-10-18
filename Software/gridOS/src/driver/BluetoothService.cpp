@@ -202,7 +202,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID, uint16_t con
 		JsonArray usersArray = (*msg->rspdoc).createNestedArray("userIDs");
 		for(uint8_t i=0;i<connectedDeviceList.size();i++)
 		{
-			usersArray.add(connectedDeviceList.at(i).connectionID);
+			usersArray.add(connectedDeviceList.at(i).connectionID + 1);	//1..4
 		}
 		(*msg->rspdoc)["error"]= 0;
 	}
@@ -210,7 +210,7 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID, uint16_t con
 	if((*msg->doc)["cmd"] == "getUserID")
 	{
 		//send connectionID
-		(*msg->rspdoc)["userID"]= conn_id;
+		(*msg->rspdoc)["userID"]= conn_id + 1;	//1..4
 		(*msg->rspdoc)["error"]= 0;
 	}
 	//OTHER CMDs

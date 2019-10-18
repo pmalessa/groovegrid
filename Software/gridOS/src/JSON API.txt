@@ -67,7 +67,7 @@ getUserID:
 Response:
 {
 	"rspID": cmdID,
-	"userID": 0..3,
+	"userID": 1..4,
 	"error": 0 if okay, else errorCode
 }
 
@@ -79,7 +79,7 @@ getConnectedUsers:
 Response:
 {
 	"rspID": cmdID,
-	"usedIDs": [0,2,3],
+	"usedIDs": [1,2,3,4],
 	"error": 0 if okay, else errorCode
 }
 
