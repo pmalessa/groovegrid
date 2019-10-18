@@ -165,7 +165,9 @@ void BLEServer::handleGATTServerEvent(esp_gatts_cb_event_t event, esp_gatt_if_t 
 		} // ESP_GATTS_ADD_CHAR_EVT
 
 		case ESP_GATTS_MTU_EVT:
+			ESP_LOGI(LOG_TAG, "before ESP_GATTS_MTU_EVT, conn_id: %i, mtu: %i",param->mtu.conn_id, param->mtu.mtu);
 			updatePeerMTU(param->mtu.conn_id, param->mtu.mtu);
+			ESP_LOGI(LOG_TAG, "after ESP_GATTS_MTU_EVT, conn_id: %i, mtu: %i",param->mtu.conn_id, param->mtu.mtu);
 			break;
 
 		// ESP_GATTS_CONNECT_EVT

@@ -17,6 +17,7 @@
 #include "Game/Game_2048.h"
 #include "Game/FlappyGroove.h"
 #include "Game/Snake.h"
+#include "Game/SwipeMaster.h"
 
 class MainLoop : private CommInterface
 {

@@ -58,6 +58,7 @@ BluetoothService::BluetoothService()
 
 	/*SERVER*/
 	BLEDevice::init("GrooveGrid");
+	BLEDevice::setMTU(185);
 	BluetoothServer = BLEDevice::createServer();
 	BluetoothServer->setCallbacks(new CommServerCallback(this));
 	BluetoothAdvertiser = BLEDevice::getAdvertising();
