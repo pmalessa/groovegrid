@@ -106,7 +106,7 @@ MainLoop::MainLoop()
 
 	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface
 
-	xTaskCreate(appTaskWrapper,"appTask",2048,this,1,&appTaskHandle);
+	xTaskCreatePinnedToCore(appTaskWrapper,"appTask",2048,this,tskIDLE_PRIORITY,&appTaskHandle,1);
 
 	//Start initial App
 	currentApp = new AppEntry();

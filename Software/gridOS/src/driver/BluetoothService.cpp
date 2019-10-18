@@ -130,7 +130,7 @@ BluetoothService::BluetoothService()
 	BluetoothAdvertiser->setScanResponse(true);
 	BLEDevice::startAdvertising();
 
-	xTaskCreate(runWrapper,"btTask", 2048, this,1,&btTask);
+	xTaskCreatePinnedToCore(runWrapper,"btTask", 2048, this,1,&btTask,0);
 }
 
 std::string BluetoothService::onRead(uint8_t channelID, uint16_t conn_id)
