@@ -15,7 +15,13 @@ DeltaTimer::DeltaTimer()
 
 void DeltaTimer::setTimeStep(int32_t milliseconds)
 {
+	startTime = 0;
 	timeStep = milliseconds;
+}
+
+void DeltaTimer::reset()
+{
+	startTime = 0;
 }
 
 bool DeltaTimer::isTimeUp()

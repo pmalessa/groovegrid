@@ -17,6 +17,7 @@ public:
 	DeltaTimer();
 	void setTimeStep(int32_t milliseconds);
 	bool isTimeUp();
+	void reset();
 private:
 	uint32_t startTime;
 	int32_t timeStep;
