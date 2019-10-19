@@ -12,7 +12,7 @@
 SpectrumAnimation::SpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
 {
 	frameTimer.setTimeStep(FRAMERATE_MS);
-	barTimer.setTimeStep(100);
+	barTimer.setTimeStep(FRAMERATE_MS*2);
 	initBars();
 }
 
@@ -45,9 +45,10 @@ void SpectrumAnimation::updateBars()
 
 void SpectrumAnimation::drawBars()
 {
+	tile->fillScreenBuffer(CRGB(0));
 	for(uint8_t i=0;i<BAR_NR;i++)
 	{
-		tile->writeRect(barArray[i].xPos,(tile->getHeight()-1) - barArray[i].len, BAR_WIDTH, tile->getHeight()-1, barArray->color);
+		tile->writeRect(barArray[i].xPos,(tile->getHeight()-1) - barArray[i].len, BAR_WIDTH, tile->getHeight()-1, barArray[i].color);
 	}
 	tile->endWrite();
 }
@@ -57,7 +58,8 @@ void SpectrumAnimation::initBars()
 	for(uint8_t i=0;i<BAR_NR;i++)
 	{
 		barArray[i].xPos = BAR_WIDTH*i;
-		barArray[i].len = esp_random()%tile->getHeight();
-		barArray[i].color = CRGB(esp_random());
+		barArray[i].len = (tile->getHeight()/3) + esp_random()%((tile->getHeight()/3)*2);
+		//barArray[i].color = CRGB(esp_random());
+		barArray[i].color = ColorFromPalette(lavaPalette,(255/BAR_NR)*i,0xFF,LINEARBLEND);
 	}
 }

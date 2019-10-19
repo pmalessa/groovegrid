@@ -21,7 +21,7 @@ private:
 	void drawBars();
 	void updateBars();
 	#define BAR_WIDTH 3
-	#define BAR_NR 12
+	#define BAR_NR 14
 	struct Bar{
 		CRGB color;
 		uint8_t len;
@@ -30,6 +30,13 @@ private:
 
 	Bar barArray[BAR_NR];
 	DeltaTimer barTimer;
+	CRGBPalette16 lavaPalette =
+	{
+    	CRGB::White,
+    	CRGB::Orange,
+    	CRGB::Red,
+    	CRGB::DarkRed
+	};
 };
 
 
