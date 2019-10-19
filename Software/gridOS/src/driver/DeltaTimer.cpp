@@ -9,19 +9,19 @@
 
 DeltaTimer::DeltaTimer()
 {
-	startTime = 0;
+	startTime = Timer::getMillis();
 	timeStep = 0;
 }
 
 void DeltaTimer::setTimeStep(int32_t milliseconds)
 {
-	startTime = 0;
+	reset();
 	timeStep = milliseconds;
 }
 
 void DeltaTimer::reset()
 {
-	startTime = 0;
+	startTime = Timer::getMillis();
 }
 
 bool DeltaTimer::isTimeUp()
