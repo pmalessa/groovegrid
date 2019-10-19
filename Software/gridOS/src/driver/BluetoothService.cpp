@@ -118,7 +118,6 @@ BluetoothService::BluetoothService()
 		ch->txCharacteristic->setCallbacks(new CommCharacteristicWriteCallback(this,ch->channelID));
 		ch->txCharacteristic->setWriteNoResponseProperty(false);
 		ch->txdescriptor = new BLE2902();
-		ch->txdescriptor->setNotifications(1);
 		ch->txCharacteristic->addDescriptor(ch->txdescriptor);
 		ch->rxdescriptor = new BLE2902();
 		ch->rxdescriptor->setNotifications(1);

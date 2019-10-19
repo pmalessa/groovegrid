@@ -39,6 +39,7 @@ private:
 	void drawHitmap();
 	void setHitmap();
 	void switchPlayer();
+	bool shootAnimation();
 
 	#define NR_SHIPS 5
 	#define GAMEFIELD_SIZE_BLOCKS_HEIGHT 10
@@ -76,6 +77,14 @@ private:
 		uint8_t y;
 		uint8_t hit;
 	}target;
+
+	struct {
+		float x;
+		float y;
+		float h;
+		float vel;
+		float gravity = 0.003;
+	}cannonBall;
 
 	enum {
 		STATE_WAIT_FOR_SHIPS,
