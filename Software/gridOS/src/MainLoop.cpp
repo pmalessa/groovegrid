@@ -11,7 +11,8 @@ std::map<std::string, std::function<GrooveApp*(GridTile*)>> AppMap::appMap = {
 		{"AnimationRunner"	,[](GridTile *tile){return new AnimationRunner(tile);}},
 		{"2048"				,[](GridTile *tile){return new SwipeMaster(tile);}},
 		{"Flappy Groove"	,[](GridTile *tile){return new FlappyGroove(tile);}},
-		{"Snake"			,[](GridTile *tile){return new SnakeGame(tile);}}
+		{"Snake"			,[](GridTile *tile){return new SnakeGame(tile);}},
+		{"Battleship"		,[](GridTile *tile){return new Battleship(tile);}}
 	};
 
 MainLoop& MainLoop::getInstance()

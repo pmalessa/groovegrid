@@ -125,3 +125,24 @@ Response
 	"rspID": cmdID
 	"error": 0 if okay, else errorCode
 }
+
+
+//Battleship
+
+//sendShips
+{
+	"cmd": "sendShip",
+	"id" : 0..4,
+	"data":{
+		"x": 6,
+		"y" : 5,
+		"len" : 2,
+		"rot" : 1
+	"},
+}
+
+Response
+{
+	"rspID": cmdID
+	"error": 0 if okay, else errorCode
+}
