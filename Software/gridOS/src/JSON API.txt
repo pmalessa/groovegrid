@@ -140,9 +140,18 @@ Response
 		"rot" : 1
 	"},
 }
-
 Response
 {
 	"rspID": cmdID
 	"error": 0 if okay, else errorCode
+}
+
+//shoot
+{
+	"cmd": "shoot",
+}
+Response
+{
+	"hit": 0..1
+	"delay": 3500 //ms till hit animation done
 }

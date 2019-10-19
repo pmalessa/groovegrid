@@ -21,21 +21,37 @@ public:
 	void start();
 	void stop();
 	void run();
-	void draw();
-	void drawCrosshair(uint8_t x, uint8_t y);
-	void drawWater();
-	void drawAllShips();
 	void onCommand(CommandMsg *msg);
     GrooveApp* new_instance(GridTile *tile);
-	void writePixel(uint8_t x, uint8_t y, CRGB color);
 
 private:
+	void draw();
+	void moveCrosshair(std::string cmd, uint8_t playerID);
+	void drawCrosshair(uint8_t x, uint8_t y, uint8_t playerID);
+	void drawMidBorder();
+	void drawWater();
+	void drawAllShips();
+	bool shoot();	//true if hit
+	bool isShipThere(uint8_t block_x, uint8_t block_y, uint8_t playerID);
 	void reset();
+	void writeBlock(uint8_t x, uint8_t y, uint8_t playerID, CRGB color);
+	void writePixel(uint8_t x, uint8_t y, uint8_t playerID, CRGB color);
+	void drawHitmap();
+	void setHitmap();
+	void switchPlayer();
 
 	#define NR_SHIPS 5
-	#define SIZE_X 10
-	#define SIZE_Y 7
-	#define SIZE_MIDBORDER 1
+	#define GAMEFIELD_SIZE_BLOCKS_HEIGHT 10
+	#define GAMEFIELD_SIZE_BLOCKS_WIDTH 7
+	#define GAMEFIELD_SIZE_BLOCKS_MIDBORDER 1
+	#define GAMEFIELD_BLOCK_TO_PIXEL 2
+	#define HITANIMATION_DELAY 3500
+	#define PLAYER1 1
+	#define PLAYER2 2
+
+	#define GAMEFIELD_SIZE_PIXEL_HEIGHT GAMEFIELD_SIZE_BLOCKS_HEIGHT*GAMEFIELD_BLOCK_TO_PIXEL
+	#define GAMEFIELD_SIZE_PIXEL_WIDTH GAMEFIELD_SIZE_BLOCKS_WIDTH*GAMEFIELD_BLOCK_TO_PIXEL
+	#define GAMEFIELD_SIZE_PIXEL_MIDBORDER GAMEFIELD_SIZE_BLOCKS_MIDBORDER*GAMEFIELD_BLOCK_TO_PIXEL
 
 	CRGBPalette16 waterPalette =
 	{
@@ -44,7 +60,7 @@ private:
 		CRGB::DarkCyan,
 		CRGB::MidnightBlue
 	};
-	uint8_t colorIndex = 0, motionStep = 0;
+	uint8_t colorIndex = 0, motionStep = 0, currentPlayerID = 1;
 
 	typedef struct {
 		uint8_t id;
@@ -52,12 +68,14 @@ private:
 		uint8_t y;
 		uint8_t len;
 		uint8_t rot;
+		uint8_t hitmap;
 	}Ship;
 
 	struct {
 		uint8_t x;
 		uint8_t y;
-	}crosshair;
+		uint8_t hit;
+	}target;
 
 	enum {
 		STATE_WAIT_FOR_SHIPS,
@@ -65,8 +83,9 @@ private:
 		STATE_SHOOTING
 	}gameState;
 
-	std::list<Ship> shipList1, shipList2;
+	std::list<Ship> shipList[2];
 	CRGB shipColor = 0x037d00;
+	CRGB hitColor = 0x000000;
 	DeltaTimer crosshairTimer;
 
 };
