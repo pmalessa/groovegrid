@@ -85,9 +85,12 @@ private:
 
 	std::list<Ship> shipList[2];
 	CRGB shipColor = 0x037d00;
-	CRGB hitColor = 0x000000;
-	DeltaTimer crosshairTimer;
+	CRGB hitColor = 0xFFFFFF;
+	CRGB waterShotColor = 0xFF00FF;
+	CRGB crosshairColor = 0xFF0000;
+	DeltaTimer crosshairTimer, shootTimer;
 
+	uint8_t waterShots[2][GAMEFIELD_SIZE_BLOCKS_WIDTH][GAMEFIELD_SIZE_BLOCKS_HEIGHT]; //2 Player, x, y
 };
 
 
