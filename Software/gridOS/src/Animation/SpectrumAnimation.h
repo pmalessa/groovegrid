@@ -16,21 +16,20 @@ class SpectrumAnimation : public GrooveAnimation
 public:
 	SpectrumAnimation(GridTile *tile);
 	void run();
-	void generateBars();
-	void drawBars();
 private:
-	void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType);
-	class Bar{
-	public:
-		uint16_t color;
+	void initBars();
+	void drawBars();
+	void updateBars();
+	#define BAR_WIDTH 3
+	#define BAR_NR 12
+	struct Bar{
+		CRGB color;
+		uint8_t len;
 		uint8_t xPos;
-		uint8_t yPos;
-	private:
-
 	};
-	Bar *barArray;
-	uint8_t barNumber;
-	uint8_t barWidth;
+
+	Bar barArray[BAR_NR];
+	DeltaTimer barTimer;
 };
 
 

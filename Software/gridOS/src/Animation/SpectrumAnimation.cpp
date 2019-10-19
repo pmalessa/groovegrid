@@ -11,39 +11,53 @@
 
 SpectrumAnimation::SpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
 {
-	frameTimer.setTimeStep(FRAMERATE_MS*15);
-	barWidth = 3;
-	barNumber = tile->getWidth()/barWidth;
-	barArray = new Bar[barNumber];	//3 wide Bars
-	generateBars();
+	frameTimer.setTimeStep(FRAMERATE_MS);
+	barTimer.setTimeStep(100);
+	initBars();
 }
 
 void SpectrumAnimation::run()
 {
-	Microphone& mic = Microphone::getInstance();
-	mic.computeFFT();
-	if(mic.isFFTAvailable())
+	if(frameTimer.isTimeUp())
 	{
-		mic.printFFT();
+		drawBars();
+		updateBars();
 	}
-	delay(1000); /* Repeat after delay */
+}
+
+void SpectrumAnimation::updateBars()
+{
+	if(barTimer.isTimeUp())
+	{
+		for(uint8_t i=0;i<BAR_NR;i++)
+		{
+			if(barArray[i].len > 0)
+			{
+				barArray[i].len--;
+			}
+			else
+			{
+				barArray[i].len = esp_random()%tile->getHeight();
+			}
+		}
+	}
 }
 
 void SpectrumAnimation::drawBars()
 {
-	for(uint8_t i=0;i<barNumber;i++)
+	for(uint8_t i=0;i<BAR_NR;i++)
 	{
-		tile->writeRect(barArray[i].xPos, barArray[i].yPos, barWidth, tile->getHeight()-1, barArray->color);
+		tile->writeRect(barArray[i].xPos,(tile->getHeight()-1) - barArray[i].len, BAR_WIDTH, tile->getHeight()-1, barArray->color);
 	}
 	tile->endWrite();
 }
 
-void SpectrumAnimation::generateBars()
+void SpectrumAnimation::initBars()
 {
-	for(uint8_t i=0;i<barNumber;i++)
+	for(uint8_t i=0;i<BAR_NR;i++)
 	{
-		barArray[i].xPos = barWidth*i;
-		barArray[i].yPos = esp_random()%tile->getHeight();
+		barArray[i].xPos = BAR_WIDTH*i;
+		barArray[i].len = esp_random()%tile->getHeight();
 		barArray[i].color = CRGB(esp_random());
 	}
 }
