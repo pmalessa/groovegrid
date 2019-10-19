@@ -123,3 +123,152 @@ void GridTile::writeFastHLine(int16_t x, int16_t y, int16_t w, CRGB color)
 {
 	writeLine(x, y, x+w-1, y, color);
 }
+
+/**************************************************************************/
+/*!
+   @brief    Draw a circle outline
+    @param    x0   Center-point x coordinate
+    @param    y0   Center-point y coordinate
+    @param    r   Radius of circle
+    @param    color 16-bit 5-6-5 Color to draw with
+*/
+/**************************************************************************/
+void GridTile::writeCircle(int16_t x0, int16_t y0, int16_t r, CRGB color) {
+    int16_t f = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x = 0;
+    int16_t y = r;
+
+    writePixel(x0  , y0+r, color);
+    writePixel(x0  , y0-r, color);
+    writePixel(x0+r, y0  , color);
+    writePixel(x0-r, y0  , color);
+
+    while (x<y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
+
+        writePixel(x0 + x, y0 + y, color);
+        writePixel(x0 - x, y0 + y, color);
+        writePixel(x0 + x, y0 - y, color);
+        writePixel(x0 - x, y0 - y, color);
+        writePixel(x0 + y, y0 + x, color);
+        writePixel(x0 - y, y0 + x, color);
+        writePixel(x0 + y, y0 - x, color);
+        writePixel(x0 - y, y0 - x, color);
+    }
+}
+
+/**************************************************************************/
+/*!
+    @brief    Quarter-circle drawer, used to do circles and roundrects
+    @param    x0   Center-point x coordinate
+    @param    y0   Center-point y coordinate
+    @param    r   Radius of circle
+    @param    cornername  Mask bit #1 or bit #2 to indicate which quarters of the circle we're doing
+    @param    color 16-bit 5-6-5 Color to draw with
+*/
+/**************************************************************************/
+void GridTile::drawCircleHelper( int16_t x0, int16_t y0, int16_t r, uint8_t cornername, CRGB color) {
+    int16_t f     = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x     = 0;
+    int16_t y     = r;
+
+    while (x<y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f     += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f     += ddF_x;
+        if (cornername & 0x4) {
+            writePixel(x0 + x, y0 + y, color);
+            writePixel(x0 + y, y0 + x, color);
+        }
+        if (cornername & 0x2) {
+            writePixel(x0 + x, y0 - y, color);
+            writePixel(x0 + y, y0 - x, color);
+        }
+        if (cornername & 0x8) {
+            writePixel(x0 - y, y0 + x, color);
+            writePixel(x0 - x, y0 + y, color);
+        }
+        if (cornername & 0x1) {
+            writePixel(x0 - y, y0 - x, color);
+            writePixel(x0 - x, y0 - y, color);
+        }
+    }
+}
+
+/**************************************************************************/
+/*!
+   @brief    Draw a circle with filled color
+    @param    x0   Center-point x coordinate
+    @param    y0   Center-point y coordinate
+    @param    r   Radius of circle
+    @param    color 16-bit 5-6-5 Color to fill with
+*/
+/**************************************************************************/
+void GridTile::writeFilledCircle(int16_t x0, int16_t y0, int16_t r,CRGB color) {
+    writeFastVLine(x0, y0-r, 2*r+1, color);
+    fillCircleHelper(x0, y0, r, 3, 0, color);
+}
+
+
+/**************************************************************************/
+/*!
+    @brief  Quarter-circle drawer with fill, used for circles and roundrects
+    @param  x0       Center-point x coordinate
+    @param  y0       Center-point y coordinate
+    @param  r        Radius of circle
+    @param  corners  Mask bits indicating which quarters we're doing
+    @param  delta    Offset from center-point, used for round-rects
+    @param  color    16-bit 5-6-5 Color to fill with
+*/
+/**************************************************************************/
+void GridTile::fillCircleHelper(int16_t x0, int16_t y0, int16_t r,uint8_t corners, int16_t delta, CRGB color) {
+
+    int16_t f     = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x     = 0;
+    int16_t y     = r;
+    int16_t px    = x;
+    int16_t py    = y;
+
+    delta++; // Avoid some +1's in the loop
+
+    while(x < y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f     += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f     += ddF_x;
+        // These checks avoid double-drawing certain lines, important
+        // for the SSD1306 library which has an INVERT drawing mode.
+        if(x < (y + 1)) {
+            if(corners & 1) writeFastVLine(x0+x, y0-y, 2*y+delta, color);
+            if(corners & 2) writeFastVLine(x0-x, y0-y, 2*y+delta, color);
+        }
+        if(y != py) {
+            if(corners & 1) writeFastVLine(x0+py, y0-px, 2*px+delta, color);
+            if(corners & 2) writeFastVLine(x0-py, y0-px, 2*px+delta, color);
+            py = y;
+        }
+        px = x;
+    }
+}

@@ -26,7 +26,9 @@ public:
     void writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color);
     void writeRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color);
     void writeFilledRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color);
-
+	void writeCircle(int16_t x0, int16_t y0, int16_t r,CRGB color);
+	void writeFilledCircle(int16_t x0, int16_t y0, int16_t r, CRGB color);
+	
 	uint8_t getWidth();
 	uint8_t getHeight();
 protected:
@@ -34,6 +36,8 @@ protected:
 private:
     void writeFastVLine(int16_t x, int16_t y, int16_t h, CRGB color);
     void writeFastHLine(int16_t x, int16_t y, int16_t w, CRGB color);
+	void drawCircleHelper( int16_t x0, int16_t y0,int16_t r, uint8_t cornername, CRGB color);
+	void fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, CRGB color);
 };
 
 
