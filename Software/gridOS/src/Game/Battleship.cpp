@@ -6,7 +6,7 @@ Battleship::Battleship(GridTile *tile): GrooveGame(tile) {
 	gameState = STATE_WAIT_FOR_SHIPS;
 	target.x = 3;
 	target.y = 3;
-	currentPlayerID = 1;
+	currentPlayerID = 0;
 
 	for(uint8_t i=0;i<2;i++)
 	{
@@ -54,7 +54,7 @@ void Battleship::onCommand(CommandMsg *msg)
 	if(doc->containsKey("move"))
 	{
 		std::string move = (*doc)["move"].as<std::string>();
-		moveCrosshair(move,msg->channelID);
+		moveCrosshair(move,msg->channelID-1);
 	}
 	else if(doc->containsKey("cmd"))
 	{
@@ -73,26 +73,17 @@ void Battleship::onCommand(CommandMsg *msg)
 				shipObject["y"].as<uint8_t>(),
 				shipObject["len"].as<uint8_t>(),
 				shipObject["rot"].as<uint8_t>(), 0};
-			if(msg->channelID == CHANNEL_USER1)
-			{
-				shipList[0].push_back(newShip);
-			}
-			else
-			{
-				shipList[1].push_back(newShip);
-			}
+				shipList[msg->channelID-1].push_back(newShip);
 			ESP_LOGI("Battleship","ship: x=%i,y=%i,len=%i,rot=%i",newShip.x,newShip.y,newShip.len,newShip.rot);
 		}
 		else if (cmd == "shoot")
 		{
 			if(shoot() == true){ //if hit
 				(*msg->rspdoc)["hit"] = 1;
-				ESP_LOGI("Battleship","shoot hit true");
 			}
 			else
 			{
 				(*msg->rspdoc)["hit"] = 0;
-				ESP_LOGI("Battleship","shoot hit false");
 			}
 			(*msg->rspdoc)["delay"] = HITANIMATION_DELAY;
 		}
@@ -109,8 +100,8 @@ void Battleship::onCommand(CommandMsg *msg)
 
 bool Battleship::isShipThere(uint8_t block_x, uint8_t block_y, uint8_t playerID)
 {
-	std::list<Ship>::iterator it = shipList[playerID-1].begin();
-	while(it != shipList[playerID-1].end())
+	std::list<Ship>::iterator it = shipList[playerID].begin();
+	while(it != shipList[playerID].end())
 	{
 		Ship curship = *it;
 		for(uint8_t i=0;i<curship.len;i++)
@@ -136,14 +127,12 @@ bool Battleship::shoot()
 	if(isShipThere(target.x,target.y,currentPlayerID) == 1)
 	{
 		target.hit = 1;
-		ESP_LOGI("Battleship","->STATE_SHOOTING");
 		gameState = STATE_SHOOTING;
 		return true;
 	}
 	else
 	{
 		target.hit = 0;
-		ESP_LOGI("Battleship","->STATE_SHOOTING");
 		gameState = STATE_SHOOTING;
 		return false;
 	}
@@ -151,8 +140,8 @@ bool Battleship::shoot()
 
 void Battleship::setHitmap()
 {
-	std::list<Ship>::iterator it = shipList[currentPlayerID-1].begin();
-	while(it != shipList[currentPlayerID-1].end())
+	std::list<Ship>::iterator it = shipList[currentPlayerID].begin();
+	while(it != shipList[currentPlayerID].end())
 	{
 		Ship curship = *it;
 		for(uint8_t i=0;i<curship.len;i++)
@@ -172,15 +161,15 @@ void Battleship::setHitmap()
 		it++;
 	}
 	ESP_LOGI("Battleship","no ship hit");//no ship hit
-	waterShots[currentPlayerID-1][target.x][target.y] = 1;
+	waterShots[currentPlayerID][target.x][target.y] = 1;
 }
 
 void Battleship::drawAllShips(){
 	std::list<Ship>::iterator it;
-	for(uint8_t j=1;j<=2;j++) //1..2
+	for(uint8_t j=0;j<2;j++)
 	{
-		it = shipList[j-1].begin();
-		while(it != shipList[j-1].end())
+		it = shipList[j].begin();
+		while(it != shipList[j].end())
 		{
 			Ship curship = *it;
 			if(curship.rot == 0)	//along playergrid x axis
@@ -232,12 +221,12 @@ void Battleship::moveCrosshair(std::string cmd, uint8_t playerID)
 
 //transform block coordinate from player coordinates to grid pixel coordinates
 void Battleship::writeBlock(uint8_t block_x, uint8_t block_y, uint8_t playerID, CRGB color){
-	if(playerID == 1){ //Player 1, left side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT-1 , 0)
+	if(playerID == 0){ //Player 1, left side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT-1 , 0)
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT-2) - block_y*2,  block_x*2,  color);
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT-1) - block_y*2,  block_x*2,  color);
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT-2) - block_y*2,  block_x*2+1,  color);
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT-1) - block_y*2,  block_x*2+1,  color);
-	}else if(playerID == 2){ //Player 2, right side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER -1 , GAMEFIELD_SIZE_PIXEL_WIDTH -1 )
+	}else{ //Player 2, right side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER -1 , GAMEFIELD_SIZE_PIXEL_WIDTH -1 )
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER) + block_y*2,  GAMEFIELD_SIZE_PIXEL_WIDTH-1 - block_x*2,  color);
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER+1) + block_y*2,  GAMEFIELD_SIZE_PIXEL_WIDTH-1 - block_x*2,  color);
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER) + block_y*2,  GAMEFIELD_SIZE_PIXEL_WIDTH-2 - block_x*2,  color);
@@ -247,9 +236,9 @@ void Battleship::writeBlock(uint8_t block_x, uint8_t block_y, uint8_t playerID, 
 
 //transform pixel coordinate from player coordinates to grid coordinates
 void Battleship::writePixel(uint8_t pixel_x, uint8_t pixel_y, uint8_t playerID, CRGB color){
-	if(playerID == 1){ //Player 1, left side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT-1 , 0)
+	if(playerID == 0){ //Player 1, left side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT-1 , 0)
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT-1) - pixel_y,  pixel_x,  color);
-	}else if(playerID == 2){ //Player 2, right side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER -1 , GAMEFIELD_SIZE_PIXEL_WIDTH -1 )
+	}else{ //Player 2, right side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER -1 , GAMEFIELD_SIZE_PIXEL_WIDTH -1 )
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER) + pixel_y,  GAMEFIELD_SIZE_PIXEL_WIDTH-1 - pixel_x,  color);
 	}
 }
@@ -283,11 +272,11 @@ void Battleship::drawHitmap()
 				{
 					if(curship.rot == 0)
 					{
-						writeBlock(curship.x+i,curship.y,j+1,hitColor);
+						writeBlock(curship.x+i,curship.y,j,hitColor);
 					}
 					else
 					{
-						writeBlock(curship.x,curship.y+i,j+1,hitColor);
+						writeBlock(curship.x,curship.y+i,j,hitColor);
 					}
 						
 				}
@@ -300,7 +289,7 @@ void Battleship::drawHitmap()
 			{
 				if(waterShots[j][i][k] == 1)
 				{
-					writeBlock(i,k,j+1,waterShotColor);
+					writeBlock(i,k,j,waterShotColor);
 				}
 			}
 		}
@@ -372,15 +361,14 @@ void Battleship::drawCrosshair(uint8_t block_x, uint8_t block_y, uint8_t playerI
 
 void Battleship::switchPlayer()
 {
-	if(currentPlayerID == 1)
-	{
-		currentPlayerID = 2;
-	}
-	else
+	if(currentPlayerID == 0)
 	{
 		currentPlayerID = 1;
 	}
-	ESP_LOGI("Battleship","switchPlayer -> P%i",currentPlayerID);
+	else
+	{
+		currentPlayerID = 0;
+	}
 }
 
 void Battleship::drawMidBorder()
@@ -422,16 +410,6 @@ void Battleship::draw(){
 		if(shootTimer.isTimeUp())
 		{
 			shoot();
-			std::list<Ship>::iterator it;
-			for(uint8_t j=0;j<2;j++)
-			{
-				it = shipList[j].begin();
-				while(it != shipList[j].end())
-				{
-					ESP_LOGI("Battleship","hitmap P%i ship: %x",j+1,(*it).hitmap);
-					it++;
-				}
-			}
 		}
 		break;
 	case STATE_SHOOTING:

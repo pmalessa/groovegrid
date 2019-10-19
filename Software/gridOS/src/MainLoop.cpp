@@ -144,6 +144,8 @@ void MainLoop::startApp(std::string appName)
 		currentApp->appName = appName;
 		btService.Attach(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
 		btService.Attach(currentApp->runningApp, CHANNEL_USER2);
+		btService.Attach(currentApp->runningApp, CHANNEL_USER3);
+		btService.Attach(currentApp->runningApp, CHANNEL_USER4);
 	}
 	else
 	{
