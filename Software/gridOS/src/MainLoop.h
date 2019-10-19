@@ -18,6 +18,7 @@
 #include "Game/FlappyGroove.h"
 #include "Game/Snake.h"
 #include "Game/SwipeMaster.h"
+#include "Game/Battleship.h"
 
 class MainLoop : private CommInterface
 {

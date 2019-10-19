@@ -161,8 +161,8 @@ void BluetoothService::onWrite(std::string data, uint8_t channelID, uint16_t con
 	}
 	CommInterface::CommandMsg *msg = new CommInterface::CommandMsg;
 	msg->channelID = channelID;
-	msg->doc = new DynamicJsonDocument(200);
-	msg->rspdoc = new DynamicJsonDocument(200);
+	msg->doc = new DynamicJsonDocument(500);
+	msg->rspdoc = new DynamicJsonDocument(500);
 
 	if(msg == nullptr)
 	{
