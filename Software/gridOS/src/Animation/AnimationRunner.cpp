@@ -10,7 +10,7 @@
 std::map<std::string, std::function<GrooveAnimation*(GridTile*)>> AnimationMap::animationMap = {
 	{"Color Palette"		,[](GridTile *tile){return new ColorPaletteAnimation(tile);}},
 	{"Simply Red"			,[](GridTile *tile){return new SimplyRedAnimation(tile);}},
-	{"Dancefloor"			,[](GridTile *tile){return new RandomRectAnimation(tile);}},
+	{"Dancefloor"			,[](GridTile *tile){return new RandomCircleAnimation(tile);}},
 	{"Matrix"				,[](GridTile *tile){return new MatrixAnimation(tile);}},
 	{"Need for Speed"		,[](GridTile *tile){return new NFSAnimation(tile);}},
 	{"Spectrum"				,[](GridTile *tile){return new SpectrumAnimation(tile);}}

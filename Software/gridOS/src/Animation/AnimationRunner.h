@@ -16,6 +16,7 @@
 #include "RandomLineAnimation.h"
 #include "RandomPixelAnimation.h"
 #include "RandomRectAnimation.h"
+#include "RandomCircleAnimation.h"
 #include "ColorPaletteAnimation.h"
 #include "NFSAnimation.h"
 #include "SimplyRedAnimation.h"
