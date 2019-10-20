@@ -40,6 +40,7 @@ private:
 	void setHitmap();
 	void switchPlayer();
 	bool shootAnimation();
+	void generateShootLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 
 	#define NR_SHIPS 5
 	#define GAMEFIELD_SIZE_BLOCKS_HEIGHT 10
@@ -53,6 +54,12 @@ private:
 	#define GAMEFIELD_SIZE_PIXEL_HEIGHT GAMEFIELD_SIZE_BLOCKS_HEIGHT*GAMEFIELD_BLOCK_TO_PIXEL
 	#define GAMEFIELD_SIZE_PIXEL_WIDTH GAMEFIELD_SIZE_BLOCKS_WIDTH*GAMEFIELD_BLOCK_TO_PIXEL
 	#define GAMEFIELD_SIZE_PIXEL_MIDBORDER GAMEFIELD_SIZE_BLOCKS_MIDBORDER*GAMEFIELD_BLOCK_TO_PIXEL
+
+	#define CANNONBALL_MAX_HEIGHT 7
+
+	#ifndef _swap_int16_t
+	#define _swap_int16_t(a, b) { int16_t t = a; a = b; b = t; }
+	#endif
 
 	CRGBPalette16 waterPalette =
 	{
@@ -78,12 +85,16 @@ private:
 		uint8_t hit;
 	}target;
 
+	typedef struct{
+		uint8_t x;
+		uint8_t y;
+	}CannonballPosition;
+
 	struct {
-		float x;
-		float y;
-		float h;
+		std::list<CannonballPosition> positionList;
+		uint8_t r;
 		float vel;
-		float gravity = 0.003;
+		float height;
 	}cannonBall;
 
 	enum {
@@ -97,7 +108,7 @@ private:
 	CRGB hitColor = 0xFFFFFF;
 	CRGB waterShotColor = 0xFF00FF;
 	CRGB crosshairColor = 0xFF0000;
-	DeltaTimer crosshairTimer, shootTimer;
+	DeltaTimer crosshairTimer, shootTimer, shootAnimationTimer;
 
 	uint8_t waterShots[2][GAMEFIELD_SIZE_BLOCKS_WIDTH][GAMEFIELD_SIZE_BLOCKS_HEIGHT]; //2 Player, x, y
 };

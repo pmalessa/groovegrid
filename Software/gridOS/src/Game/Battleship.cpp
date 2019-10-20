@@ -3,6 +3,7 @@
 Battleship::Battleship(GridTile *tile): GrooveGame(tile) {
 	frameTimer.setTimeStep(FRAMERATE_MS);
 	crosshairTimer.setTimeStep(150);
+	shootAnimationTimer.setTimeStep(FRAMERATE_MS);
 	gameState = STATE_WAIT_FOR_SHIPS;
 	target.x = 3;
 	target.y = 3;
@@ -376,18 +377,79 @@ void Battleship::drawMidBorder()
 	tile->writeFilledRect(GAMEFIELD_SIZE_PIXEL_HEIGHT,0,GAMEFIELD_SIZE_PIXEL_MIDBORDER,GAMEFIELD_SIZE_PIXEL_WIDTH-1,CRGB(0));
 }
 
+void Battleship::generateShootLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1)
+{
+    int16_t steep = abs(y1 - y0) > abs(x1 - x0);
+    if (steep) {
+        _swap_int16_t(x0, y0);
+        _swap_int16_t(x1, y1);
+    }
+    if (x0 > x1) {
+        _swap_int16_t(x0, x1);
+        _swap_int16_t(y0, y1);
+    }
+    int16_t dx, dy;
+    dx = x1 - x0;
+    dy = abs(y1 - y0);
+    int16_t err = dx / 2;
+    int16_t ystep;
+    if (y0 < y1) {
+        ystep = 1;
+    } else {
+        ystep = -1;
+    }
+    for (; x0<=x1; x0++) {
+        if (steep) {
+			CannonballPosition pos = {(uint8_t)y0, (uint8_t)x0};
+            cannonBall.positionList.push_back(pos);
+        } else {
+			CannonballPosition pos = {(uint8_t)x0, (uint8_t)y0};
+            cannonBall.positionList.push_back(pos);
+        }
+        err -= dy;
+        if (err < 0) {
+            y0 += ystep;
+            err += dx;
+        }
+    }
+}
+
 bool Battleship::shootAnimation()
 {
 	static uint8_t init = 1;
+	static float mid, xpos;
+	static std::list<CannonballPosition>::iterator it;
 	if(init == 1)
 	{
 		init = 0;
-		cannonBall.x = 0;
-		cannonBall.y = 7;
-		cannonBall.h = 0;
-		cannonBall.vel = 10;
+		cannonBall.r = 1;
+		if(currentPlayerID == 0)
+		{
+			generateShootLine(0,7,35,11);
+		}
+		else
+		{
+			generateShootLine(0,7,35,11);
+		}
+		mid = cannonBall.positionList.size()/2;
+		xpos = -mid;
+		cannonBall.vel = (CANNONBALL_MAX_HEIGHT/(mid*mid));
+		it = cannonBall.positionList.begin();
+		cannonBall.height = CANNONBALL_MAX_HEIGHT-cannonBall.vel*(xpos*xpos);
+		xpos++;
 	}
-	return true;
+	cannonBall.r = (uint8_t)round(cannonBall.height);
+	tile->writeFilledCircle((*it).x,(*it).y,cannonBall.r,CRGB(0x000000));
+	cannonBall.height = CANNONBALL_MAX_HEIGHT-cannonBall.vel*(xpos*xpos);
+	xpos++;
+	it++;
+	if(it == cannonBall.positionList.end())
+	{
+		cannonBall.positionList.clear();
+		init = 1;
+		return true; //done
+	}
+	return false;
 }
 
 void Battleship::draw(){
@@ -395,7 +457,7 @@ void Battleship::draw(){
 	switch (gameState)
 	{
 	case STATE_WAIT_FOR_SHIPS:
-		if(shipList[0].size() == NR_SHIPS && shipList[1].size() == NR_SHIPS)
+		if(shipList[0].size() == NR_SHIPS || shipList[1].size() == NR_SHIPS)
 		{
 			ESP_LOGI("Battleship","all ships there, ->STATE_CROSSHAIR");
 			gameState = STATE_CROSSHAIR;
@@ -430,7 +492,6 @@ void Battleship::draw(){
 void Battleship::reset(){
 	tile->fillScreen(CRGB(0));
 }
-
 
 void Battleship::run() {
 	if (frameTimer.isTimeUp()) {
