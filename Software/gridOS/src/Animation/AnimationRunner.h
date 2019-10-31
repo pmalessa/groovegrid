@@ -12,7 +12,6 @@
 #include "../utils/GrooveApp.h"
 #include <queue>
 
-#include "BootTransition.h"
 #include "RandomLineAnimation.h"
 #include "RandomPixelAnimation.h"
 #include "RandomRectAnimation.h"

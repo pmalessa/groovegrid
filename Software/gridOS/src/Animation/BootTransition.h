@@ -17,6 +17,8 @@ class BootTransition: public GrooveTransition
 public:
 	BootTransition(GridTile* gridTile);
 	void run();
+private:
+	uint16_t delayFrames;
 };
 
 

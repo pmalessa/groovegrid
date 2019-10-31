@@ -13,6 +13,7 @@
 #include "driver/Timer.h"
 #include "driver/BluetoothService.h"
 
+#include "Animation/BootTransition.h"
 #include "Animation/AnimationRunner.h"
 #include "Game/Game_2048.h"
 #include "Game/FlappyGroove.h"

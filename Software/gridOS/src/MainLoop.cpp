@@ -108,13 +108,13 @@ MainLoop::MainLoop()
 
 	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface
 
-	xTaskCreatePinnedToCore(appTaskWrapper,"appTask",2048,this,tskIDLE_PRIORITY,&appTaskHandle,1);
-
 	//Start initial App
 	currentApp = new AppEntry();
 	currentApp->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
 	currentApp->isRunning = false;
 	startApp("AnimationRunner");
+
+	xTaskCreatePinnedToCore(appTaskWrapper,"appTask",2048,this,tskIDLE_PRIORITY,&appTaskHandle,1);
 }
 
 void MainLoop::stopApp()
@@ -155,6 +155,13 @@ void MainLoop::startApp(std::string appName)
 
 void MainLoop::appTask()
 {
+	BootTransition *bt = new BootTransition(currentApp->tile);
+	while(bt->isRunning())
+	{
+		bt->run();
+		vTaskDelay(1);
+	}
+	delete bt;
 	while(1)
 	{
 		if(currentApp->isRunning)
