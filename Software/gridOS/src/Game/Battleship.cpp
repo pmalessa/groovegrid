@@ -377,8 +377,24 @@ void Battleship::drawMidBorder()
 	tile->writeFilledRect(GAMEFIELD_SIZE_PIXEL_HEIGHT,0,GAMEFIELD_SIZE_PIXEL_MIDBORDER,GAMEFIELD_SIZE_PIXEL_WIDTH-1,CRGB(0));
 }
 
-void Battleship::generateShootLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1)
+void Battleship::generateShootLine()
 {
+	int16_t x0,y0,x1,y1;
+	if(currentPlayerID == 1)	//conversion target block to grid pixel
+	{
+		x0 = 0;
+		y0 = tile->getHeight()/2;
+		x1 = (GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER) + target.y*2;
+		y1 = GAMEFIELD_SIZE_PIXEL_WIDTH-1 - target.x*2;
+	}
+	else
+	{
+		x0 = tile->getWidth()-1;
+		y0 = tile->getHeight()/2;
+		x1 = (GAMEFIELD_SIZE_PIXEL_HEIGHT-1) - target.y*2;
+		y1 = target.x*2;
+	}
+
     int16_t steep = abs(y1 - y0) > abs(x1 - x0);
     if (steep) {
         _swap_int16_t(x0, y0);
@@ -401,10 +417,24 @@ void Battleship::generateShootLine(int16_t x0, int16_t y0, int16_t x1, int16_t y
     for (; x0<=x1; x0++) {
         if (steep) {
 			CannonballPosition pos = {(uint8_t)y0, (uint8_t)x0};
-            cannonBall.positionList.push_back(pos);
+			if(currentPlayerID == 0)
+			{
+				cannonBall.positionList.push_front(pos);
+			}
+			else
+			{
+				cannonBall.positionList.push_back(pos);
+			}
         } else {
 			CannonballPosition pos = {(uint8_t)x0, (uint8_t)y0};
-            cannonBall.positionList.push_back(pos);
+			if(currentPlayerID == 0)
+			{
+				cannonBall.positionList.push_front(pos);
+			}
+			else
+			{
+				cannonBall.positionList.push_back(pos);
+			}
         }
         err -= dy;
         if (err < 0) {
@@ -412,6 +442,39 @@ void Battleship::generateShootLine(int16_t x0, int16_t y0, int16_t x1, int16_t y
             err += dx;
         }
     }
+}
+
+//player 0 wins, if all ships of player 1 are destroyed
+bool Battleship::checkWin()
+{
+	uint8_t playerID;
+	if(currentPlayerID == 0)
+	{
+		playerID = 1;
+	}
+	else
+	{
+		playerID = 0;
+	}
+	
+	if(shipList[playerID].empty())
+	{
+		return false;	//in debug mode, no one wins
+	}
+	std::list<Ship>::iterator it = shipList[playerID].begin();
+	while(it != shipList[playerID].end())
+	{
+		Ship curship = *it;
+		for(uint8_t i=0;i<curship.len;i++)
+		{
+			if(!(curship.hitmap & (1<<i)))
+			{
+				return false; //still one hit left, return false
+			}
+		}
+		it++;
+	}
+	return true;
 }
 
 bool Battleship::shootAnimation()
@@ -423,14 +486,7 @@ bool Battleship::shootAnimation()
 	{
 		init = 0;
 		cannonBall.r = 1;
-		if(currentPlayerID == 0)
-		{
-			generateShootLine(0,7,35,11);
-		}
-		else
-		{
-			generateShootLine(0,7,35,11);
-		}
+		generateShootLine();
 		mid = cannonBall.positionList.size()/2;
 		xpos = -mid;
 		cannonBall.vel = (CANNONBALL_MAX_HEIGHT/(mid*mid));
@@ -480,10 +536,23 @@ void Battleship::draw(){
 		if(shootAnimation() == true)	//if shootAnimation done
 		{
 			setHitmap();
-			gameState = STATE_CROSSHAIR;
-			ESP_LOGI("Battleship","-> STATE_CROSSHAIR");
-			switchPlayer();
+			if(checkWin() == true)
+			{
+				gameState = STATE_WIN;
+				ESP_LOGI("Battleship","-> STATE_WIN");
+			}
+			else
+			{
+				gameState = STATE_CROSSHAIR;
+				ESP_LOGI("Battleship","-> STATE_CROSSHAIR");
+				switchPlayer();
+			}
 		}
+		break;
+	case STATE_WIN:
+		drawMidBorder();
+		drawAllShips();
+		drawHitmap();
 		break;
 	}
 	tile->endWrite();

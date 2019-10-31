@@ -40,7 +40,8 @@ private:
 	void setHitmap();
 	void switchPlayer();
 	bool shootAnimation();
-	void generateShootLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
+	void generateShootLine();
+	bool checkWin();
 
 	#define NR_SHIPS 5
 	#define GAMEFIELD_SIZE_BLOCKS_HEIGHT 10
@@ -100,7 +101,8 @@ private:
 	enum {
 		STATE_WAIT_FOR_SHIPS,
 		STATE_CROSSHAIR,
-		STATE_SHOOTING
+		STATE_SHOOTING,
+		STATE_WIN
 	}gameState;
 
 	std::list<Ship> shipList[2];
