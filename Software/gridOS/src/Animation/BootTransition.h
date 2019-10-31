@@ -18,7 +18,7 @@ public:
 	BootTransition(GridTile* gridTile);
 	void run();
 private:
-	uint16_t delayFrames;
+	uint16_t delayFrames, x0, x1, state;
 };
 
 

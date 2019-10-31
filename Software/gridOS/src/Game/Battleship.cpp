@@ -522,7 +522,6 @@ void Battleship::draw(){
 		break;
 	case STATE_CROSSHAIR:
 		drawMidBorder();
-		//drawAllShips();
 		drawHitmap();
 		drawCrosshair(target.x,target.y, currentPlayerID);
 		if(shootTimer.isTimeUp())
@@ -556,10 +555,6 @@ void Battleship::draw(){
 		break;
 	}
 	tile->endWrite();
-}
-
-void Battleship::reset(){
-	tile->fillScreen(CRGB(0));
 }
 
 void Battleship::run() {

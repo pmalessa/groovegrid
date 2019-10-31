@@ -29,9 +29,9 @@ public:
     void writeFilledRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color);
 	void writeCircle(int16_t x0, int16_t y0, int16_t r,CRGB color);
 	void writeFilledCircle(int16_t x0, int16_t y0, int16_t r, CRGB color);
-	void drawString(int16_t x, int16_t y, std::string str, CRGB color, CRGB bg, uint8_t size);
-	void drawChar(int16_t x, int16_t y, unsigned char c, CRGB color, CRGB bg, uint8_t size);
-	void drawChar(int16_t x, int16_t y, unsigned char c, CRGB color, CRGB bg, uint8_t size_x, uint8_t size_y);
+	void writeString(int16_t x, int16_t y, std::string str, CRGB color, CRGB bg, uint8_t size);
+	void writeChar(int16_t x, int16_t y, unsigned char c, CRGB color, CRGB bg, uint8_t size);
+	void writeChar(int16_t x, int16_t y, unsigned char c, CRGB color, CRGB bg, uint8_t size_x, uint8_t size_y);
 	void setTextSize(uint8_t s);
 	void setTextSize(uint8_t s_x, uint8_t s_y);
 	void setFont(const GridFont *f);

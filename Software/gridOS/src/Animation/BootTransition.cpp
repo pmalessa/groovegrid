@@ -10,18 +10,43 @@ BootTransition::BootTransition(GridTile* gridTile):GrooveTransition(gridTile)
 {
 	running = true;
 	delayFrames = 2000/FRAMERATE_MS;	//1second delay
-	tile->drawString(2,7,"Groovegrid",CRGB(0xFF00FF),CRGB(0x000000),1);
 	tile->endWrite();
+	x0 = 0;
+	x1 = tile->getWidth()-1;
+	state = 0;
 }
 void BootTransition::run()
 {
 	if(running && frameTimer.isTimeUp())
 	{
-		delayFrames--;
-	}
-	if(delayFrames == 0)
-	{
-		running = false;
+		tile->writeString(2,7,"Groovegrid",CRGB(0xFF00FF),CRGB(0x000000),1);
+		tile->writeFilledRect(x0,0,x1-x0,tile->getHeight(),CRGB(0x000000));
+		tile->endWrite();
+		switch (state)
+		{
+		case 0:	//fade in
+			if(x0 < tile->getWidth())
+			{
+				x0++;
+			}
+			else
+			{
+				state = 1;
+				x0 = 0;
+				x1 = 0;
+			}
+			break;
+		case 1: //fade out
+			if(x1 < tile->getWidth())
+			{
+				x1++;
+			}
+			else
+			{
+				running = false;
+			}
+			break;
+		}
 	}
 }
 

@@ -33,7 +33,6 @@ private:
 	void drawAllShips();
 	bool shoot();	//true if hit
 	bool isShipThere(uint8_t block_x, uint8_t block_y, uint8_t playerID);
-	void reset();
 	void writeBlock(uint8_t x, uint8_t y, uint8_t playerID, CRGB color);
 	void writePixel(uint8_t x, uint8_t y, uint8_t playerID, CRGB color);
 	void drawHitmap();

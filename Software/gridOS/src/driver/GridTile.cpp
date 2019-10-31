@@ -303,14 +303,14 @@ inline uint8_t * pgm_read_bitmap_ptr(const GridFont *gfxFont)
 
 // TEXT- AND CHARACTER-HANDLING FUNCTIONS ----------------------------------
 
-void GridTile::drawString(int16_t x, int16_t y, std::string str, CRGB color, CRGB bg, uint8_t size)
+void GridTile::writeString(int16_t x, int16_t y, std::string str, CRGB color, CRGB bg, uint8_t size)
 {
     uint16_t x_shift = 0;
     std::string::iterator it = str.begin();
 	while(it != str.end())
 	{
 		char c = *it;
-		drawChar(x+x_shift,y,c,color,bg,size);
+		writeChar(x+x_shift,y,c,color,bg,size);
         x_shift +=4;
 		it++;
 	}
@@ -328,9 +328,9 @@ void GridTile::drawString(int16_t x, int16_t y, std::string str, CRGB color, CRG
     @param    size  Font magnification level, 1 is 'original' size
 */
 /**************************************************************************/
-void GridTile::drawChar(int16_t x, int16_t y, unsigned char c,
+void GridTile::writeChar(int16_t x, int16_t y, unsigned char c,
   CRGB color, CRGB bg, uint8_t size) {
-    drawChar(x, y, c, color, bg, size, size);
+    writeChar(x, y, c, color, bg, size, size);
 }
 
 // Draw a character
@@ -346,7 +346,7 @@ void GridTile::drawChar(int16_t x, int16_t y, unsigned char c,
     @param    size_y  Font magnification level in Y-axis, 1 is 'original' size
 */
 /**************************************************************************/
-void GridTile::drawChar(int16_t x, int16_t y, unsigned char c,
+void GridTile::writeChar(int16_t x, int16_t y, unsigned char c,
   CRGB color, CRGB bg, uint8_t size_x, uint8_t size_y) {
 
     if(!gridFont) { // 'Classic' built-in font
@@ -379,7 +379,6 @@ void GridTile::drawChar(int16_t x, int16_t y, unsigned char c,
             if(size_x == 1 && size_y == 1) writeFastVLine(x+5, y, 8, bg);
             else          writeFilledRect(x+5*size_x, y, size_x, 8*size_y, bg);
         }
-        endWrite();
 
     } else { // Custom font
 
@@ -438,7 +437,6 @@ void GridTile::drawChar(int16_t x, int16_t y, unsigned char c,
                 bits <<= 1;
             }
         }
-        endWrite();
 
     } // End classic vs custom font
 }
