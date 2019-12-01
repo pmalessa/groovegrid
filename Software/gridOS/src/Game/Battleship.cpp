@@ -513,7 +513,7 @@ void Battleship::draw(){
 	switch (gameState)
 	{
 	case STATE_WAIT_FOR_SHIPS:
-		if(shipList[0].size() == NR_SHIPS || shipList[1].size() == NR_SHIPS)
+		if(shipList[0].size() == NR_SHIPS && shipList[1].size() == NR_SHIPS)
 		{
 			ESP_LOGI("Battleship","all ships there, ->STATE_CROSSHAIR");
 			gameState = STATE_CROSSHAIR;

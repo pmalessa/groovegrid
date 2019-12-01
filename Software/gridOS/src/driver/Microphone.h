@@ -10,7 +10,8 @@
 
 #include "../PLATFORM.h"
 #include <driver/i2s.h>
-//#include "arduinoFFT.h"
+#include <arduinoFFT.h>
+#include "DeltaTimer.h"
 
 class Microphone {
 
@@ -18,7 +19,10 @@ class Microphone {
 #define SCL_TIME 0x01
 #define SCL_FREQUENCY 0x02
 #define SCL_PLOT 0x03
-#define SAMPLES 64
+
+#define NR_FFT_SAMPLES 256
+#define SAMPLERATE_HZ 16000
+#define BYTES_PER_SAMPLE 4
 
  public:
 	static Microphone& getInstance();
@@ -28,17 +32,33 @@ class Microphone {
 	void printFFT();
 	int32_t getCurrentSoundLevel(void);
 	uint32_t read(uint32_t *buf, uint32_t length);
+	void run();
+	void getFFT(double *fftBuffer);
 
  private:
-Microphone();
-Microphone(const Microphone&);
-Microphone & operator = (const Microphone &);
+	Microphone();
+	Microphone(const Microphone&);
+	Microphone & operator = (const Microphone &);
+	static void runWrapper(void* _this){((Microphone*)_this)->run();}
+	void processMicSample();
 
-bool initialized = false, fftAvailable = false;
-const double samplingFrequency = 100; //Hz, must be less than 10000 due to ADC
-double vReal[SAMPLES];
-double vImag[SAMPLES];
-//arduinoFFT *fft;
+	bool initialized = false, fftAvailable = false;
+	arduinoFFT *fft;
+	xTaskHandle micTask;
+	DeltaTimer micTaskTimer;
+
+	struct {
+		double real[NR_FFT_SAMPLES];
+		double imag[NR_FFT_SAMPLES];
+	}fftBuffer;
+	uint32_t micSample[NR_FFT_SAMPLES];
+	struct {
+		double sample[NR_FFT_SAMPLES];
+		double majorPeak;
+	}fftResult;
+	uint32_t fftCounter;
+	uint32_t maxAmplitude = 0;
+	uint32_t maxFFTValue = 0;
 };
 
 

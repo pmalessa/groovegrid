@@ -10,6 +10,7 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveAnimation.h"
+#include "../driver/Microphone.h"
 
 class SpectrumAnimation : public GrooveAnimation
 {
@@ -29,6 +30,7 @@ private:
 	};
 
 	Bar barArray[BAR_NR];
+	double fftBuffer[NR_FFT_SAMPLES];
 	DeltaTimer barTimer;
 	CRGBPalette16 lavaPalette =
 	{

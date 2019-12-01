@@ -6,7 +6,6 @@
  */
 
 #include "SpectrumAnimation.h"
-#include "../driver/Microphone.h"
 
 
 SpectrumAnimation::SpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
@@ -14,6 +13,9 @@ SpectrumAnimation::SpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
 	frameTimer.setTimeStep(FRAMERATE_MS);
 	barTimer.setTimeStep(FRAMERATE_MS*2);
 	initBars();
+
+	//static Microphone& mic = Microphone::getInstance();	//start Microphone
+	//UNUSED(mic);
 }
 
 void SpectrumAnimation::run()
@@ -41,6 +43,19 @@ void SpectrumAnimation::updateBars()
 			}
 		}
 	}
+	/*
+	static uint8_t maxHeight = 0;
+	static Microphone& mic = Microphone::getInstance();
+	mic.getFFT(fftBuffer);
+	for(uint8_t i=0;i<BAR_NR;i++)
+	{
+		barArray[i].len = (uint8_t) (fftBuffer[i+1]*tile->getHeight());	//avoid DC part
+		if(barArray[i].len > tile->getHeight()-1)
+		{
+			barArray[i].len = tile->getHeight()-1;
+		}
+	}
+	*/
 }
 
 void SpectrumAnimation::drawBars()
@@ -58,8 +73,7 @@ void SpectrumAnimation::initBars()
 	for(uint8_t i=0;i<BAR_NR;i++)
 	{
 		barArray[i].xPos = BAR_WIDTH*i;
-		barArray[i].len = (tile->getHeight()/3) + esp_random()%((tile->getHeight()/3)*2);
-		//barArray[i].color = CRGB(esp_random());
+		barArray[i].len = 0;
 		barArray[i].color = ColorFromPalette(lavaPalette,(255/BAR_NR)*i,0xFF,LINEARBLEND);
 	}
 }
