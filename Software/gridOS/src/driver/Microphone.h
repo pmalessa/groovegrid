@@ -20,7 +20,7 @@ class Microphone {
 #define SCL_FREQUENCY 0x02
 #define SCL_PLOT 0x03
 
-#define NR_FFT_SAMPLES 256
+#define NR_FFT_SAMPLES 64
 #define SAMPLERATE_HZ 16000
 #define BYTES_PER_SAMPLE 4
 

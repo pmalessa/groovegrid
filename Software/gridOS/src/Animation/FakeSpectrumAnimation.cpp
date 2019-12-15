@@ -5,10 +5,10 @@
  *      Author: pmale
  */
 
-#include "SpectrumAnimation.h"
+#include "FakeSpectrumAnimation.h"
 
 
-SpectrumAnimation::SpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
+FakeSpectrumAnimation::FakeSpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
 {
 	frameTimer.setTimeStep(FRAMERATE_MS);
 	barTimer.setTimeStep(FRAMERATE_MS*2);
@@ -18,7 +18,7 @@ SpectrumAnimation::SpectrumAnimation(GridTile *tile):GrooveAnimation(tile)
 	//UNUSED(mic);
 }
 
-void SpectrumAnimation::run()
+void FakeSpectrumAnimation::run()
 {
 	if(frameTimer.isTimeUp())
 	{
@@ -27,25 +27,38 @@ void SpectrumAnimation::run()
 	}
 }
 
-void SpectrumAnimation::updateBars()
+void FakeSpectrumAnimation::updateBars()
 {
 	if(barTimer.isTimeUp())
 	{
-		static uint8_t maxHeight = 0;
-		static Microphone& mic = Microphone::getInstance();
-		mic.getFFT(fftBuffer);
 		for(uint8_t i=0;i<BAR_NR;i++)
 		{
-			barArray[i].len = (uint8_t) (fftBuffer[i+1]*tile->getHeight());	//avoid DC part
-			if(barArray[i].len > tile->getHeight()-1)
+			if(barArray[i].len > 0)
 			{
-				barArray[i].len = tile->getHeight()-1;
+				barArray[i].len--;
+			}
+			else
+			{
+				barArray[i].len = esp_random()%tile->getHeight();
 			}
 		}
 	}
+	/*
+	static uint8_t maxHeight = 0;
+	static Microphone& mic = Microphone::getInstance();
+	mic.getFFT(fftBuffer);
+	for(uint8_t i=0;i<BAR_NR;i++)
+	{
+		barArray[i].len = (uint8_t) (fftBuffer[i+1]*tile->getHeight());	//avoid DC part
+		if(barArray[i].len > tile->getHeight()-1)
+		{
+			barArray[i].len = tile->getHeight()-1;
+		}
+	}
+	*/
 }
 
-void SpectrumAnimation::drawBars()
+void FakeSpectrumAnimation::drawBars()
 {
 	tile->fillScreenBuffer(CRGB(0));
 	for(uint8_t i=0;i<BAR_NR;i++)
@@ -55,7 +68,7 @@ void SpectrumAnimation::drawBars()
 	tile->endWrite();
 }
 
-void SpectrumAnimation::initBars()
+void FakeSpectrumAnimation::initBars()
 {
 	for(uint8_t i=0;i<BAR_NR;i++)
 	{

@@ -92,6 +92,11 @@ void MainLoop::onCommand(CommandMsg *msg)
 	{
 
 	}
+	else if(cmd=="brightness")
+	{
+		uint8_t brightness = (*msg->doc)["value"].as<uint8_t>();
+		Grid::setBrightness(brightness);
+	}
 	else
 	{
 		errorCode = 1;
@@ -115,7 +120,7 @@ MainLoop::MainLoop()
 	currentApp->isRunning = false;
 	startApp("AnimationRunner");
 
-	xTaskCreatePinnedToCore(appTaskWrapper,"appTask",2048,this,tskIDLE_PRIORITY,&appTaskHandle,1);
+	xTaskCreatePinnedToCore(appTaskWrapper,"appTask",8192,this,tskIDLE_PRIORITY,&appTaskHandle,1);
 }
 
 void MainLoop::stopApp()

@@ -24,9 +24,7 @@ private:
 	uint8_t gameState = 0;
 	uint16_t fadePosition = 0;
 	uint16_t fadeDuration = 1000; //ms
-	uint16_t flashDuration = 50; //ms
-	uint32_t minFlashInterval = 100; //seconds
-	uint32_t maxFlashInterval = 3000; //seconds
+	DeltaTimer fadeTimer;
 };
 
 

@@ -19,8 +19,6 @@ Battleship::Battleship(GridTile *tile): GrooveGame(tile) {
 			}		
 		}
 	}
-
-	shootTimer.setTimeStep(5000);	//automatic shooting for debugging
 }
 
 Battleship::~Battleship(){
@@ -73,7 +71,7 @@ void Battleship::onCommand(CommandMsg *msg)
 				shipObject["x"].as<uint8_t>(),
 				shipObject["y"].as<uint8_t>(),
 				shipObject["len"].as<uint8_t>(),
-				shipObject["rot"].as<uint8_t>(), 0};
+				shipObject["rot"].as<uint8_t>(), 0, 0};
 				shipList[msg->channelID-1].push_back(newShip);
 			ESP_LOGI("Battleship","ship: x=%i,y=%i,len=%i,rot=%i",newShip.x,newShip.y,newShip.len,newShip.rot);
 		}
@@ -196,7 +194,6 @@ void Battleship::moveCrosshair(std::string cmd, uint8_t playerID)
 {
 	if(playerID != currentPlayerID && gameState == STATE_CROSSHAIR)
 	{
-		shootTimer.reset();
 		if(cmd == "down" && target.y > 0)
 		{
 			ESP_LOGI("Battleship","move Crosshair %s",cmd.c_str());
@@ -267,6 +264,22 @@ void Battleship::drawHitmap()
 		while(it != shipList[j].end())
 		{
 			Ship curship = *it;
+			if(curship.sunken == true)
+			{
+				for(uint8_t i=0;i<curship.len;i++)	//draw sunken ship
+				{
+					if(curship.rot == 0)
+					{
+						writeBlock(curship.x+i,curship.y,j,shipSunkColor);
+					}
+					else
+					{
+						writeBlock(curship.x,curship.y+i,j,shipSunkColor);
+					}
+				}
+				continue;
+			}
+			curship.sunken = true;	//gets cleared by next loop, if not sunken yet
 			for(uint8_t i=0;i<curship.len;i++)
 			{
 				if(curship.hitmap & (1<<i))
@@ -278,8 +291,11 @@ void Battleship::drawHitmap()
 					else
 					{
 						writeBlock(curship.x,curship.y+i,j,hitColor);
-					}
-						
+					}	
+				}
+				else
+				{
+					curship.sunken = false;	//at least one part of the ship not hit, so ship is not sunken yet
 				}
 			}
 			it++;
@@ -517,17 +533,12 @@ void Battleship::draw(){
 		{
 			ESP_LOGI("Battleship","all ships there, ->STATE_CROSSHAIR");
 			gameState = STATE_CROSSHAIR;
-			shootTimer.reset();
 		}
 		break;
 	case STATE_CROSSHAIR:
 		drawMidBorder();
 		drawHitmap();
 		drawCrosshair(target.x,target.y, currentPlayerID);
-		if(shootTimer.isTimeUp())
-		{
-			shoot();
-		}
 		break;
 	case STATE_SHOOTING:
 		drawMidBorder();

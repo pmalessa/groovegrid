@@ -77,6 +77,7 @@ private:
 		uint8_t len;
 		uint8_t rot;
 		uint8_t hitmap;
+		uint8_t sunken;
 	}Ship;
 
 	struct {
@@ -106,10 +107,11 @@ private:
 
 	std::list<Ship> shipList[2];
 	CRGB shipColor = 0x037d00;
-	CRGB hitColor = 0xFFFFFF;
-	CRGB waterShotColor = 0xFF00FF;
+	CRGB shipSunkColor = 0xFF0000;
+	CRGB hitColor = 0xFF00FF;
+	CRGB waterShotColor = 0xFFFFFF;
 	CRGB crosshairColor = 0xFF0000;
-	DeltaTimer crosshairTimer, shootTimer, shootAnimationTimer;
+	DeltaTimer crosshairTimer, shootAnimationTimer;
 
 	uint8_t waterShots[2][GAMEFIELD_SIZE_BLOCKS_WIDTH][GAMEFIELD_SIZE_BLOCKS_HEIGHT]; //2 Player, x, y
 };

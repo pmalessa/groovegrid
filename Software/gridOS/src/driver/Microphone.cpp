@@ -88,14 +88,7 @@ void Microphone::computeFFT()
 	//LOCK NECESSARY
 	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
 	{
-		if(fftBuffer.real[i] > maxFFTValue)
-		{
-			maxFFTValue = fftBuffer.real[i];	//get max Amplitude
-		}
-	}
-	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
-	{
-		fftResult.sample[i] = fftBuffer.real[i]/maxFFTValue;	//save result
+		fftResult.sample[i] = fftBuffer.real[i];	//save result
 	}
 	fftResult.majorPeak = fft->MajorPeak();
 	//UNLOCK

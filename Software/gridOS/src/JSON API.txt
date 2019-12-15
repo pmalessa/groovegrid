@@ -83,6 +83,18 @@ Response:
 	"error": 0 if okay, else errorCode
 }
 
+set Brightness:
+{
+	"cmdID": nonce,
+	"cmd": "brightness",
+	"value": 0..255
+}
+Response:
+{
+	"rspID": cmdID,
+	"error": 0 if okay, else errorCode
+}
+
 User Channel
 
 
