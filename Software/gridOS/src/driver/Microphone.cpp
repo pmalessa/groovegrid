@@ -25,7 +25,7 @@ Microphone::Microphone()
 	// The I2S config as per the example
 	const i2s_config_t i2s_config = {
 	  .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX), // Receive, not transfer
-	  .sample_rate = SAMPLERATE_HZ,                         // 44.1KHz
+	  .sample_rate = SAMPLERATE_HZ,
 	  .bits_per_sample = I2S_BITS_PER_SAMPLE_32BIT, // could only get it to work with 32bits
 	  .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT, // although the SEL config should be left, it seems to transmit on right
 	  .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
@@ -61,26 +61,50 @@ Microphone::Microphone()
 	fft->Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
 }
 
-void Microphone::computeFFT()
+void Microphone::readSamples()
 {
-	uint32_t bytes_read; uint64_t mean = 0;
+	uint32_t bytes_read;
 	i2s_read(I2S_NUM_0, micSample, NR_FFT_SAMPLES*BYTES_PER_SAMPLE, &bytes_read, portMAX_DELAY);	//no timeout, wait till all samples are read
-	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)	//calc mean value
-	{
-		mean += micSample[i];
-	}
-	mean = mean / NR_FFT_SAMPLES;
 	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
 	{
-		micSample[i] -= mean;				//remove mean
-		if(micSample[i] > maxAmplitude)
-		{
-			maxAmplitude = micSample[i];	//get max Amplitude
+		micSample[i] = micSample[i] >> BIT_SHIFT; //only 18bits are data, rest zeros
+	}
+}
+
+void Microphone::processMicSamples()
+{
+	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
+	{
+		mean = ((SAMPLE_MEAN_SIZE-1)*mean + micSample[i])/SAMPLE_MEAN_SIZE;
+	}
+	ESP_LOGI("Mic","%i - %x",micSample[10],micSample[10]);
+	ESP_LOGI("Mic","mean: %i",mean);
+
+	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
+	{
+		micSample[i] -= mean;				//remove mean / DC Offset
+	}
+
+	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
+	{
+		if(abs(micSample[i]) > peakValue)
+		{	//Attack
+			peakValue = (1 - ATTACK_TIME)*peakValue + ATTACK_TIME*abs(micSample[i]);
+		}
+		else
+		{	//Release
+			peakValue = (1 - RELEASE_TIME)*peakValue;
 		}
 	}
+}
+
+void Microphone::computeFFT()
+{
+	readSamples();
+	processMicSamples();
 	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)	//uint32_t to double, maybe scaling required
 	{
-		fftBuffer.real[i] = ((double) micSample[i]) / maxAmplitude;
+		fftBuffer.real[i] = ((double) micSample[i]) / peakValue;
 		fftBuffer.imag[i] = 0;
 	}
 	fft->Compute(FFT_FORWARD); /* Compute FFT */
