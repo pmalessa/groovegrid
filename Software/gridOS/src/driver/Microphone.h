@@ -29,8 +29,9 @@ class Microphone {
 
 #define SAMPLE_MEAN_SIZE 16384	//around 1 second, power of 2 for performance
 
-#define ATTACK_TIME 0.1
-#define RELEASE_TIME 0.05
+#define ATTACK_TIME 0.04
+#define RELEASE_TIME 0.0005 //0.00001
+#define K_GAIN 0.04
 
  public:
 	static Microphone& getInstance();
@@ -50,6 +51,7 @@ class Microphone {
 	static void runWrapper(void* _this){((Microphone*)_this)->run();}
 	void processMicSamples();
 	void readSamples();
+	void initValues();
 
 	bool initialized = false, fftAvailable = false;
 	arduinoFFT *fft;
@@ -61,13 +63,15 @@ class Microphone {
 		double imag[NR_FFT_SAMPLES];
 	}fftBuffer;
 	int32_t micSample[NR_FFT_SAMPLES];
+	double processedSample[NR_FFT_SAMPLES];
 	int32_t mean;
 	struct {
 		double sample[NR_FFT_SAMPLES];
 		double majorPeak;
 	}fftResult;
 	uint32_t fftCounter;
-	uint32_t peakValue = 0;
+	double peakValue = 0;
+	double gainValue = 0;
 };
 
 

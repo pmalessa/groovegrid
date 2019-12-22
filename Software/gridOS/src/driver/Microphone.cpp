@@ -59,6 +59,32 @@ Microphone::Microphone()
 
 	fft = new arduinoFFT(fftBuffer.real, fftBuffer.imag, NR_FFT_SAMPLES, SAMPLERATE_HZ);
 	fft->Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
+	initValues();
+}
+
+void Microphone::initValues()
+{	//initial Values, take the first 64 samples
+	readSamples();
+	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
+	{	//calculate mean, incremental average
+		mean = ((SAMPLE_MEAN_SIZE-1)*mean + micSample[i])/SAMPLE_MEAN_SIZE;	
+	}
+	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
+	{	//remove mean / DC Offset
+		micSample[i] -= mean;				
+	}
+	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
+	{	//estimate peak value, EWMA
+		if(abs(micSample[i]) > peakValue)
+		{	//Attack
+			peakValue = (1 - ATTACK_TIME)*peakValue + ATTACK_TIME*abs(micSample[i]);
+		}
+		else
+		{	//Release
+			peakValue = (1 - RELEASE_TIME)*peakValue;
+		}
+	}
+	gainValue = peakValue;
 }
 
 void Microphone::readSamples()
@@ -74,19 +100,19 @@ void Microphone::readSamples()
 void Microphone::processMicSamples()
 {
 	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
-	{
-		mean = ((SAMPLE_MEAN_SIZE-1)*mean + micSample[i])/SAMPLE_MEAN_SIZE;
+	{	//calculate mean, incremental average
+		mean = ((SAMPLE_MEAN_SIZE-1)*mean + micSample[i])/SAMPLE_MEAN_SIZE;	
 	}
-	ESP_LOGI("Mic","%i - %x",micSample[10],micSample[10]);
-	ESP_LOGI("Mic","mean: %i",mean);
+	//ESP_LOGI("Mic","%i - %x",micSample[10],micSample[10]);
+	//ESP_LOGI("Mic","mean: %i",mean);
 
 	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
-	{
-		micSample[i] -= mean;				//remove mean / DC Offset
+	{	//remove mean / DC Offset
+		micSample[i] -= mean;				
 	}
 
 	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
-	{
+	{	//estimate peak value, EWMA
 		if(abs(micSample[i]) > peakValue)
 		{	//Attack
 			peakValue = (1 - ATTACK_TIME)*peakValue + ATTACK_TIME*abs(micSample[i]);
@@ -96,6 +122,13 @@ void Microphone::processMicSamples()
 			peakValue = (1 - RELEASE_TIME)*peakValue;
 		}
 	}
+
+	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)
+	{	//calculate gain smoothing factor, EWMA
+		gainValue = (1 - K_GAIN)*gainValue + K_GAIN*peakValue;
+		processedSample[i] = (double) micSample[i] / gainValue;	//correct gain factor, save processed sample
+	}
+	//ESP_LOGI("Mic","processed: %f",processedSample[10]);
 }
 
 void Microphone::computeFFT()
@@ -104,7 +137,7 @@ void Microphone::computeFFT()
 	processMicSamples();
 	for(uint16_t i=0;i<NR_FFT_SAMPLES;i++)	//uint32_t to double, maybe scaling required
 	{
-		fftBuffer.real[i] = ((double) micSample[i]) / peakValue;
+		fftBuffer.real[i] = processedSample[i];
 		fftBuffer.imag[i] = 0;
 	}
 	fft->Compute(FFT_FORWARD); /* Compute FFT */

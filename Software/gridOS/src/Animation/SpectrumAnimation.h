@@ -23,9 +23,13 @@ private:
 	void updateBars();
 	#define BAR_WIDTH 3
 	#define BAR_NR 14
+
+	#define BAR_AT 0.7
+	#define BAR_RT 0.4
+
 	struct Bar{
 		CRGB color;
-		uint8_t len;
+		double len;
 		uint8_t xPos;
 	};
 

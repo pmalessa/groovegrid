@@ -36,10 +36,22 @@ void SpectrumAnimation::updateBars()
 		mic.getFFT(fftBuffer);
 		for(uint8_t i=0;i<BAR_NR;i++)
 		{
-			barArray[i].len = (uint8_t) (fftBuffer[i+1]*tile->getHeight());	//avoid DC part
+			double height = 6*log10(fftBuffer[i+1])+6;
+			if(height > barArray[i].len) //attack
+			{
+				barArray[i].len = BAR_AT*height + (1-BAR_AT)*barArray[i].len;
+			}
+			else //release
+			{
+				barArray[i].len = (1-BAR_RT)*barArray[i].len;
+			}
 			if(barArray[i].len > tile->getHeight()-1)
 			{
 				barArray[i].len = tile->getHeight()-1;
+			}
+			if(barArray[i].len < 0)
+			{
+				barArray[i].len = 0;
 			}
 		}
 	}
@@ -50,7 +62,7 @@ void SpectrumAnimation::drawBars()
 	tile->fillScreenBuffer(CRGB(0));
 	for(uint8_t i=0;i<BAR_NR;i++)
 	{
-		tile->writeRect(barArray[i].xPos,(tile->getHeight()-1) - barArray[i].len, BAR_WIDTH, tile->getHeight()-1, barArray[i].color);
+		tile->writeRect(barArray[i].xPos,(tile->getHeight()-1) - (uint8_t)barArray[i].len, BAR_WIDTH, tile->getHeight()-1, barArray[i].color);
 	}
 	tile->endWrite();
 }
