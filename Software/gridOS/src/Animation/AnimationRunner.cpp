@@ -13,7 +13,8 @@ std::map<std::string, std::function<GrooveAnimation*(GridTile*)>> AnimationMap::
 	{"Dancefloor"			,[](GridTile *tile){return new RandomCircleAnimation(tile);}},
 	{"Matrix"				,[](GridTile *tile){return new MatrixAnimation(tile);}},
 	{"Need for Speed"		,[](GridTile *tile){return new NFSAnimation(tile);}},
-	{"Spectrum"				,[](GridTile *tile){return new SpectrumAnimation(tile);}}
+	{"Spectrum"				,[](GridTile *tile){return new SpectrumAnimation(tile);}},
+	{"Shot"					,[](GridTile *tile){return new ShotAnimation(tile);}}
 };
 
 AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
@@ -25,11 +26,6 @@ AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 AnimationRunner::~AnimationRunner()
 {
 
-}
-
-GrooveApp* AnimationRunner::new_instance(GridTile *tile)
-{
-	return new AnimationRunner(tile);
 }
 
 void AnimationRunner::start()

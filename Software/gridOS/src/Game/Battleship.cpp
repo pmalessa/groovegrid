@@ -26,11 +26,6 @@ Battleship::~Battleship(){
 	shipList[1].clear();
 }
 
-GrooveApp* Battleship::new_instance(GridTile *tile)
-{
-	return new Battleship(tile);
-}
-
 void Battleship::start() {
 	ESP_LOGI("Battleship","start");
 	tile->fillScreenBuffer(CRGB(0));

@@ -10,11 +10,6 @@ SwipeMaster::~SwipeMaster(){
 
 }
 
-GrooveApp* SwipeMaster::new_instance(GridTile *tile)
-{
-	return new SwipeMaster(tile);
-}
-
 void SwipeMaster::start() {
 	tile->fillScreen(CRGB(0));
 }

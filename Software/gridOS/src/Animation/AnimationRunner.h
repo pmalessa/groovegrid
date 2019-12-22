@@ -21,6 +21,7 @@
 #include "SimplyRedAnimation.h"
 #include "MatrixAnimation.h"
 #include "SpectrumAnimation.h"
+#include "ShotAnimation.h"
 
 
 class AnimationRunner: public GrooveApp
@@ -34,7 +35,6 @@ public:
 	void setAnimation(std::string animationName);
 	void clearQueue();
 	void onCommand(DynamicJsonDocument doc, uint8_t channelID);
-    GrooveApp* new_instance(GridTile *tile);
 private:
 
     struct AnimationEntry{
@@ -47,7 +47,7 @@ private:
     uint8_t currentAnimation;
 	DeltaTimer animationTimer;
 
-	#define DEFAULT_ANIMATION "Color Palette"
+	#define DEFAULT_ANIMATION "Spectrum"
 	#define ANIMATION_RUNTIME_MS 10000
 };
 

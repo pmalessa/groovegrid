@@ -31,7 +31,6 @@ public:
 	void stop();
 	void run();
 	void onCommand(CommandMsg *msg);
-    GrooveApp* new_instance(GridTile *tile);
 
     uint32_t color = 0xFF0000;
 private:

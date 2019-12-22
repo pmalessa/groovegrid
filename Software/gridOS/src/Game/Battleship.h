@@ -22,7 +22,6 @@ public:
 	void stop();
 	void run();
 	void onCommand(CommandMsg *msg);
-    GrooveApp* new_instance(GridTile *tile);
 
 private:
 	void draw();

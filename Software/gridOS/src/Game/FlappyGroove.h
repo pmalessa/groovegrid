@@ -19,7 +19,6 @@ public:
 	void start();
 	void stop();
 	void onCommand(CommandMsg *msg);
-    GrooveApp* new_instance(GridTile *tile);
 private:
     void spawnWall();
     void moveWorld();

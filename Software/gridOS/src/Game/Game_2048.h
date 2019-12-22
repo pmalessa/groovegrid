@@ -74,9 +74,6 @@ public:
 	void stop();
 	void run();
 	void onCommand(CommandMsg *msg);
-    GrooveApp* new_instance(GridTile *tile);
-    void load(DynamicJsonDocument *doc);
-    void save(DynamicJsonDocument *doc);
 private:
     GameState_2048 *gameState;
     uint8_t boardsize;

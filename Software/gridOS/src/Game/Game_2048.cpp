@@ -10,14 +10,7 @@ Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 {
 	gameSpeed = 5;
 	tile->fillScreen(CRGB(0, 0, 0));	//fill grid black
-	if(tile->getWidth() <= tile->getHeight())	//make board square
-	{
-		this->boardsize = tile->getWidth();
-	}
-	else
-	{
-		this->boardsize = tile->getHeight();
-	}
+	this->boardsize = std::min(tile->getWidth(),tile->getHeight()); //make board square
 	gameState = new GameState_2048(this->boardsize);
 	gameState->initializeBoard();
 }
@@ -25,11 +18,6 @@ Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 Game_2048::~Game_2048()
 {
 	delete gameState;
-}
-
-GrooveApp* Game_2048::new_instance(GridTile *tile)
-{
-	return new Game_2048(tile);
 }
 
 void Game_2048::start()
@@ -62,32 +50,6 @@ void Game_2048::onCommand(CommandMsg *msg)
 		move(LEFT);
 	}
 }
-
-void Game_2048::load(DynamicJsonDocument *doc)
-{
-	boardsize = (*doc)["savegame"]["size"];	//this seems to work but is not very elegant...
-	//boardsize = savegame["size"];
-}
-void Game_2048::save(DynamicJsonDocument *doc)
-{
-	JsonObject savegame = doc->createNestedObject("savegame");
-	savegame["size"] = boardsize;
-}
-
-//for now: highest reached tile in percent, with 0=0% and 2048=100%
-/*
-uint8_t Game_2048::getProgress()
-{
-	uint16_t tileValue = game.highestTile;
-	uint8_t powerOfTwo = 0;
-	do{
-		tileValue = tileValue >> 1;	//div2
-		powerOfTwo++;
-	}while(tileValue > 0);
-	return (uint8_t)(powerOfTwo/11)*100;	//2^11 is 2048
-}
-*/
-
 
 void Game_2048::move(direction_t dir) {
 	if(movdir == NONE)
@@ -133,55 +95,53 @@ void Game_2048::run()
 
 void Game_2048::DrawBoard(uint16_t **arr)
 {
-	static Grid& grid = Grid::getInstance();
-
     for (uint8_t i = 0; i < boardsize; i++)
       for (uint8_t j = 0; j < boardsize; j++)
     	  DrawTile(i, j, arr[i][j]);
-    grid.endWrite();
+    tile->endWrite();
 }
 
 void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 {
-	uint16_t col = 0;
+	uint16_t color = 0;
 	switch (number) {
 		case 2:
-			 col = CRGB(COLOR_RED);
+			 color = CRGB(COLOR_RED);
 			break;
 		case 4:
-			col = CRGB(COLOR_GREEN);
+			color = CRGB(COLOR_GREEN);
 			break;
 		case 8:
-			col = CRGB(COLOR_BLUE);
+			color = CRGB(COLOR_BLUE);
 			break;
 		case 16:
-			col = CRGB(COLOR_WHITE);
+			color = CRGB(COLOR_WHITE);
 			break;
 		case 32:
-			col = CRGB(COLOR_YELLOW);
+			color = CRGB(COLOR_YELLOW);
 			break;
 		case 64:
-			col = CRGB(COLOR_VIOLET);
+			color = CRGB(COLOR_VIOLET);
 			break;
 		case 128:
-			col = CRGB(COLOR_CYAN);
+			color = CRGB(COLOR_CYAN);
 			break;
 		case 256:
-			col = CRGB(COLOR_PINK);
+			color = CRGB(COLOR_PINK);
 			break;
 		case 512:
-			col = CRGB(COLOR_ORANGE);
+			color = CRGB(COLOR_ORANGE);
 			break;
 		case 1024:
-			col = CRGB(COLOR_LIGHTGREEN);
+			color = CRGB(COLOR_LIGHTGREEN);
 			break;
 		case 2048:
-			col = CRGB(COLOR_PINKRED);
+			color = CRGB(COLOR_PINKRED);
 			break;
 		default:
 			break;
 	}
-	tile->writePixel(x, y, col);
+	tile->writePixel(x, y, color);
 
 	if(number > gameState->highestTile)	//update game progress
 	{

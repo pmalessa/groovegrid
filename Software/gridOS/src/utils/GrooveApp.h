@@ -16,7 +16,6 @@ public:
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual void run() = 0;					//has to be overridden by AppLoop
-    virtual GrooveApp* new_instance(GridTile *tile) = 0;
     void onCommand(CommandMsg *msg){};	//can be overridden
     void load(DynamicJsonDocument *doc){};								//can be overridden
     void save(DynamicJsonDocument *doc){doc->createNestedObject("savegame");};	//create empty savegame object, can be overridden
