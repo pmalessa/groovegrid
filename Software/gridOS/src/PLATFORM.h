@@ -26,6 +26,7 @@
 	#define GRID_WIDTH 4
 	#define GRID_HEIGHT 4
 	#define GRID_DATA_PIN 0
+	#define BT_NAME "GrooveGrid Door"
 #elif defined(TABLE)
 	#define GRID_WIDTH 42
 	#define GRID_HEIGHT 14
@@ -39,6 +40,7 @@
 	#define GRID_DATA5_PIN 4
 	#define GRID_DATA6_PIN 17
 	#define GRID_DATA7_PIN 16
+	#define BT_NAME "GrooveGrid Table"
 #endif
 
 #define UNUSED(x) (void)(x)
