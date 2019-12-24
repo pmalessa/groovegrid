@@ -28,10 +28,7 @@ void ShotAnimation::run()
 	if(frameTimer.isTimeUp())
 	{
 		tile->fillScreenBuffer(bgColor);
-		tile->writeChar(textOffset + textSpacing*0,textHeight,'S',textColor,bgColor,textSize);
-		tile->writeChar(textOffset + textSpacing*1,textHeight,'H',textColor,bgColor,textSize);
-		tile->writeChar(textOffset + textSpacing*2,textHeight,'O',textColor,bgColor,textSize);
-		tile->writeChar(textOffset + textSpacing*3,textHeight,'T',textColor,bgColor,textSize);
+		tile->writeString(6,10,"SHOT",textColor,bgColor,2);
 		tile->endWrite();
 	}
 	if(animationTimer.isTimeUp())

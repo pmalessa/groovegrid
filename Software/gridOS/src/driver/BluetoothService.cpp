@@ -57,7 +57,7 @@ BluetoothService::BluetoothService()
 	btTaskTimer.setTimeStep(3000);
 
 	/*SERVER*/
-	BLEDevice::init("GrooveGrid");
+	BLEDevice::init(BT_NAME);
 	BLEDevice::setMTU(185);
 	BluetoothServer = BLEDevice::createServer();
 	BluetoothServer->setCallbacks(new CommServerCallback(this));

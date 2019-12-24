@@ -37,11 +37,14 @@ public:
 	void setFont(const GridFont *f);
 	uint8_t getWidth();
 	uint8_t getHeight();
+	uint8_t getRotation();
+	void setRotation(uint8_t rot);	//rotation by 90 Deg clockwise, set Coordinate Origin at different spot
 protected:
-	uint16_t x0,y0,x1,y1, cursor_x, cursor_y;
+	uint16_t x0,y0,x1,y1, cursor_x, cursor_y, rotation;
 	uint8_t textsize_x, textsize_y;
 	bool wrap, _cp437;
 	GridFont *gridFont;
+	static Grid &grid;
 private:
     void writeFastVLine(int16_t x, int16_t y, int16_t h, CRGB color);
     void writeFastHLine(int16_t x, int16_t y, int16_t w, CRGB color);
@@ -51,7 +54,6 @@ private:
 	void getTextBounds(const std::string &str, int16_t x, int16_t y,int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);
 	void getTextBounds(const char *str, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);
 	void charBounds(char c, int16_t *x, int16_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy);
-
 };
 
 
