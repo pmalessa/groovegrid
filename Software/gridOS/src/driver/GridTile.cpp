@@ -21,6 +21,7 @@
  #define pgm_read_dword(addr) (*(const unsigned long *)(addr))
 #endif
 
+Grid& GridTile::grid = Grid::getInstance();
 
 GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
@@ -28,12 +29,15 @@ GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 	this->y0 = y0;
 	this->x1 = x1;
 	this->y1 = y1;
+    this->rotation = 0;
     cursor_y  = cursor_x    = 0;
     textsize_x = textsize_y  = 1;
     wrap      = true;
     _cp437    = false;
     gridFont   = NULL;
     setFont(&Picopixel);
+    grid.setBrightness(0xFF);
+
 }
 
 uint8_t GridTile::getWidth()
@@ -48,11 +52,32 @@ uint8_t GridTile::getHeight()
 
 void GridTile::writePixel(int16_t x, int16_t y, CRGB color)
 {
-	static Grid& grid = Grid::getInstance();
-	if(!((uint16_t)x < x0 || (uint16_t)y < y0 || (uint16_t)x > x1 || (uint16_t)y > y1))	//if draw is inside tile dimensions
+    int16_t rot_x, rot_y;
+
+	if((x < x0 || y < y0 || x > x1 || y > y1))	//if draw not is inside tile dimensions
 	{
-		grid.writePixel(x, y, color);
+		return;
 	}
+    switch (rotation)
+    {
+    case 0: //TOP LEFT
+        rot_x = x; //no rotation
+        rot_y = y;
+        break;
+    case 1: //TOP RIGHT, x -> y, y -> width-x
+        rot_x = GRID_WIDTH-y-1;
+        rot_y = x;
+        break;
+    case 2: //BOT RIGHT, x -> width-x, y -> height-y
+        rot_x = GRID_WIDTH-x-1;
+        rot_y = GRID_HEIGHT-y-1;
+        break;
+    case 3: //BOT LEFT, x -> height
+        rot_x = y;
+        rot_y = GRID_HEIGHT-x-1;
+        break;
+    }
+	grid.writePixel((uint16_t)x, (uint16_t)y, color);
 }
 
 void GridTile::fillScreen(CRGB color)
@@ -73,8 +98,19 @@ void GridTile::fillScreenBuffer(CRGB color) {
 
 void GridTile::endWrite()
 {
-	static Grid& grid = Grid::getInstance();
 	grid.endWrite();
+}
+
+uint8_t GridTile::getRotation()
+{
+    return rotation;
+}
+void GridTile::setRotation(uint8_t rot)
+{
+    if(rot >= 0 && rot <= 3)
+    {
+        rotation = rot;
+    }
 }
 
 void GridTile::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
@@ -311,7 +347,7 @@ void GridTile::writeString(int16_t x, int16_t y, std::string str, CRGB color, CR
 	{
 		char c = *it;
 		writeChar(x+x_shift,y,c,color,bg,size);
-        x_shift +=4;
+        x_shift +=4*size;
 		it++;
 	}
 }

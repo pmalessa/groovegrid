@@ -83,13 +83,13 @@ void Game_2048::run()
 					}
 					move_possible = 0;
 				}
-				DrawBoard(gameState->board);
 			}
 		}
 		else
 		{
 			wait--;
 		}
+		DrawBoard(gameState->board);
 	}
 }
 

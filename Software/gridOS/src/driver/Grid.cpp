@@ -35,21 +35,24 @@ Grid::Grid()
 
 void Grid::writePixel(int16_t x, int16_t y, CRGB color)
 {
-	if(y%2 == 0)	//even row
+    if(!(x < 0 || y < 0 || x >= GRID_WIDTH || y >= GRID_HEIGHT))	//if draw is inside grid dimensions
 	{
-#ifdef DOOR16	//First LED Top Left
-		matrixleds[GRID_WIDTH*y + x] = color;
-#else			//First LED Top Right
-		matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
-#endif
-	}
-	else			//odd row
-	{
-#ifdef DOOR16	//First LED Top Left
-		matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
-#else			//First LED Top Right
-		matrixleds[GRID_WIDTH*y + x] = color;
-#endif
+		if(y%2 == 0)	//even row
+		{
+	#ifdef DOOR16	//First LED Top Left
+			matrixleds[GRID_WIDTH*y + x] = color;
+	#else			//First LED Top Right
+			matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
+	#endif
+		}
+		else			//odd row
+		{
+	#ifdef DOOR16	//First LED Top Left
+			matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
+	#else			//First LED Top Right
+			matrixleds[GRID_WIDTH*y + x] = color;
+	#endif
+		}
 	}
 }
 
