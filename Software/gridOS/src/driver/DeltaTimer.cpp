@@ -11,6 +11,7 @@ DeltaTimer::DeltaTimer()
 {
 	startTime = Timer::getMillis();
 	timeStep = 0;
+	forcedTimeUp = false;
 }
 
 void DeltaTimer::setTimeStep(int32_t milliseconds)
@@ -24,14 +25,20 @@ void DeltaTimer::reset()
 	startTime = Timer::getMillis();
 }
 
+void DeltaTimer::forceTimeUp()
+{
+	forcedTimeUp = true;
+}
+
 bool DeltaTimer::isTimeUp()
 {
 	if(timeStep == -1)
 	{
 		return false; //endless
 	}
-	if(Timer::getMillis()-startTime > timeStep)
+	if(Timer::getMillis()-startTime > timeStep || forcedTimeUp == true)
 	{
+		forcedTimeUp = false;
 		startTime = Timer::getMillis();
 		return true;
 	}

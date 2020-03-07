@@ -18,8 +18,11 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-#define WIFI_SSID           "MG"
-#define WIFI_PASS           "QU;PkSsQVnksrUJ9"
+//#define WIFI_SSID           "MG"
+//#define WIFI_PASS           "QU;PkSsQVnksrUJ9"
+#define WIFI_SSID "phoggy"
+#define WIFI_PASS "phoggy0815"
+
 #define WIFI_MAXIMUM_RETRY  5
 
 class WifiService{

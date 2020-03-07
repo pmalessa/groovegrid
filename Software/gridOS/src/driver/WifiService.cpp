@@ -65,7 +65,14 @@ void WifiService::run()
 	{
 		if(wifiTaskTimer.isTimeUp())
 		{
-            ESP_LOGI(tag,"Wifi Tick");
+            if(connected == true)
+            {
+                ESP_LOGI(tag,"Wifi connected");
+            }
+            else
+            {
+                ESP_LOGI(tag,"Wifi disconnected");
+            }
         }
         vTaskDelay(100);
     }
@@ -73,11 +80,14 @@ void WifiService::run()
 
 esp_err_t WifiService::event_handler(void *ctx, system_event_t *event)
 {
+    WifiService& wifiService = WifiService::getInstance();
     switch(event->event_id) {
     case SYSTEM_EVENT_STA_START:
+        wifiService.connected = false;
         esp_wifi_connect();
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
+        wifiService.connected = true;
         ESP_LOGI(tag, "got ip:%s",
                  ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
         retryCounter = 0;
@@ -85,6 +95,7 @@ esp_err_t WifiService::event_handler(void *ctx, system_event_t *event)
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         {
+            wifiService.connected = false;
             if (retryCounter < WIFI_MAXIMUM_RETRY) {
                 esp_wifi_connect();
                 xEventGroupClearBits(wifiEventGroup, WIFI_CONNECTED_BIT);

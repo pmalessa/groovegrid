@@ -31,7 +31,6 @@ void SpectrumAnimation::updateBars()
 {
 	if(barTimer.isTimeUp())
 	{
-		static uint8_t maxHeight = 0;
 		static Microphone& mic = Microphone::getInstance();
 		mic.getFFT(fftBuffer);
 		for(uint8_t i=0;i<BAR_NR;i++)

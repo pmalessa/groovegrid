@@ -43,6 +43,12 @@
 	#define BT_NAME "GrooveGrid Table"
 #endif
 
+#define CONFIG_WEB_UPDATE_URL "https://groovegrid.de/api/device/update.php"
+#define CONFIG_WEB_BEACON_URL "https://groovegrid.de/api/device/beacon.php"
+#define CONFIG_WEB_INIT_URL "https://groovegrid.de/api/device/create.php"
+#define CONFIG_OTA_INTERVAL_S 300		//every 5 minutes
+#define CONFIG_BEACON_INTERVAL_S 30		//every 30 seconds
+
 #define UNUSED(x) (void)(x)
 
 #endif /* PLATFORM_H_ */

@@ -12,7 +12,7 @@
 
 #include "driver/Timer.h"
 #include "driver/BluetoothService.h"
-#include "driver/WifiService.h"
+#include "driver/GrooveWeb.h"
 
 #include "Animation/BootTransition.h"
 #include "Animation/AnimationRunner.h"

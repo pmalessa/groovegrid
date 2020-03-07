@@ -108,8 +108,8 @@ MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
 	static BluetoothService& btService = BluetoothService::getInstance();
-	static WifiService& wifiService = WifiService::getInstance();
-	UNUSED(wifiService);
+	static GrooveWeb& webService = GrooveWeb::getInstance();
+	UNUSED(webService);
 	Timer::start();
 
 	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface

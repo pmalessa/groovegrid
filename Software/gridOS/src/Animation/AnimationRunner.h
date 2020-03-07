@@ -47,7 +47,7 @@ private:
     uint8_t currentAnimation;
 	DeltaTimer animationTimer;
 
-	#define DEFAULT_ANIMATION "Spectrum"
+	#define DEFAULT_ANIMATION "Dancefloor"
 	#define ANIMATION_RUNTIME_MS 10000
 };
 

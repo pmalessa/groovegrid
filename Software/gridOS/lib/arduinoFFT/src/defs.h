@@ -71,18 +71,15 @@
 //  but can assist in code portability to AVR)
 #define GNUC_PACKED __attribute__((packed)) 
 
-// port address helpers
-#define DDR(x) ((x)-1)    // address of data direction register of port x
-#define PIN(x) ((x)-2)    // address of input register of port x
-
 // MIN/MAX/ABS macros
 #define MIN(a,b)			((a<b)?(a):(b))
 #define MAX(a,b)			((a>b)?(a):(b))
 #define ABS(x)				((x>0)?(x):(-x))
 
 // constants
+#ifndef PI
 #define PI		3.14159265359
-
+#endif
 //Math
 #define sq(x) ((x)*(x))
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))

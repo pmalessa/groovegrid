@@ -31,7 +31,10 @@ Microphone::Microphone()
 	  .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
 	  .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,     // Interrupt level 1
 	  .dma_buf_count = 4,                           // number of buffers
-	  .dma_buf_len = 80                              // 80 samples per buffer (minimum)
+	  .dma_buf_len = 80,                              // 80 samples per buffer (minimum)
+	  .use_apll = 0,
+	  .tx_desc_auto_clear = 0,
+	  .fixed_mclk = 0
 	};
 
 	// The pin config as per the setup
