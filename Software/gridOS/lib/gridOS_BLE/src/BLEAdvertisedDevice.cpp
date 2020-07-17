@@ -507,7 +507,7 @@ std::string BLEAdvertisedDevice::toString() {
 		res += ", serviceUUID: " + getServiceUUID().toString();
 	}
 	if (haveTXPower()) {
-		char val[4];
+		char val[5];
 		snprintf(val, sizeof(val), "%d", getTXPower());
 		res += ", txPower: ";
 		res += val;
