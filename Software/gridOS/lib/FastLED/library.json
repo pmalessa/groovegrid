@@ -1,6 +1,6 @@
 {
   "name": "FastLED",
-  "version": "3.3.2_gridOS",
+  "version": "3.3.2",
   "keywords": "led",
   "description": "FastLED",
   "frameworks": "espidf",

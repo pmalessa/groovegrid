@@ -1,0 +1,17 @@
+"Qty";"Value";"Device";"Package";"Parts";"Description";"";
+"8";"";"PINHD-1X3";"1X03";"JP1, JP2, JP3, JP4, JP5, JP6, JP7, JP8";"PIN HEADER";"";
+"1";"";"R-EU_R0805";"R0805";"R19";"RESISTOR, European symbol";"";
+"1";"0";"R-EU_R0805";"R0805";"R20";"RESISTOR, European symbol";"";
+"8";"100n";"C-EUC0805";"C0805";"C2, C7, C12, C17, C22, C27, C32, C37";"CAPACITOR, European symbol";"";
+"2";"10k";"R-EU_R0805";"R0805";"R1, R2";"RESISTOR, European symbol";"";
+"8";"10u";"C-EUC1206";"C1206";"C1, C6, C11, C16, C21, C26, C31, C36";"CAPACITOR, European symbol";"";
+"8";"120k";"R-EU_R0805";"R0805";"R3, R5, R7, R9, R11, R13, R15, R17";"RESISTOR, European symbol";"";
+"8";"22k";"R-EU_R0805";"R0805";"R4, R6, R8, R10, R12, R14, R16, R18";"RESISTOR, European symbol";"";
+"16";"22u";"C-EUC1206";"C1206";"C4, C5, C9, C10, C14, C15, C19, C20, C24, C25, C29, C30, C34, C35, C39, C40";"CAPACITOR, European symbol";"";
+"8";"47p";"C-EUC0805";"C0805";"C3, C8, C13, C18, C23, C28, C33, C38";"CAPACITOR, European symbol";"";
+"1";"5.5x2.1mm Barrel";"POWER_JACKSMD";"POWER_JACK_SMD";"J1";"Power Jack Connector";"";
+"8";"AP63300";"AP63300";"SOT23-6";"IC1, IC2, IC3, IC4, IC5, IC6, IC7, IC8";"";"";
+"2";"DMP3098";"PMOSSOT23";"SOT23-3";"T1, T2";"MOS FET";"";
+"3";"JST-XH-02-PIN-ROUND-PAD";"JST-XH-02-PIN-ROUND-PAD";"JST-XH-02-PACKAGE-ROUND-PAD";"X1, X2, X4";"JST XH Connector 2 Pin";"";
+"1";"JST-XH-08-PIN-ROUND-PAD";"JST-XH-08-PIN-ROUND-PAD";"JST-XH-08-PACKAGE-ROUND-PAD";"X3";"JST XH Connector 2 Pin";"";
+"8";"SRN8040, 6u8";"SRN8040";"SRN8040";"L1, L2, L3, L4, L5, L6, L7, L8";"";"";
