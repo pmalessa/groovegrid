@@ -27,7 +27,7 @@
 	#define GRID_HEIGHT 4
 	#define GRID_DATA_PIN 0
 	#define BT_NAME "GrooveGrid Door"
-#elif defined(TABLE)
+#elif defined(ROVER)
 	#define GRID_WIDTH 42
 	#define GRID_HEIGHT 14
 	#define NUM_STRIPS 7
@@ -40,6 +40,21 @@
 	#define GRID_DATA5_PIN 4
 	#define GRID_DATA6_PIN 17
 	#define GRID_DATA7_PIN 16
+	#define BT_NAME "GrooveGrid Rover"
+#elif defined(TABLE)
+	#define GRID_WIDTH 23
+	#define GRID_HEIGHT 15
+	#define NUM_STRIPS 8
+	#define STRIP_WIDTH 2
+	#define NUM_LEDS_PER_CHANNEL STRIP_WIDTH*GRID_WIDTH
+	#define GRID_DATA1_PIN 4
+	#define GRID_DATA2_PIN 5
+	#define GRID_DATA3_PIN 18
+	#define GRID_DATA4_PIN 19
+	#define GRID_DATA5_PIN 21
+	#define GRID_DATA6_PIN 27
+	#define GRID_DATA7_PIN 26
+	#define GRID_DATA8_PIN 25
 	#define BT_NAME "GrooveGrid Table"
 #endif
 

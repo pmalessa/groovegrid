@@ -5,8 +5,17 @@
  *      Author: pmale
  */
 #include "Grid.h"
+#include "FastLED_RGBW.h"
 
-CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
+#ifdef DOOR16
+	CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
+#elif defined(ROVER)
+	CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
+	//FastLED.setMaxRefreshRate(100, 0);
+#elif defined(TABLE)
+	CRGBW matrixleds_rgbw[GRID_WIDTH*GRID_HEIGHT];	// FastLED with RGBW
+	CRGB *matrixleds = (CRGB *) &matrixleds_rgbw[0];
+#endif
 
 Grid& Grid::getInstance()
 {
@@ -20,7 +29,7 @@ Grid::Grid()
 #ifdef DOOR16
 	FastLED.addLeds<NEOPIXEL,GRID_DATA_PIN>(matrixleds, GRID_WIDTH*GRID_HEIGHT);
 	FastLED.setBrightness(16);
-#else
+#elif defined(ROVER)
 	FastLED.addLeds<NEOPIXEL,GRID_DATA1_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*0, NUM_LEDS_PER_CHANNEL);
 	FastLED.addLeds<NEOPIXEL,GRID_DATA2_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*1, NUM_LEDS_PER_CHANNEL);
 	FastLED.addLeds<NEOPIXEL,GRID_DATA3_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*2, NUM_LEDS_PER_CHANNEL);
@@ -30,6 +39,17 @@ Grid::Grid()
 	FastLED.addLeds<NEOPIXEL,GRID_DATA7_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*6, NUM_LEDS_PER_CHANNEL);
 	FastLED.setBrightness(255);
 	//FastLED.setMaxRefreshRate(100, 0);
+#elif defined(TABLE)
+	uint16_t rgbw_size = getRGBWsize(NUM_LEDS_PER_CHANNEL);
+	FastLED.addLeds<SK6812,GRID_DATA1_PIN>(matrixleds, rgbw_size*0, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA2_PIN>(matrixleds, rgbw_size*1, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA3_PIN>(matrixleds, rgbw_size*2, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA4_PIN>(matrixleds, rgbw_size*3, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA5_PIN>(matrixleds, rgbw_size*4, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA6_PIN>(matrixleds, rgbw_size*5, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA7_PIN>(matrixleds, rgbw_size*6, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA8_PIN>(matrixleds, rgbw_size*7, rgbw_size/2);	//only 1 strip on Pin8
+	FastLED.setBrightness(255);
 #endif
 }
 
@@ -41,16 +61,20 @@ void Grid::writePixel(int16_t x, int16_t y, CRGB color)
 		{
 	#ifdef DOOR16	//First LED Top Left
 			matrixleds[GRID_WIDTH*y + x] = color;
-	#else			//First LED Top Right
+	#elif defined(ROVER)			//First LED Top Right
 			matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
+	#elif defined(TABLE)
+			matrixleds_rgbw[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
 	#endif
 		}
 		else			//odd row
 		{
 	#ifdef DOOR16	//First LED Top Left
 			matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
-	#else			//First LED Top Right
+	#elif defined(ROVER)			//First LED Top Right
 			matrixleds[GRID_WIDTH*y + x] = color;
+	#elif defined(TABLE)
+			matrixleds_rgbw[GRID_WIDTH*y + x] = color;
 	#endif
 		}
 	}
