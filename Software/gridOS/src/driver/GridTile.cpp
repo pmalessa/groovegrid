@@ -50,7 +50,7 @@ uint8_t GridTile::getHeight()
 	return (y1-y0)+1;
 }
 
-void GridTile::writePixel(int16_t x, int16_t y, CRGB color)
+void GridTile::writePixel(int16_t x, int16_t y, CRGBW color)
 {
     int16_t rot_x, rot_y;
 
@@ -80,13 +80,13 @@ void GridTile::writePixel(int16_t x, int16_t y, CRGB color)
 	grid.writePixel((uint16_t)x, (uint16_t)y, color);
 }
 
-void GridTile::fillScreen(CRGB color)
+void GridTile::fillScreen(CRGBW color)
 {
 	fillScreenBuffer(color);
 	endWrite();
 }
 
-void GridTile::fillScreenBuffer(CRGB color) {
+void GridTile::fillScreenBuffer(CRGBW color) {
 	for(uint16_t x = x0; x <= x1; x++)
 		{
 			for(uint16_t y = y0; y <= y1; y++)
@@ -113,7 +113,7 @@ void GridTile::setRotation(uint8_t rot)
     }
 }
 
-void GridTile::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
+void GridTile::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGBW color)
 {
     int16_t steep = abs(y1 - y0) > abs(x1 - x0);
     if (steep) {
@@ -153,7 +153,7 @@ void GridTile::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB co
     }
 }
 
-void GridTile::writeRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color)
+void GridTile::writeRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGBW color)
 {
     writeFastHLine(x, y, w, color);
     writeFastHLine(x, y+h-1, w, color);
@@ -161,19 +161,19 @@ void GridTile::writeRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color)
     writeFastVLine(x+w-1, y, h, color);
 }
 
-void GridTile::writeFilledRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color)
+void GridTile::writeFilledRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGBW color)
 {
     for (int16_t i=x; i<x+w; i++) {
         writeFastVLine(i, y, h, color);
     }
 }
 
-void GridTile::writeFastVLine(int16_t x, int16_t y, int16_t h, CRGB color)
+void GridTile::writeFastVLine(int16_t x, int16_t y, int16_t h, CRGBW color)
 {
 	writeLine(x, y, x, y+h-1, color);
 }
 
-void GridTile::writeFastHLine(int16_t x, int16_t y, int16_t w, CRGB color)
+void GridTile::writeFastHLine(int16_t x, int16_t y, int16_t w, CRGBW color)
 {
 	writeLine(x, y, x+w-1, y, color);
 }
@@ -187,7 +187,7 @@ void GridTile::writeFastHLine(int16_t x, int16_t y, int16_t w, CRGB color)
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void GridTile::writeCircle(int16_t x0, int16_t y0, int16_t r, CRGB color) {
+void GridTile::writeCircle(int16_t x0, int16_t y0, int16_t r, CRGBW color) {
     int16_t f = 1 - r;
     int16_t ddF_x = 1;
     int16_t ddF_y = -2 * r;
@@ -230,7 +230,7 @@ void GridTile::writeCircle(int16_t x0, int16_t y0, int16_t r, CRGB color) {
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void GridTile::drawCircleHelper( int16_t x0, int16_t y0, int16_t r, uint8_t cornername, CRGB color) {
+void GridTile::drawCircleHelper( int16_t x0, int16_t y0, int16_t r, uint8_t cornername, CRGBW color) {
     int16_t f     = 1 - r;
     int16_t ddF_x = 1;
     int16_t ddF_y = -2 * r;
@@ -274,7 +274,7 @@ void GridTile::drawCircleHelper( int16_t x0, int16_t y0, int16_t r, uint8_t corn
     @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void GridTile::writeFilledCircle(int16_t x0, int16_t y0, int16_t r,CRGB color) {
+void GridTile::writeFilledCircle(int16_t x0, int16_t y0, int16_t r,CRGBW color) {
     writeFastVLine(x0, y0-r, 2*r+1, color);
     fillCircleHelper(x0, y0, r, 3, 0, color);
 }
@@ -291,7 +291,7 @@ void GridTile::writeFilledCircle(int16_t x0, int16_t y0, int16_t r,CRGB color) {
     @param  color    16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void GridTile::fillCircleHelper(int16_t x0, int16_t y0, int16_t r,uint8_t corners, int16_t delta, CRGB color) {
+void GridTile::fillCircleHelper(int16_t x0, int16_t y0, int16_t r,uint8_t corners, int16_t delta, CRGBW color) {
 
     int16_t f     = 1 - r;
     int16_t ddF_x = 1;
@@ -339,7 +339,7 @@ inline uint8_t * pgm_read_bitmap_ptr(const GridFont *gfxFont)
 
 // TEXT- AND CHARACTER-HANDLING FUNCTIONS ----------------------------------
 
-void GridTile::writeString(int16_t x, int16_t y, std::string str, CRGB color, CRGB bg, uint8_t size)
+void GridTile::writeString(int16_t x, int16_t y, std::string str, CRGBW color, CRGBW bg, uint8_t size)
 {
     uint16_t x_shift = 0;
     std::string::iterator it = str.begin();
@@ -365,7 +365,7 @@ void GridTile::writeString(int16_t x, int16_t y, std::string str, CRGB color, CR
 */
 /**************************************************************************/
 void GridTile::writeChar(int16_t x, int16_t y, unsigned char c,
-  CRGB color, CRGB bg, uint8_t size) {
+  CRGBW color, CRGBW bg, uint8_t size) {
     writeChar(x, y, c, color, bg, size, size);
 }
 
@@ -383,7 +383,7 @@ void GridTile::writeChar(int16_t x, int16_t y, unsigned char c,
 */
 /**************************************************************************/
 void GridTile::writeChar(int16_t x, int16_t y, unsigned char c,
-  CRGB color, CRGB bg, uint8_t size_x, uint8_t size_y) {
+  CRGBW color, CRGBW bg, uint8_t size_x, uint8_t size_y) {
 
     if(!gridFont) { // 'Classic' built-in font
 

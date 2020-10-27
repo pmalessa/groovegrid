@@ -19,19 +19,19 @@ public:
 	//Specify the size by giving it the start and end points in the grid
 	GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
 
-	void 		 writePixel(int16_t x, int16_t y, CRGB color);
+	void 		 writePixel(int16_t x, int16_t y, CRGBW color);
 	void 		 endWrite(void);
-	void 		 fillScreen(CRGB color);
-	void		 fillScreenBuffer(CRGB color);
+	void 		 fillScreen(CRGBW color);
+	void		 fillScreenBuffer(CRGBW color);
 
-    void writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color);
-    void writeRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color);
-    void writeFilledRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color);
-	void writeCircle(int16_t x0, int16_t y0, int16_t r,CRGB color);
-	void writeFilledCircle(int16_t x0, int16_t y0, int16_t r, CRGB color);
-	void writeString(int16_t x, int16_t y, std::string str, CRGB color, CRGB bg, uint8_t size);
-	void writeChar(int16_t x, int16_t y, unsigned char c, CRGB color, CRGB bg, uint8_t size);
-	void writeChar(int16_t x, int16_t y, unsigned char c, CRGB color, CRGB bg, uint8_t size_x, uint8_t size_y);
+    void writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGBW color);
+    void writeRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGBW color);
+    void writeFilledRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGBW color);
+	void writeCircle(int16_t x0, int16_t y0, int16_t r,CRGBW color);
+	void writeFilledCircle(int16_t x0, int16_t y0, int16_t r, CRGBW color);
+	void writeString(int16_t x, int16_t y, std::string str, CRGBW color, CRGBW bg, uint8_t size);
+	void writeChar(int16_t x, int16_t y, unsigned char c, CRGBW color, CRGBW bg, uint8_t size);
+	void writeChar(int16_t x, int16_t y, unsigned char c, CRGBW color, CRGBW bg, uint8_t size_x, uint8_t size_y);
 	void setTextSize(uint8_t s);
 	void setTextSize(uint8_t s_x, uint8_t s_y);
 	void setFont(const GridFont *f);
@@ -46,10 +46,10 @@ protected:
 	GridFont *gridFont;
 	static Grid &grid;
 private:
-    void writeFastVLine(int16_t x, int16_t y, int16_t h, CRGB color);
-    void writeFastHLine(int16_t x, int16_t y, int16_t w, CRGB color);
-	void drawCircleHelper( int16_t x0, int16_t y0,int16_t r, uint8_t cornername, CRGB color);
-	void fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, CRGB color);
+    void writeFastVLine(int16_t x, int16_t y, int16_t h, CRGBW color);
+    void writeFastHLine(int16_t x, int16_t y, int16_t w, CRGBW color);
+	void drawCircleHelper( int16_t x0, int16_t y0,int16_t r, uint8_t cornername, CRGBW color);
+	void fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, CRGBW color);
 	void getTextBounds(std::string *str,int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);
 	void getTextBounds(const std::string &str, int16_t x, int16_t y,int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);
 	void getTextBounds(const char *str, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);

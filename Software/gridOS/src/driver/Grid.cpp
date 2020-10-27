@@ -5,7 +5,6 @@
  *      Author: pmale
  */
 #include "Grid.h"
-#include "FastLED_RGBW.h"
 
 #ifdef DOOR16
 	CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
@@ -13,8 +12,7 @@
 	CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
 	//FastLED.setMaxRefreshRate(100, 0);
 #elif defined(TABLE)
-	CRGBW matrixleds_rgbw[GRID_WIDTH*GRID_HEIGHT];	// FastLED with RGBW
-	CRGB *matrixleds = (CRGB *) &matrixleds_rgbw[0];
+	CRGBW matrixleds_rgbw[8][NUM_LEDS_PER_CHANNEL];	// FastLED with RGBW
 #endif
 
 Grid& Grid::getInstance()
@@ -41,19 +39,19 @@ Grid::Grid()
 	//FastLED.setMaxRefreshRate(100, 0);
 #elif defined(TABLE)
 	uint16_t rgbw_size = getRGBWsize(NUM_LEDS_PER_CHANNEL);
-	FastLED.addLeds<SK6812,GRID_DATA1_PIN>(matrixleds, rgbw_size*0, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA2_PIN>(matrixleds, rgbw_size*1, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA3_PIN>(matrixleds, rgbw_size*2, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA4_PIN>(matrixleds, rgbw_size*3, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA5_PIN>(matrixleds, rgbw_size*4, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA6_PIN>(matrixleds, rgbw_size*5, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA7_PIN>(matrixleds, rgbw_size*6, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA8_PIN>(matrixleds, rgbw_size*7, rgbw_size/2);	//only 1 strip on Pin8
+	FastLED.addLeds<SK6812,GRID_DATA1_PIN>((CRGB *)&matrixleds_rgbw[0][0], 0, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA2_PIN>((CRGB *)&matrixleds_rgbw[1][0], 0, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA3_PIN>((CRGB *)&matrixleds_rgbw[2][0], 0, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA4_PIN>((CRGB *)&matrixleds_rgbw[3][0], 0, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA5_PIN>((CRGB *)&matrixleds_rgbw[4][0], 0, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA6_PIN>((CRGB *)&matrixleds_rgbw[5][0], 0, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA7_PIN>((CRGB *)&matrixleds_rgbw[6][0], 0, rgbw_size);
+	FastLED.addLeds<SK6812,GRID_DATA8_PIN>((CRGB *)&matrixleds_rgbw[7][0], 0, rgbw_size/2);	//only 1 strip on Pin8
 	FastLED.setBrightness(255);
 #endif
 }
 
-void Grid::writePixel(int16_t x, int16_t y, CRGB color)
+void Grid::writePixel(int16_t x, int16_t y, CRGBW color)
 {
     if(!(x < 0 || y < 0 || x >= GRID_WIDTH || y >= GRID_HEIGHT))	//if draw is inside grid dimensions
 	{
@@ -64,7 +62,7 @@ void Grid::writePixel(int16_t x, int16_t y, CRGB color)
 	#elif defined(ROVER)			//First LED Top Right
 			matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
 	#elif defined(TABLE)
-			matrixleds_rgbw[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
+			matrixleds_rgbw[y/STRIP_WIDTH][GRID_WIDTH*(y%2)+(GRID_WIDTH-x)-1] = color;
 	#endif
 		}
 		else			//odd row
@@ -74,7 +72,7 @@ void Grid::writePixel(int16_t x, int16_t y, CRGB color)
 	#elif defined(ROVER)			//First LED Top Right
 			matrixleds[GRID_WIDTH*y + x] = color;
 	#elif defined(TABLE)
-			matrixleds_rgbw[GRID_WIDTH*y + x] = color;
+			matrixleds_rgbw[y/STRIP_WIDTH][GRID_WIDTH*(y%2)+x] = color;
 	#endif
 		}
 	}

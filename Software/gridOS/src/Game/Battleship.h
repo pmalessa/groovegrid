@@ -32,8 +32,8 @@ private:
 	void drawAllShips();
 	bool shoot();	//true if hit
 	bool isShipThere(uint8_t block_x, uint8_t block_y, uint8_t playerID);
-	void writeBlock(uint8_t x, uint8_t y, uint8_t playerID, CRGB color);
-	void writePixel(uint8_t x, uint8_t y, uint8_t playerID, CRGB color);
+	void writeBlock(uint8_t x, uint8_t y, uint8_t playerID, CRGBW color);
+	void writePixel(uint8_t x, uint8_t y, uint8_t playerID, CRGBW color);
 	void drawHitmap();
 	void setHitmap();
 	void switchPlayer();
@@ -105,11 +105,11 @@ private:
 	}gameState;
 
 	std::list<Ship> shipList[2];
-	CRGB shipColor = 0x037d00;
-	CRGB shipSunkColor = 0xFF0000;
-	CRGB hitColor = 0xFF00FF;
-	CRGB waterShotColor = 0xFFFFFF;
-	CRGB crosshairColor = 0xFF0000;
+	CRGBW shipColor = CRGBW(0x03,0x7d,0,0);
+	CRGBW shipSunkColor = CRGBW(255,0,0,0);
+	CRGBW hitColor = CRGBW(255,0,255,0);
+	CRGBW waterShotColor = CRGBW(255,255,255,0);
+	CRGBW crosshairColor = CRGBW(255,0,0,0);
 	DeltaTimer crosshairTimer, shootAnimationTimer;
 
 	uint8_t waterShots[2][GAMEFIELD_SIZE_BLOCKS_WIDTH][GAMEFIELD_SIZE_BLOCKS_HEIGHT]; //2 Player, x, y

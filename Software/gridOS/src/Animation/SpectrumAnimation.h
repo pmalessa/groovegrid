@@ -28,7 +28,7 @@ private:
 	#define BAR_RT 0.4
 
 	struct Bar{
-		CRGB color;
+		CRGBW color;
 		double len;
 		uint8_t xPos;
 	};

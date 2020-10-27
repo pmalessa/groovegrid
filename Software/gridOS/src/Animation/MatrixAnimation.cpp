@@ -21,7 +21,7 @@ void MatrixAnimation::run()
 	static MatrixSnake newsnake;
 	if(frameTimer.isTimeUp())
 	{
-		tile->fillScreenBuffer(CRGB(0,0,0));
+		tile->fillScreenBuffer(CRGBW(0,0,0,0));
 		//generate new MatrixSnake
 		if(esp_random()%100 <= MATRIX_NEW_SNAKE_PROB)
 		{
@@ -39,7 +39,7 @@ void MatrixAnimation::run()
 			{
 				//draw snakes
 				uint16_t x2 = std::min(it->x + it->length,tile->getWidth()-1);	//limit width
-				tile->writeLine(it->x, it->y, x2, it->y, CRGB(0,255,0));
+				tile->writeLine(it->x, it->y, x2, it->y, CRGBW(0,255,0,0));
 				if(it->x > 0)	//if head not yet at the end, move further
 				{
 					it->x--;

@@ -60,7 +60,7 @@ void FakeSpectrumAnimation::updateBars()
 
 void FakeSpectrumAnimation::drawBars()
 {
-	tile->fillScreenBuffer(CRGB(0));
+	tile->fillScreenBuffer(CRGBW(0));
 	for(uint8_t i=0;i<BAR_NR;i++)
 	{
 		tile->writeRect(barArray[i].xPos,(tile->getHeight()-1) - barArray[i].len, BAR_WIDTH, tile->getHeight()-1, barArray[i].color);
@@ -74,6 +74,6 @@ void FakeSpectrumAnimation::initBars()
 	{
 		barArray[i].xPos = BAR_WIDTH*i;
 		barArray[i].len = 0;
-		barArray[i].color = ColorFromPalette(lavaPalette,(255/BAR_NR)*i,0xFF,LINEARBLEND);
+		barArray[i].color = CRGBW(ColorFromPalette(lavaPalette,(255/BAR_NR)*i,0xFF,LINEARBLEND));
 	}
 }

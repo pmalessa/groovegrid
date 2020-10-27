@@ -20,7 +20,7 @@ public:
 private:
 	uint32_t animationSpeed;
 	uint8_t textHeight, textSize, textOffset, textSpacing;
-	CRGB textColor, bgColor;
+	CRGBW textColor, bgColor;
 	DeltaTimer animationTimer;
 };
 

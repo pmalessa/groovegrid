@@ -28,11 +28,11 @@ void RandomPixelAnimation::run()
 		{
 			if(esp_random()%2)	//clear or draw
 			{
-				tile->writePixel(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, CRGB(esp_random()%256, esp_random()%256, esp_random()%256));
+				tile->writePixel(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, CRGBW(esp_random()%256, esp_random()%256, esp_random()%256, 0));
 			}
 			else
 			{
-				tile->writePixel(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, CRGB(0, 0, 0));
+				tile->writePixel(esp_random()%GRID_WIDTH, esp_random()%GRID_HEIGHT, CRGBW(0, 0, 0, 0));
 			}
 			tile->endWrite();
 			wait = esp_random()%animationSpeed;

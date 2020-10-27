@@ -9,7 +9,7 @@
 Game_2048::Game_2048(GridTile *tile):GrooveGame(tile)
 {
 	gameSpeed = 5;
-	tile->fillScreen(CRGB(0, 0, 0));	//fill grid black
+	tile->fillScreen(CRGBW(0, 0, 0,0));	//fill grid black
 	this->boardsize = std::min(tile->getWidth(),tile->getHeight()); //make board square
 	gameState = new GameState_2048(this->boardsize);
 	gameState->initializeBoard();
@@ -141,7 +141,7 @@ void Game_2048::DrawTile(uint16_t x, uint16_t y, uint16_t number)
 		default:
 			break;
 	}
-	tile->writePixel(x, y, color);
+	tile->writePixel(x, y, (CRGBW)color);
 
 	if(number > gameState->highestTile)	//update game progress
 	{

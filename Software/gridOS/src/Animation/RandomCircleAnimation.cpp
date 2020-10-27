@@ -28,11 +28,11 @@ void RandomCircleAnimation::run()
 		{
 			if(esp_random()%2)	//clear or draw
 			{
-				tile->writeFilledCircle(esp_random()%GRID_WIDTH,esp_random()%GRID_HEIGHT,esp_random()%(GRID_HEIGHT/2),CRGB(esp_random()%256, esp_random()%256, esp_random()%256));
+				tile->writeFilledCircle(esp_random()%GRID_WIDTH,esp_random()%GRID_HEIGHT,esp_random()%(GRID_HEIGHT/2),CRGBW(esp_random()%256, esp_random()%256, esp_random()%256, 0));
 			}
 			else
 			{
-				tile->writeFilledCircle(esp_random()%GRID_WIDTH,esp_random()%GRID_HEIGHT,esp_random()%(GRID_HEIGHT/2),CRGB(0,0,0));
+				tile->writeFilledCircle(esp_random()%GRID_WIDTH,esp_random()%GRID_HEIGHT,esp_random()%(GRID_HEIGHT/2),CRGBW(0,0,0, 0));
 			}
 			tile->endWrite();
 			wait = esp_random()%animationSpeed;

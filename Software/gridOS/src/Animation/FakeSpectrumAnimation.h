@@ -24,7 +24,7 @@ private:
 	#define BAR_WIDTH 3
 	#define BAR_NR 14
 	struct Bar{
-		CRGB color;
+		CRGBW color;
 		uint8_t len;
 		uint8_t xPos;
 	};

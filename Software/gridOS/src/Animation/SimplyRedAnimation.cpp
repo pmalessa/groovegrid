@@ -33,7 +33,7 @@
 			case 0:	//fade in
 				if(fadeTimer.isTimeUp())
 				{
-					tile->writeLine(tile->getWidth()-1-fadePosition, 0, tile->getWidth()-1-fadePosition, tile->getHeight()-1, CRGB(255, 0, 0));	//draw red line
+					tile->writeLine(tile->getWidth()-1-fadePosition, 0, tile->getWidth()-1-fadePosition, tile->getHeight()-1, CRGBW(255, 0, 0, 0));	//draw red line
 					tile->endWrite();
 					fadePosition++;
 					if(fadePosition == tile->getWidth())
@@ -45,7 +45,7 @@
 			case 1:	//stay red
 				if(frameTimer.isTimeUp())
 				{
-					tile->writeFilledRect(0,0,tile->getWidth()-1,tile->getHeight()-1,CRGB(255, 0, 0));
+					tile->writeFilledRect(0,0,tile->getWidth()-1,tile->getHeight()-1,CRGBW(255, 0, 0, 0));
 					tile->endWrite();
 				}
 				break;

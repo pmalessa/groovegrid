@@ -72,6 +72,6 @@ void SpectrumAnimation::initBars()
 	{
 		barArray[i].xPos = BAR_WIDTH*i;
 		barArray[i].len = 0;
-		barArray[i].color = ColorFromPalette(lavaPalette,(255/BAR_NR)*i,0xFF,LINEARBLEND);
+		barArray[i].color = (CRGBW)ColorFromPalette(lavaPalette,(255/BAR_NR)*i,0xFF,LINEARBLEND);
 	}
 }

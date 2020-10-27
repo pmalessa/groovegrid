@@ -42,11 +42,27 @@ struct CRGBW  {
 		w = wht;
 	}
 
+	CRGBW(CRGB c){
+		r = c.r;
+		g = c.g;
+		b = c.b;
+		w = 0;
+	}
+
 	inline void operator = (const CRGB c) __attribute__((always_inline)){ 
 		this->r = c.r;
 		this->g = c.g;
 		this->b = c.b;
 		this->white = 0;
+	}
+
+	inline bool operator==(const CRGBW& c)
+	{
+	return this->r == c.r && this->g == c.g && this->b == c.b && this->w == c.w;
+	}
+	inline bool operator!=(const CRGBW& c)
+	{
+	return this->r != c.r || this->g != c.g || this->b != c.b || this->w != c.w;
 	}
 };
 

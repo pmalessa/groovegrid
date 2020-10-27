@@ -50,11 +50,11 @@ void NFSAnimation::run()
 			{
 				if(screenBuffer[j][i] == 0)
 				{
-					tile->writePixel(j, i, CRGB(0,0,255));
+					tile->writePixel(j, i, CRGBW(0,0,255,0));
 				}
 				else
 				{
-					tile->writePixel(j, i, CRGB(0, 0, 0));
+					tile->writePixel(j, i, CRGBW(0, 0, 0, 0));
 				}
 			}
 		}

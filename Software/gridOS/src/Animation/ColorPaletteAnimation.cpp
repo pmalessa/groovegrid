@@ -42,7 +42,7 @@ void ColorPaletteAnimation::FillLEDsFromPaletteColors( uint8_t colorIndex)
     	{
         	for(int j=tile->getWidth()-1;j>=0;j--)
         	{
-        		tile->writePixel(j, i, ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending));
+        		tile->writePixel(j, i, (CRGBW)ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending));
         		colorIndex += 3;
         	}
     	}
@@ -50,7 +50,7 @@ void ColorPaletteAnimation::FillLEDsFromPaletteColors( uint8_t colorIndex)
     	{
         	for(int j=0;j<tile->getWidth();j++)
         	{
-        		tile->writePixel(j, i, ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending));
+        		tile->writePixel(j, i, (CRGBW)ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending));
         		colorIndex += 3;
         	}
     	}

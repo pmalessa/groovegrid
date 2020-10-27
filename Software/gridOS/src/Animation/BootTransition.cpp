@@ -19,8 +19,8 @@ void BootTransition::run()
 {
 	if(running && frameTimer.isTimeUp())
 	{
-		tile->writeString(2,7,"Groovegrid",CRGB(0xFF00FF),CRGB(0x000000),1);
-		tile->writeFilledRect(x0,0,x1-x0,tile->getHeight(),CRGB(0x000000));
+		tile->writeString(2,7,"Groovegrid",CRGBW(255,0,255,0),CRGBW(0,0,0,0),1);
+		tile->writeFilledRect(x0,0,x1-x0,tile->getHeight(),CRGBW(0,0,0,0));
 		tile->endWrite();
 		switch (state)
 		{

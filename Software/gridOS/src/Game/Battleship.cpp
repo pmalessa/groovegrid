@@ -28,7 +28,7 @@ Battleship::~Battleship(){
 
 void Battleship::start() {
 	ESP_LOGI("Battleship","start");
-	tile->fillScreenBuffer(CRGB(0));
+	tile->fillScreenBuffer(CRGBW(0));
 }
 
 void Battleship::stop() {
@@ -213,7 +213,7 @@ void Battleship::moveCrosshair(std::string cmd, uint8_t playerID)
 }
 
 //transform block coordinate from player coordinates to grid pixel coordinates
-void Battleship::writeBlock(uint8_t block_x, uint8_t block_y, uint8_t playerID, CRGB color){
+void Battleship::writeBlock(uint8_t block_x, uint8_t block_y, uint8_t playerID, CRGBW color){
 	if(playerID == 0){ //Player 1, left side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT-1 , 0)
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT-2) - block_y*2,  block_x*2,  color);
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT-1) - block_y*2,  block_x*2,  color);
@@ -228,7 +228,7 @@ void Battleship::writeBlock(uint8_t block_x, uint8_t block_y, uint8_t playerID, 
 }
 
 //transform pixel coordinate from player coordinates to grid coordinates
-void Battleship::writePixel(uint8_t pixel_x, uint8_t pixel_y, uint8_t playerID, CRGB color){
+void Battleship::writePixel(uint8_t pixel_x, uint8_t pixel_y, uint8_t playerID, CRGBW color){
 	if(playerID == 0){ //Player 1, left side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT-1 , 0)
 		tile->writePixel((GAMEFIELD_SIZE_PIXEL_HEIGHT-1) - pixel_y,  pixel_x,  color);
 	}else{ //Player 2, right side, coord origin at (GAMEFIELD_SIZE_PIXEL_HEIGHT + GAMEFIELD_SIZE_PIXEL_MIDBORDER -1 , GAMEFIELD_SIZE_PIXEL_WIDTH -1 )
@@ -244,7 +244,7 @@ void Battleship::drawWater()
 		colorIndex = i + motionStep;
 		for(int j=tile->getWidth()-1;j>=0;j--)
 		{
-			tile->writePixel(j, i, ColorFromPalette(waterPalette, colorIndex, 255, LINEARBLEND));
+			tile->writePixel(j, i, (CRGBW)ColorFromPalette(waterPalette, colorIndex, 255, LINEARBLEND));
 			colorIndex+=1;
 		}
 	}
@@ -385,7 +385,7 @@ void Battleship::switchPlayer()
 
 void Battleship::drawMidBorder()
 {
-	tile->writeFilledRect(GAMEFIELD_SIZE_PIXEL_HEIGHT,0,GAMEFIELD_SIZE_PIXEL_MIDBORDER,GAMEFIELD_SIZE_PIXEL_WIDTH-1,CRGB(0));
+	tile->writeFilledRect(GAMEFIELD_SIZE_PIXEL_HEIGHT,0,GAMEFIELD_SIZE_PIXEL_MIDBORDER,GAMEFIELD_SIZE_PIXEL_WIDTH-1,CRGBW(0));
 }
 
 void Battleship::generateShootLine()
@@ -506,7 +506,7 @@ bool Battleship::shootAnimation()
 		xpos++;
 	}
 	cannonBall.r = (uint8_t)round(cannonBall.height);
-	tile->writeFilledCircle((*it).x,(*it).y,cannonBall.r,CRGB(0x000000));
+	tile->writeFilledCircle((*it).x,(*it).y,cannonBall.r,CRGBW(0));
 	cannonBall.height = CANNONBALL_MAX_HEIGHT-cannonBall.vel*(xpos*xpos);
 	xpos++;
 	it++;

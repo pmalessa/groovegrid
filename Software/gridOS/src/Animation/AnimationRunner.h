@@ -22,6 +22,7 @@
 #include "MatrixAnimation.h"
 #include "SpectrumAnimation.h"
 #include "ShotAnimation.h"
+#include "WalkingDotAnimation.h"
 
 
 class AnimationRunner: public GrooveApp

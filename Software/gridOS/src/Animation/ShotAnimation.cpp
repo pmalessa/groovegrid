@@ -12,8 +12,8 @@ ShotAnimation::ShotAnimation(GridTile* gridTile):GrooveAnimation(gridTile)
 	animationSpeed = 15;
 	textSize = 0;
 	textHeight = tile->getHeight()-1;
-	textColor = CRGB(0xFF0000);
-	bgColor = CRGB(0x00FF00);
+	textColor = CRGBW(255,0,0,0);
+	bgColor = CRGBW(0,255,0,0);
 	textOffset = 2;
 	textSpacing = 8;
 	animationTimer.setTimeStep(FRAMERATE_MS*animationSpeed);

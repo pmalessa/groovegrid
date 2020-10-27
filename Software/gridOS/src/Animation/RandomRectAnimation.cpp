@@ -66,7 +66,7 @@ void RandomRectAnimation::run()
 			if(currentRed + stepSize > desiredRed) 		currentRed = desiredRed; 		else currentRed += stepSize;
 			if(currentGreen + stepSize > desiredGreen)	currentGreen = desiredGreen; 	else currentGreen += stepSize;
 			if(currentBlue + stepSize > desiredBlue) 	currentBlue = desiredBlue; 		else currentBlue += stepSize;
-			tile->writeFilledRect(x, y, w, h, CRGB(currentRed, currentGreen, currentBlue));
+			tile->writeFilledRect(x, y, w, h, CRGBW(currentRed, currentGreen, currentBlue,0));
 			tile->endWrite();
 			if(currentRed == desiredRed && currentGreen == desiredGreen && currentBlue == desiredBlue)
 			{
@@ -78,7 +78,7 @@ void RandomRectAnimation::run()
 			if(currentRed-stepSize < 0) 	currentRed=0; 		else currentRed -= stepSize;
 			if(currentGreen-stepSize < 0) 	currentGreen=0; 	else currentGreen -= stepSize;
 			if(currentBlue-stepSize < 0) 	currentBlue=0; 		else currentBlue -= stepSize;
-			tile->writeFilledRect(x, y, w, h, CRGB(currentRed, currentGreen, currentBlue));
+			tile->writeFilledRect(x, y, w, h, CRGBW(currentRed, currentGreen, currentBlue, 0));
 			tile->endWrite();
 			if(currentRed == 0 && currentGreen == 0 && currentBlue == 0)
 			{

@@ -10,6 +10,7 @@
 
 #include "../PLATFORM.h"
 #include "FastLED.h"
+#include "FastLED_RGBW.h"
 #include "gamma.h"
 
 class Grid {
@@ -19,7 +20,7 @@ class Grid {
 
 	void         display(void);
 	void         clearDisplay(void);
-	void  		 writePixel(int16_t x, int16_t y, CRGB color);
+	void  		 writePixel(int16_t x, int16_t y, CRGBW color);
 	void 		 endWrite(void);
 static void		 setBrightness(uint8_t brightness);	//set global brightness value 0..255
 
