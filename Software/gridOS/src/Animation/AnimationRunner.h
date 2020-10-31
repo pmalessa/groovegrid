@@ -23,6 +23,7 @@
 #include "SpectrumAnimation.h"
 #include "ShotAnimation.h"
 #include "WalkingDotAnimation.h"
+#include "UnicolorAnimation.h"
 
 
 class AnimationRunner: public GrooveApp
@@ -48,7 +49,7 @@ private:
     uint8_t currentAnimation;
 	DeltaTimer animationTimer;
 
-	#define DEFAULT_ANIMATION "Dancefloor"
+	#define DEFAULT_ANIMATION "Unicolor"
 	#define ANIMATION_RUNTIME_MS 10000
 };
 

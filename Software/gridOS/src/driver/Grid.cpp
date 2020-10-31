@@ -55,14 +55,14 @@ void Grid::writePixel(int16_t x, int16_t y, CRGBW color)
 {
     if(!(x < 0 || y < 0 || x >= GRID_WIDTH || y >= GRID_HEIGHT))	//if draw is inside grid dimensions
 	{
-		if(y%2 == 0)	//even row
+		if((y&0x01) == 0)	//even row
 		{
 	#ifdef DOOR16	//First LED Top Left
 			matrixleds[GRID_WIDTH*y + x] = color;
 	#elif defined(ROVER)			//First LED Top Right
 			matrixleds[GRID_WIDTH*y + (GRID_WIDTH-x)-1] = color;
 	#elif defined(TABLE)
-			matrixleds_rgbw[y/STRIP_WIDTH][GRID_WIDTH*(y%2)+(GRID_WIDTH-x)-1] = color;
+			matrixleds_rgbw[y>>1][GRID_WIDTH*(y&0x01)+(GRID_WIDTH-x)-1] = color;
 	#endif
 		}
 		else			//odd row
@@ -72,7 +72,7 @@ void Grid::writePixel(int16_t x, int16_t y, CRGBW color)
 	#elif defined(ROVER)			//First LED Top Right
 			matrixleds[GRID_WIDTH*y + x] = color;
 	#elif defined(TABLE)
-			matrixleds_rgbw[y/STRIP_WIDTH][GRID_WIDTH*(y%2)+x] = color;
+			matrixleds_rgbw[y>>1][GRID_WIDTH*(y&0x01)+x] = color;
 	#endif
 		}
 	}

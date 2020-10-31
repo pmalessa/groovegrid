@@ -15,7 +15,8 @@ std::map<std::string, std::function<GrooveAnimation*(GridTile*)>> AnimationMap::
 	{"Need for Speed"		,[](GridTile *tile){return new NFSAnimation(tile);}},
 	{"Spectrum"				,[](GridTile *tile){return new SpectrumAnimation(tile);}},
 	{"Shot"					,[](GridTile *tile){return new ShotAnimation(tile);}},
-	{"Walking Dot"			,[](GridTile *tile){return new WalkingDotAnimation(tile);}}
+	{"Walking Dot"			,[](GridTile *tile){return new WalkingDotAnimation(tile);}},
+	{"Unicolor"				,[](GridTile *tile){return new UnicolorAnimation(tile);}}
 };
 
 AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
