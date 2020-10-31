@@ -88,8 +88,8 @@ esp_err_t WifiService::event_handler(void *ctx, system_event_t *event)
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
         wifiService.connected = true;
-        ESP_LOGI(tag, "got ip:%s",
-                 ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+//        ESP_LOGI(tag, "got ip:%s",
+//                 ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
         retryCounter = 0;
         xEventGroupSetBits(wifiEventGroup, WIFI_CONNECTED_BIT);
         break;

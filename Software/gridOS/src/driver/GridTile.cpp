@@ -5,7 +5,7 @@
  *      Author: pmale
  */
 #include "GridTile.h"
-#include "fonts/glcdfont.c"
+#include "fonts/glcdfont.cpp"
 #include "fonts/PicoPixel.h"
 
 #ifndef _swap_int16_t
