@@ -19,7 +19,8 @@ public:
 	void start();
 	void stop();
 private:
-
+	CRGBW currentColor, desiredColor;
+	DeltaTimer fadeTimer;
 };
 
 

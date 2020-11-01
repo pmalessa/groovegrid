@@ -18,7 +18,9 @@ public:
 	BootTransition(GridTile* gridTile);
 	void run();
 private:
-	uint16_t delayFrames, x0, x1, state;
+	uint16_t delayFrames, currentDelay, state;
+	CRGBW desiredColor,currentColor;
+	DeltaTimer fadeTimer;
 };
 
 

@@ -9,6 +9,9 @@
 
 UnicolorAnimation::UnicolorAnimation(GridTile *tile):GrooveAnimation(tile)
 {
+	//currentColor = CRGBW(0,0,0,0);
+	desiredColor = CRGBW(0,0,0,255);
+	fadeTimer.setTimeStep(5);
 }
 UnicolorAnimation::~UnicolorAnimation()
 {
@@ -27,10 +30,30 @@ void UnicolorAnimation::stop()
 
 void UnicolorAnimation::run()
 {
+	/*
+	if(fadeTimer.isTimeUp())
+	{
+		if(currentColor.r < desiredColor.r)
+		{
+			currentColor.r++;
+		}
+		if(currentColor.g < desiredColor.g)
+		{
+			currentColor.g++;
+		}
+		if(currentColor.b < desiredColor.b)
+		{
+			currentColor.b++;
+		}
+		if(currentColor.w < desiredColor.w)
+		{
+			currentColor.w++;
+		}
+	}
+	*/
 	if(frameTimer.isTimeUp())
 	{
-		tile->writeFilledRect(0,0,tile->getWidth()-1,tile->getHeight()-1,CRGBW(0, 0, 0, 255));
-		tile->writePixel(tile->getWidth()-1,tile->getHeight()-1,CRGBW(0, 0, 0, 255));
+		tile->writeFilledRect(0,0,tile->getWidth(),tile->getHeight(),desiredColor);
 		tile->endWrite();
 	}
 }
