@@ -82,7 +82,6 @@ static esp_err_t PostHandler(httpd_req_t *req)
 {
     static MessageService& msgService = MessageService::getInstance();
     char buf[100];
-    uint8_t returnLength = 0;
 
     if(req->content_len >= 100)
     {

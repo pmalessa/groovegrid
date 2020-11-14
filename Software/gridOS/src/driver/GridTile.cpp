@@ -78,6 +78,7 @@ void GridTile::writePixel(int16_t x, int16_t y, CRGBW color)
         rot_y = GRID_HEIGHT-x-1;
         break;
     }
+    UNUSED(rot_x*rot_y);    //rotation not implemented yet
 	grid->writePixel((uint16_t)x, (uint16_t)y, color);
 }
 
@@ -108,7 +109,7 @@ uint8_t GridTile::getRotation()
 }
 void GridTile::setRotation(uint8_t rot)
 {
-    if(rot >= 0 && rot <= 3)
+    if(rot <= 3)
     {
         rotation = rot;
     }

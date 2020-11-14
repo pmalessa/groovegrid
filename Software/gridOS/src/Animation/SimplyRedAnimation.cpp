@@ -28,7 +28,6 @@
 
 	void SimplyRedAnimation::run()
 	{
-		uint16_t xPos, yPos;
 		switch (gameState) {
 			case 0:	//fade in
 				if(fadeTimer.isTimeUp())

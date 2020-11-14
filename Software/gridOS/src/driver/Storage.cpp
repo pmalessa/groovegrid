@@ -8,7 +8,7 @@
 #include "Storage.h"
 
 static const char* TAG = "Storage";
-nvs_handle_t Storage::storageHandler = NULL;
+nvs_handle_t Storage::storageHandler;
 
 void Storage::init()
 {

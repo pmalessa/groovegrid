@@ -72,13 +72,19 @@
 #define GNUC_PACKED __attribute__((packed)) 
 
 // MIN/MAX/ABS macros
-#define MIN(a,b)			((a<b)?(a):(b))
-#define MAX(a,b)			((a>b)?(a):(b))
-#define ABS(x)				((x>0)?(x):(-x))
+#ifndef MIN
+	#define MIN(a,b)			((a<b)?(a):(b))
+#endif
+#ifndef MAX
+	#define MAX(a,b)			((a>b)?(a):(b))
+#endif
+#ifndef ABS
+	#define ABS(x)				((x>0)?(x):(-x))
+#endif
 
 // constants
 #ifndef PI
-#define PI		3.14159265359
+	#define PI		3.14159265359
 #endif
 //Math
 #define sq(x) ((x)*(x))

@@ -48,6 +48,11 @@ WifiService::WifiService()
             .rssi = 0,
             .authmode = WIFI_AUTH_OPEN
         },
+        .pmf_cfg =
+        {
+            .capable = true,
+            .required = false
+        }
         }
     };
 
