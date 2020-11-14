@@ -33,26 +33,47 @@ MessageService& MessageService::getInstance()
 	return _instance;
 }
 
-void MessageService::connectUser(ConnectedUser user)
+//add User to connectedUserList and return userID.
+uint16_t MessageService::connectUser(ConnectedUser user)
 {
-	ESP_LOGI(TAG,"User Connected, name: %s, address: %s, id: %i",user.userName.c_str(), user.userAddress.c_str(), user.userID);
-
-	connectedUserList.push_back(user);
+	uint8_t userBitmap = 0;
+	ESP_LOGI(TAG,"User Connected, name: %s, address: 0x%X",user.userName.c_str(), user.userAddress);
+	for(uint8_t i = 0; i< connectedUserList.size();i++)	//check if user is in connectedUserList already
+	{
+		if(connectedUserList.at(i).userAddress == user.userAddress)
+		{
+			ESP_LOGI(TAG,"Already connected, userID: %i",connectedUserList.at(i).userID);
+			return connectedUserList.at(i).userID;
+		}
+		userBitmap |= (1<<connectedUserList.at(i).userID);	//create Bitmap of used userIDs
+	}
+	for(uint8_t i=1;i<=4;i++)	//check which userID is free, 1..4
+	{
+		if(!(userBitmap & (1<<i)))
+		{
+			user.userID = i;
+			connectedUserList.push_back(user);
+			ESP_LOGI(TAG,"assigned userID: %i",user.userID);
+			return user.userID;
+		}
+	}
+	return 0;
 }
 
-void MessageService::disconnectUser(ConnectedUser user)
+//remove User from connectedUserList
+void MessageService::disconnectUser(uint32_t userAddress)
 {
-
-	ESP_LOGI(TAG,"User Disconnected, name: %s, address: %s, id: %i",user.userName.c_str(), user.userAddress.c_str(), user.userID);
+	ESP_LOGI(TAG,"User Disconnected, address: 0x%X",userAddress);
 	for(uint8_t i = 0; i< connectedUserList.size();i++)
 	{
-		if(connectedUserList.at(i).userID == user.userID)
+		if(connectedUserList.at(i).userAddress == userAddress)
 		{
 			ESP_LOGI(TAG,"Erased element nr %i",i);
 			connectedUserList.erase(connectedUserList.begin()+i);
 			return;
 		}
 	}
+	ESP_LOGI(TAG,"User not connected, address: 0x%X", userAddress);
 }
 
 void free_msg(CommInterface::CommandMsg *msg)
@@ -108,14 +129,32 @@ std::string MessageService::handleMessage(std::string cmd)
 		{
 			usersArray.add(connectedUserList.at(i).userID + 1);	//1..4
 		}
+		//TODO: include address and name
 		(*msg->rspdoc)["error"]= 0;
 	}
-	//GET USER ID
-	if((*msg->doc)["cmd"] == "getUserID")
+	//CONNECT USER
+	else if((*msg->doc)["cmd"] == "connectUser")
 	{
 		//check user address in connectedUserList
 		//return userID if it exists, else return new number and connect new user
-		(*msg->rspdoc)["userID"]=  1;	//1..4 TODO: fix
+		ConnectedUser user;
+		//user.userName = (*msg->doc)["userName"];
+		user.userAddress = (*msg->doc)["uuid"];
+		user.userID = connectUser(user);
+		if(user.userID == 0)	//if no free slot
+		{
+			(*msg->rspdoc)["error"]= 2;
+		}
+		else
+		{
+			(*msg->rspdoc)["userID"]=  user.userID;
+			(*msg->rspdoc)["error"]= 0;
+		}
+	}
+	//DISCONNECT USER
+	else if((*msg->doc)["cmd"] == "disconnectUser")
+	{
+		disconnectUser((*msg->doc)["uuid"]);
 		(*msg->rspdoc)["error"]= 0;
 	}
 	//OTHER CMDs
@@ -124,11 +163,11 @@ std::string MessageService::handleMessage(std::string cmd)
 		uint8_t userID = (*msg->doc)["userID"];
 		if(msg->doc->containsKey("userID"))
 		{
-			channelList.at(userID)->commInterface->onCommand(msg);	//parse doc to app
+			channelList.at(userID)->commInterface->onCommand(msg);	//parse doc to user channel
 		}
 		else
 		{
-			channelList.at(0)->commInterface->onCommand(msg);	//parse doc to app
+			channelList.at(0)->commInterface->onCommand(msg);	//parse doc to control channel
 		}
 	}
 	serializeJson((*msg->rspdoc), output);
@@ -156,8 +195,7 @@ void MessageService::run()
 			ESP_LOGI(TAG,"Connected devices: %i",connectedUserList.size());
 			for(uint8_t i = 0; i< connectedUserList.size();i++)
 			{
-				std::string str = connectedUserList.at(i).userAddress;
-				ESP_LOGI(TAG,"conn_id %i \t address: %s",connectedUserList.at(i).userID,str.c_str());
+				ESP_LOGI(TAG,"userID: %i \t address: 0x%X",connectedUserList.at(i).userID,connectedUserList.at(i).userAddress);
 
 			}
 		}

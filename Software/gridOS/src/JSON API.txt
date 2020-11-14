@@ -59,15 +59,29 @@ Response:
 	"error": 0 if okay, else errorCode
 }
 
-getUserID:
+connectUser:
 {
 	"cmdID": nonce,
-	"cmd": "getUserID"
+	"cmd": "connectUser",
+	"uuid": device specific ID
+	"name": Player Name
 }
 Response:
 {
 	"rspID": cmdID,
-	"userID": 1..4,
+	"userID": 1..4,	returns the userID to use
+	"error": 0 if okay, else errorCode
+}
+
+disconnectUser:
+{
+	"cmdID": nonce,
+	"cmd": "disconnectUser",
+	"uuid": device specific ID
+}
+Response:
+{
+	"rspID": cmdID,
 	"error": 0 if okay, else errorCode
 }
 
@@ -101,6 +115,7 @@ User Channel
 move	//game dependent
 {
 	"cmdID": nonce,
+	"userID": userID,
 	"move": "up/down/right/left"	//2048/Snake
 	"move": "up"					//FlappyGroove
 }
@@ -144,6 +159,7 @@ Response
 //sendShips
 {
 	"cmd": "sendShip",
+	"userID": userID,
 	"id" : 0..4,
 	"data":{
 		"x": 6,
@@ -161,6 +177,7 @@ Response
 //shoot
 {
 	"cmd": "shoot",
+	"userID": userID,
 }
 Response
 {

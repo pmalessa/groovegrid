@@ -10,7 +10,7 @@
 
 struct ConnectedUser{
 	std::string userName;
-	std::string userAddress;
+	uint32_t userAddress;
 	uint16_t userID;
 };
 
@@ -33,8 +33,8 @@ class MessageService{
 	MessageService(const MessageService&);
 	MessageService& operator = (const MessageService&);
 
-	void connectUser(ConnectedUser user);
-	void disconnectUser(ConnectedUser user);
+	uint16_t connectUser(ConnectedUser user);
+	void disconnectUser(uint32_t userAddress);
 
 	static void runWrapper(void* _this){((MessageService*)_this)->run();}
 
