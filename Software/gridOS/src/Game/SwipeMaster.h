@@ -10,7 +10,6 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveGame.h"
-#include "../driver/BluetoothService.h"
 
 class SwipeMaster : public GrooveGame
 {

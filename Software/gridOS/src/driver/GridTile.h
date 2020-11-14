@@ -44,7 +44,7 @@ protected:
 	uint8_t textsize_x, textsize_y;
 	bool wrap, _cp437;
 	GridFont *gridFont;
-	static Grid &grid;
+	static Grid* grid;
 private:
     void writeFastVLine(int16_t x, int16_t y, int16_t h, CRGBW color);
     void writeFastHLine(int16_t x, int16_t y, int16_t w, CRGBW color);

@@ -8,12 +8,13 @@
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 
-#include "FreeRTOS.h"
+#include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <sys/param.h>
 #include "GRIDCONFIG.h"
 
 #include <map>

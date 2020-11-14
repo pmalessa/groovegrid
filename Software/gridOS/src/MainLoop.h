@@ -11,7 +11,7 @@
 #include "PLATFORM.h"
 
 #include "driver/Timer.h"
-#include "driver/BluetoothService.h"
+#include "MessageService.h"
 #include "driver/GrooveWeb.h"
 
 #include "Animation/BootTransition.h"

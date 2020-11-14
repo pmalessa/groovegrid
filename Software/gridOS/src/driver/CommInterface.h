@@ -11,6 +11,14 @@
 #include "../PLATFORM.h"
 #include "ArduinoJson.h"
 
+enum ChannelID{
+	CHANNEL_CONTROL,
+	CHANNEL_USER1,
+	CHANNEL_USER2,
+	CHANNEL_USER3,
+	CHANNEL_USER4
+};
+
 class CommInterface
 {
 public:

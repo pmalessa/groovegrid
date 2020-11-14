@@ -4,7 +4,7 @@
 #define UTILS_GROOVEAPP_H_
 
 #include "../PLATFORM.h"
-#include "../driver/BluetoothService.h"
+#include "../driver/CommInterface.h"
 #include "../driver/GridTile.h"
 #include "../driver/DeltaTimer.h"
 

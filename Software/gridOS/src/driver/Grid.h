@@ -12,6 +12,7 @@
 #include "FastLED.h"
 #include "FastLED_RGBW.h"
 #include "gamma.h"
+#include "driver/Storage.h"
 
 class Grid {
  public:

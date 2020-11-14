@@ -2,13 +2,16 @@
 #include "PLATFORM.h"
 #include "MainLoop.h"
 #include "driver/DeltaTimer.h"
+#include "driver/Storage.h"
 
 extern "C" void app_main()
 {
+	Storage::init();
 	const char* idleTaskTag = "IdleTask";
 	delay(1000);
+	uint32_t brightness = Storage::getValue("Brightness");
 	MainLoop::getInstance();
-	ESP_LOGI(idleTaskTag,"Hey!\n");
+	ESP_LOGI(idleTaskTag,"Hey! %i\n",brightness);
 
 	while(1)
 	{

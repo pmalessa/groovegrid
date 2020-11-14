@@ -13,7 +13,6 @@
 #include "../driver/Timer.h"
 #include "../driver/GridTile.h"
 #include <deque>
-#include "../driver/BluetoothService.h"
 
 struct Coordinate{
 	int8_t x;

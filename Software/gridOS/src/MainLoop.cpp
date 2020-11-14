@@ -107,12 +107,12 @@ void MainLoop::onCommand(CommandMsg *msg)
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
-	static BluetoothService& btService = BluetoothService::getInstance();
+	static MessageService& msgService = MessageService::getInstance();
 	static GrooveWeb& webService = GrooveWeb::getInstance();
 	UNUSED(webService);
 	Timer::start();
 
-	btService.Attach(this, CHANNEL_CONTROL);	//Attach CommInterface
+	msgService.attachCallback(this, CHANNEL_CONTROL);	//Attach CommInterface
 
 	//Start initial App
 	currentApp = new AppEntry();
@@ -135,7 +135,7 @@ void MainLoop::stopApp()
 
 void MainLoop::startApp(std::string appName)
 {
-	static BluetoothService& btService = BluetoothService::getInstance();
+	static MessageService& msgService = MessageService::getInstance();
 
 	if(currentApp->isRunning == true)
 	{
@@ -148,10 +148,10 @@ void MainLoop::startApp(std::string appName)
 		currentApp->runningApp->start();
 		currentApp->isRunning = true;
 		currentApp->appName = appName;
-		btService.Attach(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
-		btService.Attach(currentApp->runningApp, CHANNEL_USER2);
-		btService.Attach(currentApp->runningApp, CHANNEL_USER3);
-		btService.Attach(currentApp->runningApp, CHANNEL_USER4);
+		msgService.attachCallback(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
+		msgService.attachCallback(currentApp->runningApp, CHANNEL_USER2);
+		msgService.attachCallback(currentApp->runningApp, CHANNEL_USER3);
+		msgService.attachCallback(currentApp->runningApp, CHANNEL_USER4);
 	}
 	else
 	{

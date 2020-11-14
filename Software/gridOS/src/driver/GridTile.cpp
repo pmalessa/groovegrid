@@ -21,10 +21,11 @@
  #define pgm_read_dword(addr) (*(const unsigned long *)(addr))
 #endif
 
-Grid& GridTile::grid = Grid::getInstance();
+Grid* GridTile::grid;
 
 GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
+    grid = &Grid::getInstance();
 	this->x0 = x0;
 	this->y0 = y0;
 	this->x1 = x1;
@@ -36,7 +37,7 @@ GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
     _cp437    = false;
     gridFont   = NULL;
     setFont(&Picopixel);
-    grid.setBrightness(0xFF);
+    grid->setBrightness(0xFF);
 
 }
 
@@ -77,7 +78,7 @@ void GridTile::writePixel(int16_t x, int16_t y, CRGBW color)
         rot_y = GRID_HEIGHT-x-1;
         break;
     }
-	grid.writePixel((uint16_t)x, (uint16_t)y, color);
+	grid->writePixel((uint16_t)x, (uint16_t)y, color);
 }
 
 void GridTile::fillScreen(CRGBW color)
@@ -98,7 +99,7 @@ void GridTile::fillScreenBuffer(CRGBW color) {
 
 void GridTile::endWrite()
 {
-	grid.endWrite();
+	grid->endWrite();
 }
 
 uint8_t GridTile::getRotation()
