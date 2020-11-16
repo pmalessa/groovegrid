@@ -21,6 +21,7 @@
 #include "Game/Snake.h"
 #include "Game/SwipeMaster.h"
 #include "Game/Battleship.h"
+#include "utils/ProvisionApp.h"
 
 class MainLoop : private CommInterface
 {

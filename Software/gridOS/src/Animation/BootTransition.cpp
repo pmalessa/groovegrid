@@ -20,22 +20,7 @@ void BootTransition::run()
 {
 	if(fadeTimer.isTimeUp())
 	{
-		if(currentColor.r < desiredColor.r)
-		{
-			currentColor.r++;
-		}
-		if(currentColor.g < desiredColor.g)
-		{
-			currentColor.g++;
-		}
-		if(currentColor.b < desiredColor.b)
-		{
-			currentColor.b++;
-		}
-		if(currentColor.w < desiredColor.w)
-		{
-			currentColor.w++;
-		}
+		currentColor.incrementUntil(desiredColor);
 	}
 	if(running && frameTimer.isTimeUp())
 	{

@@ -35,8 +35,8 @@ WifiService::WifiService()
     wifi_config_t wifi_config = 
     {.sta = 
         {
-        {.ssid = WIFI_SSID},
-        {.password = WIFI_PASS},
+ //       {.ssid = WIFI_SSID},
+ //       {.password = WIFI_PASS},
         .scan_method = WIFI_FAST_SCAN,
         .bssid_set = false,
         {.bssid = ""},
@@ -58,10 +58,10 @@ WifiService::WifiService()
 
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
-    ESP_ERROR_CHECK(esp_wifi_start() );
+    ESP_ERROR_CHECK(esp_wifi_start());
 
     ESP_LOGI(tag, "wifi_init_sta finished.");
-    ESP_LOGI(tag, "connect to ap SSID:%s password:%s", WIFI_SSID, WIFI_PASS);
+    //ESP_LOGI(tag, "connect to ap SSID:%s password:%s", WIFI_SSID, WIFI_PASS);
 }
 
 void WifiService::run()
@@ -81,6 +81,12 @@ void WifiService::run()
         }
         vTaskDelay(100);
     }
+}
+
+void WifiService::reconnect()
+{
+    esp_wifi_disconnect();
+    esp_wifi_connect();
 }
 
 esp_err_t WifiService::event_handler(void *ctx, system_event_t *event)

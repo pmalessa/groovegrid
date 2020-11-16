@@ -37,8 +37,6 @@ GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
     _cp437    = false;
     gridFont   = NULL;
     setFont(&Picopixel);
-    grid->setBrightness(0xFF);
-
 }
 
 uint8_t GridTile::getWidth()

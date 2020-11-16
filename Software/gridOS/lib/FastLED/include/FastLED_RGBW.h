@@ -64,6 +64,57 @@ struct CRGBW  {
 	{
 	return this->r != c.r || this->g != c.g || this->b != c.b || this->w != c.w;
 	}
+
+	inline bool incrementUntil(const CRGBW& desiredColor)
+	{
+		bool done = true;
+		if(this->r < desiredColor.r)
+		{
+			this->r++;
+			done = false;
+		}
+		if(this->g < desiredColor.g)
+		{
+			this->g++;
+			done = false;
+		}
+		if(this->b < desiredColor.b)
+		{
+			this->b++;
+			done = false;
+		}
+		if(this->w < desiredColor.w)
+		{
+			this->w++;
+			done = false;
+		}
+		return done;
+	}
+	inline bool decrementUntil(const CRGBW& desiredColor)
+	{
+		bool done = true;
+		if(this->r > desiredColor.r)
+		{
+			this->r--;
+			done = false;
+		}
+		if(this->g > desiredColor.g)
+		{
+			this->g--;
+			done = false;
+		}
+		if(this->b > desiredColor.b)
+		{
+			this->b--;
+			done = false;
+		}
+		if(this->w > desiredColor.w)
+		{
+			this->w--;
+			done = false;
+		}
+		return done;
+	}
 };
 
 inline uint16_t getRGBWsize(uint16_t nleds){

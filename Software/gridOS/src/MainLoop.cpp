@@ -107,11 +107,8 @@ void MainLoop::onCommand(CommandMsg *msg)
 MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
-	static MessageService& msgService = MessageService::getInstance();
-	static GrooveWeb& webService = GrooveWeb::getInstance();
-	UNUSED(webService);
 	Timer::start();
-
+	static MessageService& msgService = MessageService::getInstance();
 	msgService.attachCallback(this, CHANNEL_CONTROL);	//Attach CommInterface
 
 	//Start initial App
@@ -120,6 +117,8 @@ MainLoop::MainLoop()
 	currentApp->isRunning = false;
 	startApp("AnimationRunner");
 
+	static GrooveWeb& webService = GrooveWeb::getInstance();
+	UNUSED(webService);
 	xTaskCreatePinnedToCore(appTaskWrapper,"appTask",8192,this,tskIDLE_PRIORITY,&appTaskHandle,1);
 }
 
@@ -161,6 +160,13 @@ void MainLoop::startApp(std::string appName)
 
 void MainLoop::appTask()
 {
+	ProvisionApp *provisionApp =new ProvisionApp(currentApp->tile);
+	while(provisionApp->isRunning())
+	{
+		provisionApp->run();
+		vTaskDelay(1);
+	}
+	delete provisionApp;
 	BootTransition *bt = new BootTransition(currentApp->tile);
 	while(bt->isRunning())
 	{

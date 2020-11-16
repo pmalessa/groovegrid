@@ -32,6 +32,7 @@ class WifiService{
 	virtual ~WifiService(void);
 	bool isConnected();
 	void run();
+	void reconnect();
 
     static EventGroupHandle_t wifiEventGroup;
     static const int WIFI_CONNECTED_BIT = BIT0;
