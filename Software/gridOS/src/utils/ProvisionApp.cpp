@@ -92,14 +92,15 @@ ProvisionApp::ProvisionApp(GridTile *tile): GrooveTransition(tile) {
 
     const char *service_key = NULL; //not used in BLE mode
 
-    uint8_t custom_service_uuid[] = {
-        /* LSB <---------------------------------------
-        * ---------------------------------------> MSB */
-        0xb4, 0xdf, 0x5a, 0x1c, 0x3f, 0x6b, 0xf4, 0xbf,
-        0xea, 0x4a, 0x82, 0x03, 0x04, 0x90, 0x1a, 0x02,
-    };
-    wifi_prov_scheme_ble_set_service_uuid(custom_service_uuid);
 
+    //uint8_t custom_service_uuid[] = {
+    //    /* LSB <---------------------------------------
+    //    * ---------------------------------------> MSB */
+    //    0xb4, 0xdf, 0x5a, 0x1c, 0x3f, 0x6b, 0xf4, 0xbf,
+    //    0xea, 0x4a, 0x82, 0x03, 0x04, 0x90, 0x1a, 0x02,
+    //};
+    //wifi_prov_scheme_ble_set_service_uuid(custom_service_uuid);
+    
     /* Start provisioning service */
     ESP_ERROR_CHECK(wifi_prov_mgr_start_provisioning(security, pop, service_name, service_key));
 

@@ -17,6 +17,7 @@ public:
     static uint32_t getValue(const char *key);
     static void setValue(const char *key, uint32_t value);
     static void eraseStorage();
+    static void printStorageInfo();
 private:
     static nvs_handle_t storageHandler;
 };

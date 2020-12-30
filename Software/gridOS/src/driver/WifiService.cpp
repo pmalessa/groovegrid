@@ -32,36 +32,9 @@ WifiService::WifiService()
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    wifi_config_t wifi_config = 
-    {.sta = 
-        {
- //       {.ssid = WIFI_SSID},
- //       {.password = WIFI_PASS},
-        .scan_method = WIFI_FAST_SCAN,
-        .bssid_set = false,
-        {.bssid = ""},
-        .channel = 0,
-        .listen_interval = 0,
-        .sort_method = WIFI_CONNECT_AP_BY_SIGNAL,
-        .threshold = 
-        {
-            .rssi = 0,
-            .authmode = WIFI_AUTH_OPEN
-        },
-        .pmf_cfg =
-        {
-            .capable = true,
-            .required = false
-        }
-        }
-    };
-
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
     ESP_ERROR_CHECK(esp_wifi_start());
-
-    ESP_LOGI(tag, "wifi_init_sta finished.");
-    //ESP_LOGI(tag, "connect to ap SSID:%s password:%s", WIFI_SSID, WIFI_PASS);
+    ESP_LOGI(tag, "WifiService initialized.");
 }
 
 void WifiService::run()

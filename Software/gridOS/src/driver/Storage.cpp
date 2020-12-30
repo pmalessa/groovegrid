@@ -26,26 +26,18 @@ void Storage::init()
     ESP_ERROR_CHECK( err );
 	ESP_ERROR_CHECK(nvs_open("storage", NVS_READWRITE, &storageHandler));
 
-	ESP_LOGI(TAG,"Storage Info:");
-	nvs_iterator_t it = nvs_entry_find("nvs", "storage", NVS_TYPE_ANY);
-	while (it != NULL) {
-		nvs_entry_info_t info;
- 		nvs_entry_info(it, &info);
- 		it = nvs_entry_next(it);
-		uint32_t value = getValue(info.key);
- 		ESP_LOGI(TAG,"key '%s', value 0x%X", info.key, value);
- 	};
+	printStorageInfo();
 
 	uint32_t tmp;
 	if(nvs_get_u32(storageHandler, "InitValue", &tmp) == ESP_OK)
 	{
-		if(tmp != 0xDEADBEA)
+		if(tmp != 0xDEADBEEF)
 		{
 			//set default values
 			ESP_LOGI(TAG,"Setting default values");
 			setValue(SET_USERCOLOR, 0xAA5500FF);
 			setValue(SET_BRIGHTNESS,0x30);
-			setValue(SET_INITVALUE,0xDEADBEA);
+			setValue(SET_INITVALUE,0xDEADBEEF);
 		}
 	}
 	else
@@ -54,7 +46,7 @@ void Storage::init()
 		ESP_LOGI(TAG,"Setting default values");
 		setValue(SET_USERCOLOR, 0xAA5500FF);
 		setValue(SET_BRIGHTNESS,0x30);
-		setValue(SET_INITVALUE,0xDEADBEA);
+		setValue(SET_INITVALUE,0xDEADBEEF);
 	}
 	
 }
@@ -76,4 +68,17 @@ void Storage::eraseStorage()
 {
 	ESP_ERROR_CHECK(nvs_flash_erase());
 	ESP_LOGI(TAG,"Storage erased");
+}
+
+void Storage::printStorageInfo()
+{
+	ESP_LOGI(TAG,"Storage Info:");
+	nvs_iterator_t it = nvs_entry_find("nvs", "storage", NVS_TYPE_ANY);
+	while (it != NULL) {
+		nvs_entry_info_t info;
+ 		nvs_entry_info(it, &info);
+ 		it = nvs_entry_next(it);
+		uint32_t value = getValue(info.key);
+ 		ESP_LOGI(TAG,"key '%s', value 0x%X", info.key, value);
+ 	};
 }
