@@ -5,6 +5,14 @@
 #include "PLATFORM.h"
 #include "nvs_flash.h"
 #include "nvs.h"
+#include <stdio.h>
+#include <string.h>
+#include <sys/unistd.h>
+#include <sys/stat.h>
+#include <sys/dirent.h>
+#include <sys/fcntl.h>
+#include "esp_spiffs.h"
+#include <string.h>
 
 class Storage{
 public:
@@ -14,10 +22,12 @@ public:
     #define SET_USERCOLOR "UserColor"
     #define SET_INITVALUE "InitValue"
 
-    static uint32_t getValue(const char *key);
-    static void setValue(const char *key, uint32_t value);
-    static void eraseStorage();
-    static void printStorageInfo();
+    #define FNAME_CONFIG "config.json"
+
+    static uint32_t getConfig(const char *key);
+    static void setConfig(const char *key, uint32_t value);
+    static void eraseConfig();
+    static void printConfigInfo();
 private:
     static nvs_handle_t storageHandler;
 };

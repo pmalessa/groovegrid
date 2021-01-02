@@ -54,6 +54,7 @@ private:
 	void getTextBounds(const std::string &str, int16_t x, int16_t y,int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);
 	void getTextBounds(const char *str, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);
 	void charBounds(char c, int16_t *x, int16_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy);
+	void writeBitmap(CRGBW *data, uint16_t xsize, uint16_t ysize);
 };
 
 

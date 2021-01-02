@@ -31,6 +31,7 @@ struct CRGBW  {
 			};
 		};
 		uint8_t raw[4];
+		uint32_t u32raw;
 	};
 
 	CRGBW(){}

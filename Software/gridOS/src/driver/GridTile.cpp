@@ -681,3 +681,15 @@ void GridTile::getTextBounds(std::string *str,
         *h  = maxy - miny + 1;
     }
 }
+
+void GridTile::writeBitmap(CRGBW *data, uint16_t xsize, uint16_t ysize)
+{
+    for (uint16_t y = 0; y < ysize; y++)
+    {
+        for (uint16_t x = 0; x < xsize; x++)
+        {
+            writePixel(x,y,*data);
+            data++;
+        }
+    }
+}

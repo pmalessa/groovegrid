@@ -31,7 +31,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
                          (*reason == WIFI_PROV_STA_AUTH_ERROR) ?
                          "Wi-Fi station authentication failed" : "Wi-Fi access-point not found");
                 wifi_prov_mgr_deinit();
-                Storage::eraseStorage();
+                Storage::eraseConfig();
                 esp_restart();
                 break;
             }
@@ -60,6 +60,8 @@ ProvisionApp::ProvisionApp(GridTile *tile): GrooveTransition(tile) {
 	running = true;
 	fadeTimer.setTimeStep(5);
 
+    Storage::eraseConfig(); //REMOVE
+    
     /* Register our event handler for Wi-Fi, IP and Provisioning related events */
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_PROV_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
 

@@ -49,7 +49,7 @@ Grid::Grid()
 	FastLED.addLeds<SK6812,GRID_DATA6_PIN>((CRGB *)&matrixleds_rgbw[5][0], 0, rgbw_size);
 	FastLED.addLeds<SK6812,GRID_DATA7_PIN>((CRGB *)&matrixleds_rgbw[6][0], 0, rgbw_size);
 	FastLED.addLeds<SK6812,GRID_DATA8_PIN>((CRGB *)&matrixleds_rgbw[7][0], 0, rgbw_size/2);	//only 1 strip on Pin8
-	uint32_t brightness = Storage::getValue("Brightness");
+	uint32_t brightness = Storage::getConfig("Brightness");
 	ESP_LOGI(TAG,"Brightness: %i",brightness);
 	FastLED.setBrightness(brightness);
 #endif
@@ -95,5 +95,5 @@ void Grid::clearDisplay()
 void Grid::setBrightness(uint8_t brightness)
 {
 	FastLED.setBrightness(brightness);
-	Storage::setValue(SET_BRIGHTNESS,brightness);
+	Storage::setConfig(SET_BRIGHTNESS,brightness);
 }
