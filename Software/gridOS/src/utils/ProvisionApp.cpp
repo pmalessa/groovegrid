@@ -2,15 +2,10 @@
 
 static const char *TAG = "ProvisionApp";
 
-/* Signal Wi-Fi events on this event-group */
-const int WIFI_CONNECTED_EVENT = BIT0;
-static EventGroupHandle_t wifi_event_group;
-
 /* Event handler for catching system events */
 static void event_handler(void* arg, esp_event_base_t event_base,
                           int event_id, void* event_data)
 {
-    static WifiService& wifiService = WifiService::getInstance();
     if (event_base == WIFI_PROV_EVENT) {
         switch (event_id) {
             case WIFI_PROV_START:
@@ -41,10 +36,6 @@ static void event_handler(void* arg, esp_event_base_t event_base,
             case WIFI_PROV_END:
                 /* De-initialize manager once provisioning is finished */
                 wifi_prov_mgr_deinit();
-                if(!wifiService.isConnected())
-                {
-                    wifiService.reconnect();
-                }
                 break;
             default:
                 break;
@@ -54,13 +45,11 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 
 ProvisionApp::ProvisionApp(GridTile *tile): GrooveTransition(tile) {
 
-    static WifiService& wifiService = WifiService::getInstance();
-	UNUSED(wifiService);
-
+    WifiService::init();
 	running = true;
 	fadeTimer.setTimeStep(5);
 
-    Storage::eraseConfig(); //REMOVE
+    //Storage::eraseConfig(); //REMOVE
     
     /* Register our event handler for Wi-Fi, IP and Provisioning related events */
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_PROV_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
@@ -76,7 +65,7 @@ ProvisionApp::ProvisionApp(GridTile *tile): GrooveTransition(tile) {
         running = false;    //skip Provisioning
         ESP_LOGI(TAG, "Already provisioned");
         wifi_prov_mgr_deinit();
-        wifiService.reconnect();
+        WifiService::enable();
         return;
     }
     ESP_LOGI(TAG, "Starting provisioning");
@@ -106,6 +95,9 @@ ProvisionApp::ProvisionApp(GridTile *tile): GrooveTransition(tile) {
     /* Start provisioning service */
     ESP_ERROR_CHECK(wifi_prov_mgr_start_provisioning(security, pop, service_name, service_key));
 
+    //tile->writePNGFromSPIFFS("/spiffs/logo.png", 0, 0);
+    tile->writeBitmapFromSPIFFS("/spiffs/logo.bmp", 0, 0);
+    tile->endWrite();
 }
 
 ProvisionApp::~ProvisionApp(){
@@ -160,7 +152,7 @@ void ProvisionApp::run()
     }
 	if(running && frameTimer.isTimeUp())
 	{
-        tile->writeString(tile->getWidth()>>1,tile->getHeight()>>1,"Gg",currentColor,CRGBW(0,0,0,0),1);
+        //tile->writeString(tile->getWidth()>>1,tile->getHeight()>>1,"Gg",currentColor,CRGBW(0,0,0,0),1);
 		tile->endWrite();
 	}
 }

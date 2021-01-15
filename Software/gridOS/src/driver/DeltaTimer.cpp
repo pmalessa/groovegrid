@@ -14,6 +14,13 @@ DeltaTimer::DeltaTimer()
 	forcedTimeUp = false;
 }
 
+DeltaTimer::DeltaTimer(int32_t milliseconds)
+{
+	startTime = Timer::getMillis();
+	timeStep = milliseconds;
+	forcedTimeUp = false;
+}
+
 void DeltaTimer::setTimeStep(int32_t milliseconds)
 {
 	reset();

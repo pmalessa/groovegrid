@@ -18,37 +18,34 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-//#define WIFI_SSID           "MG"
-//#define WIFI_PASS           "QU;PkSsQVnksrUJ9"
-#define WIFI_SSID "Otterbau"
-#define WIFI_PASS "In1ThunfischWasserbueffel"
-
-#define WIFI_MAXIMUM_RETRY  5
-
 class WifiService{
 
  public:
-	static WifiService& getInstance();
-	virtual ~WifiService(void);
-	bool isConnected();
-	void run();
-	void reconnect();
+	static void init();
+	static bool isConnected();
+	static void reconnect();
+	static void enable();
+	static void disable();
+	static bool isEnabled();
 
-    static EventGroupHandle_t wifiEventGroup;
-    static const int WIFI_CONNECTED_BIT = BIT0;
-    static int retryCounter;
-    static const char* tag;
+	#define MAX_RETRY  5
+	#define RETRY_DELAY_SECONDS 30
+	#define TASK_TIMER_SECONDS 10
  private:
-	WifiService();
-	WifiService(const WifiService&);
-	WifiService& operator = (const WifiService&);
+	typedef enum{
+		WIFI_ENABLED = 1,
+		WIFI_CONNECTED,
+		WIFI_RECONNECT
+	}wifiEvent;
 
-	DeltaTimer wifiTaskTimer;
-	xTaskHandle wifiTask;
-    bool connected = false;
+	static void run();
+	static esp_err_t event_handler(void *ctx, system_event_t *event);
 
-    static void runWrapper(void* _this){((WifiService*)_this)->run();}
-    static esp_err_t event_handler(void *ctx, system_event_t *event);
+	static DeltaTimer wifiTaskTimer;
+	static xTaskHandle wifiTask;
+	static EventGroupHandle_t wifiEventGroup;
+	static bool isInitialized;
+	static uint8_t retryCounter;
 };
 
 #endif /* WIFISERVICE_H_ */

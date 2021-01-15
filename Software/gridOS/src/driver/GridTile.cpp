@@ -21,6 +21,7 @@
  #define pgm_read_dword(addr) (*(const unsigned long *)(addr))
 #endif
 
+static const char* TAG = "GridTile";
 Grid* GridTile::grid;
 
 GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
@@ -691,5 +692,185 @@ void GridTile::writeBitmap(CRGBW *data, uint16_t xsize, uint16_t ysize)
             writePixel(x,y,*data);
             data++;
         }
+    }
+}
+
+uint16_t read16(FILE* f)
+{
+  // BMP data is stored little-endian, same as Arduino.
+  uint16_t result;
+  ((uint8_t *)&result)[0] = fgetc(f); // LSB
+  ((uint8_t *)&result)[1] = fgetc(f); // MSB
+  return result;
+}
+
+uint32_t read32(FILE* f)
+{
+  // BMP data is stored little-endian, same as Arduino.
+  uint32_t result;
+  ((uint8_t *)&result)[0] = fgetc(f); // LSB
+  ((uint8_t *)&result)[1] = fgetc(f);
+  ((uint8_t *)&result)[2] = fgetc(f);
+  ((uint8_t *)&result)[3] = fgetc(f); // MSB
+  return result;
+}
+
+#define SD_BUFFER_PIXELS 23
+
+void GridTile::writeBitmapFromSPIFFS(const char *filename, uint8_t x, uint8_t y)
+{
+    FILE* file;
+    uint8_t buffer[3*SD_BUFFER_PIXELS]; // pixel buffer, size for r,g,b
+    bool valid = false; // valid format to be handled
+    bool flip = true; // bitmap is stored bottom-to-top
+    uint32_t pos = 0;
+    file =fopen(filename, "r");
+    if (file == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to open file %s", filename);
+        return;
+    }
+    // Parse BMP header
+    if (read16(file) == 0x4D42) // BMP signature
+    {
+        uint32_t fileSize = read32(file);
+        uint32_t creatorBytes = read32(file);
+        uint32_t imageOffset = read32(file); // Start of image data
+        uint32_t headerSize = read32(file);
+        uint32_t width  = read32(file);
+        uint32_t height = read32(file);
+        uint16_t planes = read16(file);
+        uint16_t depth = read16(file); // bits per pixel
+        uint32_t format = read32(file);
+        if ((planes == 1) && (format == 0)) // uncompressed is handled
+        {
+            ESP_LOGI(TAG, "File %s:", filename);
+            ESP_LOGI(TAG, "File Size %i", fileSize);
+            ESP_LOGI(TAG, "Image Offset: %i",imageOffset); 
+            ESP_LOGI(TAG, "Header size: %i",headerSize); 
+            ESP_LOGI(TAG, "Bit Depth: %i",depth); 
+            ESP_LOGI(TAG, "Image size: %ix%i",width, height);
+            uint32_t rowSize = (width * depth / 8 + 3) & ~3;
+            if (height < 0)
+            {
+                height = -height;
+                flip = false;
+            }
+            uint16_t w = width;
+            uint16_t h = height;
+            size_t buffidx = sizeof(buffer); // force buffer load
+            for (uint16_t row = 0; row < h; row++) // for each line
+            {
+                if (flip) // Bitmap is stored bottom-to-top order (normal BMP)
+                    pos = imageOffset + (height - 1 - row) * rowSize;
+                else     // Bitmap is stored top-to-bottom
+                    pos = imageOffset + row * rowSize;
+                fpos_t filepos;
+                fgetpos(file, &filepos);
+                if (filepos != pos)
+                { // Need seek?
+                    fseek(file, pos, SEEK_SET); // if mode is SeekSet, position is set to offset bytes from the beginning.
+                    buffidx = sizeof(buffer);   // force buffer reload
+                }
+                uint8_t bits = 0;
+                for (uint16_t col = 0; col < w; col++) // for each pixel
+                {
+                    // Time to read more pixel data?
+                    if (buffidx >= sizeof(buffer))
+                    {
+                        fread(buffer, sizeof(buffer), 1, file);
+                        buffidx = 0; // Set index to beginning
+                    }
+                    switch (depth)
+                    {
+                    case 1: // one bit per pixel b/w format
+                        {
+                            valid = true;
+                            if (0 == col % 8)
+                            {
+                                bits = buffer[buffidx++];
+                            }
+                            uint16_t bw_color = bits & 0x80;
+                            writePixel(col, row, CRGB(bw_color,bw_color,bw_color));
+                            bits <<= 1;
+                        }
+                        break;
+                    case 24: // standard BMP format
+                        {
+                            valid = true;
+                            uint16_t b = buffer[buffidx++];
+                            uint16_t g = buffer[buffidx++];
+                            uint16_t r = buffer[buffidx++];
+                            writePixel(col, row, CRGB(r,g,b));
+                        }
+                        break;
+                    }
+                } // end pixel
+            } // end line
+        }
+    }
+    fclose(file);
+    if (valid == false)
+    {
+        ESP_LOGE(TAG, "File %s not valid", filename);
+    }
+}
+
+void GridTile::writePNGFromSPIFFS(const char *filename, uint8_t x, uint8_t y)
+{
+    upng_t* upng;
+    uint16_t bufidx = 0;
+
+    upng = upng_new_from_file(filename);
+    if (upng != NULL) {
+        upng_decode(upng);
+        uint16_t fwidth = upng_get_width(upng);
+        uint16_t fheight = upng_get_height(upng);
+        uint16_t fdepth = upng_get_bitdepth(upng);
+        uint16_t fsize = upng_get_size(upng);
+        const unsigned char *buf = upng_get_buffer(upng);
+        bufidx = 0;
+        ESP_LOGI(TAG, "File %s:", filename);
+        ESP_LOGI(TAG, "File Size %i", fsize);
+        ESP_LOGI(TAG, "Bit Depth: %i",fdepth); 
+        ESP_LOGI(TAG, "Image size: %ix%i",fwidth, fheight);
+        ESP_LOGI(TAG, "Image Format: %i",upng_get_format(upng)); 
+        if (upng_get_error(upng) == UPNG_EOK) {
+            switch (upng_get_format(upng))
+            {
+            case UPNG_RGB8:
+                for(uint16_t x=0; x < fwidth; x++){
+                    for(uint16_t y=0; y < fheight; y++){
+                        CRGB col;
+                        col.r = buf[bufidx++];
+                        col.g = buf[bufidx++];
+                        col.b = buf[bufidx++];
+                        writePixel(x,y,col);
+                        ESP_LOGI(TAG, "%ix%i:%ir%ig%ib", x,y,col.r,col.g,col.b);
+                    }
+                }
+                break;
+            case UPNG_RGBA8:
+                for(uint16_t x=0; x < fwidth; x++){
+                    for(uint16_t y=0; y < fheight; y++){
+                        CRGB col;
+                        col.r = buf[bufidx++];
+                        col.g = buf[bufidx++];
+                        col.b = buf[bufidx++];
+                        writePixel(x,y,col);
+                        ESP_LOGI(TAG, "%ix%i:%ir%ig%ib", x,y,col.r,col.g,col.b);
+                    }
+                }
+                break;
+            case UPNG_LUMINANCE8:
+                /* code */
+                break;
+            
+            default:
+                break;
+            }
+        }
+
+        upng_free(upng);
     }
 }

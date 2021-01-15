@@ -100,11 +100,15 @@ ESP_LOGI(TAG, "Initializing SPIFFS");
 	{
 		ESP_LOGE(TAG, "Failed to open file for reading");
 	}
+}
 
-
-
-
-    // All done, unmount partition and disable SPIFFS
+void Storage::unmount(){
+	esp_vfs_spiffs_conf_t conf = {
+      .base_path = "/spiffs",
+      .partition_label = "storage",
+      .max_files = 5,
+      .format_if_mount_failed = false
+    };
     esp_vfs_spiffs_unregister(conf.partition_label);
     ESP_LOGI(TAG, "SPIFFS unmounted");
 }

@@ -16,14 +16,14 @@
 
 class Storage{
 public:
-	static void init();
-
     #define SET_BRIGHTNESS "Brightness"
     #define SET_USERCOLOR "UserColor"
     #define SET_INITVALUE "InitValue"
 
-    #define FNAME_CONFIG "config.json"
-
+    #define FNAME_CONFIG "/spiffs/config.json"
+    
+	static void init();
+    static void unmount();
     static uint32_t getConfig(const char *key);
     static void setConfig(const char *key, uint32_t value);
     static void eraseConfig();

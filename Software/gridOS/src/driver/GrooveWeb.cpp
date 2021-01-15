@@ -172,8 +172,7 @@ GrooveWeb::GrooveWeb()
 {
     uint8_t mac[6];
     char   *hostname;
-    static WifiService& wifiService = WifiService::getInstance();
-	UNUSED(wifiService);
+    WifiService::init();
     static httpd_handle_t server = NULL;
 
     ESP_ERROR_CHECK(mdns_init());    //initialize mDNS service

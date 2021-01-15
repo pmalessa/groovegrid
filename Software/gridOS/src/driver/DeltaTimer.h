@@ -15,6 +15,7 @@ class DeltaTimer
 {
 public:
 	DeltaTimer();
+	DeltaTimer(int32_t milliseconds);
 	void setTimeStep(int32_t milliseconds);
 	bool isTimeUp();
 	void reset();

@@ -67,4 +67,6 @@
 
 #define UNUSED(x) (void)(x)
 
+#define EVENT_BIT(x) (1 << (x-1))
+
 #endif /* PLATFORM_H_ */
