@@ -16,23 +16,14 @@
 
 class Grid {
  public:
-	static Grid& getInstance();
-	~Grid(void);
-
-	void         display(void);
-	void         clearDisplay(void);
-	void  		 writePixel(int16_t x, int16_t y, CRGBW color);
-	void 		 endWrite(void);
-static void		 setBrightness(uint8_t brightness);	//set global brightness value 0..255
-
-uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
-uint16_t RGB(uint32_t rgb);
-uint16_t HSV(uint8_t h, uint8_t s, uint8_t v);
-uint32_t expandColor(uint16_t color);
+	static void init();
+	static void display(void);
+	static void clearDisplay(void);
+	static void writePixel(int16_t x, int16_t y, CRGBW color);
+	static void endWrite(void);
+	static void	setGlobalBrightness(uint8_t brightness);	//set global brightness value 0..255
 
  private:
-	Grid();
-	Grid(const Grid&);
-	Grid & operator = (const Grid &);
+	static bool isInitialized;
 };
 #endif /* GRID_H_ */

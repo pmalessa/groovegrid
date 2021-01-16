@@ -22,11 +22,10 @@
 #endif
 
 static const char* TAG = "GridTile";
-Grid* GridTile::grid;
 
 GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
-    grid = &Grid::getInstance();
+    Grid::init();
 	this->x0 = x0;
 	this->y0 = y0;
 	this->x1 = x1;
@@ -78,7 +77,7 @@ void GridTile::writePixel(int16_t x, int16_t y, CRGBW color)
         break;
     }
     UNUSED(rot_x*rot_y);    //rotation not implemented yet
-	grid->writePixel((uint16_t)x, (uint16_t)y, color);
+	Grid::writePixel((uint16_t)x, (uint16_t)y, color);
 }
 
 void GridTile::fillScreen(CRGBW color)
@@ -99,7 +98,7 @@ void GridTile::fillScreenBuffer(CRGBW color) {
 
 void GridTile::endWrite()
 {
-	grid->endWrite();
+	Grid::endWrite();
 }
 
 uint8_t GridTile::getRotation()

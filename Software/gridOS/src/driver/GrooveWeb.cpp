@@ -80,7 +80,6 @@ static esp_err_t GetHandler(httpd_req_t *req)
 /* Answer a post request of Client */
 static esp_err_t PostHandler(httpd_req_t *req)
 {
-    static MessageService& msgService = MessageService::getInstance();
     char buf[100];
 
     if(req->content_len >= 100)
@@ -98,7 +97,7 @@ static esp_err_t PostHandler(httpd_req_t *req)
     ESP_LOGI(TAG, "====================================");
 
     std::string msg(buf);
-    std::string returnMsg = msgService.handleMessage(msg);
+    std::string returnMsg = MessageService::handleMessage(msg);
 
     // End response
     httpd_resp_send(req, returnMsg.c_str(), returnMsg.length());

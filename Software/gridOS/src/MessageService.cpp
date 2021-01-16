@@ -2,40 +2,42 @@
 #include "MessageService.h"
 
 static const char* TAG = "msgService";
+DeltaTimer MessageService::msgTaskTimer;
+xTaskHandle MessageService::msgTask;
+std::vector<MessageService::CommChannel*> MessageService::channelList;
+std::vector<MessageService::ConnectedUser> MessageService::connectedUserList;
+bool MessageService::isInitialized = false;
 
-MessageService::MessageService()
+void MessageService::init()
 {
-	CommChannel *ch;
-	msgTaskTimer.setTimeStep(3000);
-	xTaskCreatePinnedToCore(runWrapper,"msgTask", 2048, this,1,&msgTask,0);
+	if(!isInitialized){
+		isInitialized = true;
+		CommChannel *ch;
+		msgTaskTimer.setTimeStep(3000);
+		xTaskCreatePinnedToCore((TaskFunction_t)run,"messageTask", 2048, nullptr,1,&msgTask,0);
 
-	ch = new CommChannel;
-	ch->channelID = CHANNEL_CONTROL;
-	channelList.push_back(ch);
-	ch = new CommChannel;
-	ch->channelID = CHANNEL_USER1;
-	channelList.push_back(ch);
-	ch = new CommChannel;
-	ch->channelID = CHANNEL_USER2;
-	channelList.push_back(ch);
-	ch = new CommChannel;
-	ch->channelID = CHANNEL_USER3;
-	channelList.push_back(ch);
-	ch = new CommChannel;
-	ch->channelID = CHANNEL_USER4;
-	channelList.push_back(ch);
-}
-MessageService::~MessageService(){}
-
-MessageService& MessageService::getInstance()
-{
-	static MessageService _instance;
-	return _instance;
+		ch = new CommChannel;
+		ch->channelID = CommInterface::CHANNEL_CONTROL;
+		channelList.push_back(ch);
+		ch = new CommChannel;
+		ch->channelID = CommInterface::CHANNEL_USER1;
+		channelList.push_back(ch);
+		ch = new CommChannel;
+		ch->channelID = CommInterface::CHANNEL_USER2;
+		channelList.push_back(ch);
+		ch = new CommChannel;
+		ch->channelID = CommInterface::CHANNEL_USER3;
+		channelList.push_back(ch);
+		ch = new CommChannel;
+		ch->channelID = CommInterface::CHANNEL_USER4;
+		channelList.push_back(ch);
+	}
 }
 
 //add User to connectedUserList and return userID.
 uint16_t MessageService::connectUser(ConnectedUser user)
 {
+	if(!isInitialized)init();
 	uint8_t userBitmap = 0;
 	ESP_LOGI(TAG,"User Connected, name: %s, address: 0x%X",user.userName.c_str(), user.userAddress);
 	for(uint8_t i = 0; i< connectedUserList.size();i++)	//check if user is in connectedUserList already
@@ -63,6 +65,7 @@ uint16_t MessageService::connectUser(ConnectedUser user)
 //remove User from connectedUserList
 void MessageService::disconnectUser(uint32_t userAddress)
 {
+	if(!isInitialized)init();
 	ESP_LOGI(TAG,"User Disconnected, address: 0x%X",userAddress);
 	for(uint8_t i = 0; i< connectedUserList.size();i++)
 	{
@@ -85,6 +88,7 @@ void free_msg(CommInterface::CommandMsg *msg)
 
 std::string MessageService::handleMessage(std::string cmd)
 {
+	if(!isInitialized)init();
 	CommInterface::CommandMsg *msg = new CommInterface::CommandMsg;
 	msg->doc = new DynamicJsonDocument(500);
 	msg->rspdoc = new DynamicJsonDocument(500);
@@ -175,8 +179,9 @@ std::string MessageService::handleMessage(std::string cmd)
 	return output;
 }
 
-void MessageService::attachCallback(CommInterface *callbackPointer, ChannelID channelID)
+void MessageService::attachCallback(CommInterface *callbackPointer, CommInterface::ChannelID channelID)
 {
+	if(!isInitialized)init();
     for (uint16_t i=0; i < channelList.size(); i++) {
         if(channelList.at(i)->channelID == channelID)
         {

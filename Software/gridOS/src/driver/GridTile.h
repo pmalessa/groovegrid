@@ -48,7 +48,6 @@ protected:
 	uint8_t textsize_x, textsize_y;
 	bool wrap, _cp437;
 	GridFont *gridFont;
-	static Grid* grid;
 private:
     void writeFastVLine(int16_t x, int16_t y, int16_t h, CRGBW color);
     void writeFastHLine(int16_t x, int16_t y, int16_t w, CRGBW color);
@@ -59,7 +58,5 @@ private:
 	void getTextBounds(const char *str, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);
 	void charBounds(char c, int16_t *x, int16_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy);
 };
-
-
 
 #endif /* DRIVER_GRIDTILE_H_ */

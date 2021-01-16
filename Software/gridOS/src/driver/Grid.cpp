@@ -7,6 +7,7 @@
 #include "Grid.h"
 
 static const char* TAG = "Grid";
+bool Grid::isInitialized = false;
 
 #ifdef DOOR16
 	CRGB matrixleds[GRID_WIDTH*GRID_HEIGHT];
@@ -17,42 +18,38 @@ static const char* TAG = "Grid";
 	CRGBW matrixleds_rgbw[8][NUM_LEDS_PER_CHANNEL];	// FastLED with RGBW
 #endif
 
-Grid& Grid::getInstance()
+void Grid::init()
 {
-	static Grid _instance;
-	return _instance;
-}
-
-Grid::~Grid(){}
-Grid::Grid()
-{
+	if(!isInitialized){
+		isInitialized = true;
 #ifdef DOOR16
-	FastLED.addLeds<NEOPIXEL,GRID_DATA_PIN>(matrixleds, GRID_WIDTH*GRID_HEIGHT);
-	FastLED.setBrightness(16);
+		FastLED.addLeds<NEOPIXEL,GRID_DATA_PIN>(matrixleds, GRID_WIDTH*GRID_HEIGHT);
+		FastLED.setBrightness(16);
 #elif defined(ROVER)
-	FastLED.addLeds<NEOPIXEL,GRID_DATA1_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*0, NUM_LEDS_PER_CHANNEL);
-	FastLED.addLeds<NEOPIXEL,GRID_DATA2_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*1, NUM_LEDS_PER_CHANNEL);
-	FastLED.addLeds<NEOPIXEL,GRID_DATA3_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*2, NUM_LEDS_PER_CHANNEL);
-	FastLED.addLeds<NEOPIXEL,GRID_DATA4_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*3, NUM_LEDS_PER_CHANNEL);
-	FastLED.addLeds<NEOPIXEL,GRID_DATA5_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*4, NUM_LEDS_PER_CHANNEL);
-	FastLED.addLeds<NEOPIXEL,GRID_DATA6_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*5, NUM_LEDS_PER_CHANNEL);
-	FastLED.addLeds<NEOPIXEL,GRID_DATA7_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*6, NUM_LEDS_PER_CHANNEL);
-	FastLED.setBrightness(255);
-	//FastLED.setMaxRefreshRate(100, 0);
+		FastLED.addLeds<NEOPIXEL,GRID_DATA1_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*0, NUM_LEDS_PER_CHANNEL);
+		FastLED.addLeds<NEOPIXEL,GRID_DATA2_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*1, NUM_LEDS_PER_CHANNEL);
+		FastLED.addLeds<NEOPIXEL,GRID_DATA3_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*2, NUM_LEDS_PER_CHANNEL);
+		FastLED.addLeds<NEOPIXEL,GRID_DATA4_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*3, NUM_LEDS_PER_CHANNEL);
+		FastLED.addLeds<NEOPIXEL,GRID_DATA5_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*4, NUM_LEDS_PER_CHANNEL);
+		FastLED.addLeds<NEOPIXEL,GRID_DATA6_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*5, NUM_LEDS_PER_CHANNEL);
+		FastLED.addLeds<NEOPIXEL,GRID_DATA7_PIN>(matrixleds, NUM_LEDS_PER_CHANNEL*6, NUM_LEDS_PER_CHANNEL);
+		FastLED.setBrightness(255);
+		//FastLED.setMaxRefreshRate(100, 0);
 #elif defined(TABLE)
-	uint16_t rgbw_size = getRGBWsize(NUM_LEDS_PER_CHANNEL);
-	FastLED.addLeds<SK6812,GRID_DATA1_PIN>((CRGB *)&matrixleds_rgbw[0][0], 0, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA2_PIN>((CRGB *)&matrixleds_rgbw[1][0], 0, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA3_PIN>((CRGB *)&matrixleds_rgbw[2][0], 0, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA4_PIN>((CRGB *)&matrixleds_rgbw[3][0], 0, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA5_PIN>((CRGB *)&matrixleds_rgbw[4][0], 0, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA6_PIN>((CRGB *)&matrixleds_rgbw[5][0], 0, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA7_PIN>((CRGB *)&matrixleds_rgbw[6][0], 0, rgbw_size);
-	FastLED.addLeds<SK6812,GRID_DATA8_PIN>((CRGB *)&matrixleds_rgbw[7][0], 0, rgbw_size/2);	//only 1 strip on Pin8
-	uint32_t brightness = Storage::getConfig("Brightness");
-	ESP_LOGI(TAG,"Brightness: %i",brightness);
-	FastLED.setBrightness(brightness);
+		uint16_t rgbw_size = getRGBWsize(NUM_LEDS_PER_CHANNEL);
+		FastLED.addLeds<SK6812,GRID_DATA1_PIN>((CRGB *)&matrixleds_rgbw[0][0], 0, rgbw_size);
+		FastLED.addLeds<SK6812,GRID_DATA2_PIN>((CRGB *)&matrixleds_rgbw[1][0], 0, rgbw_size);
+		FastLED.addLeds<SK6812,GRID_DATA3_PIN>((CRGB *)&matrixleds_rgbw[2][0], 0, rgbw_size);
+		FastLED.addLeds<SK6812,GRID_DATA4_PIN>((CRGB *)&matrixleds_rgbw[3][0], 0, rgbw_size);
+		FastLED.addLeds<SK6812,GRID_DATA5_PIN>((CRGB *)&matrixleds_rgbw[4][0], 0, rgbw_size);
+		FastLED.addLeds<SK6812,GRID_DATA6_PIN>((CRGB *)&matrixleds_rgbw[5][0], 0, rgbw_size);
+		FastLED.addLeds<SK6812,GRID_DATA7_PIN>((CRGB *)&matrixleds_rgbw[6][0], 0, rgbw_size);
+		FastLED.addLeds<SK6812,GRID_DATA8_PIN>((CRGB *)&matrixleds_rgbw[7][0], 0, rgbw_size/2);	//only 1 strip on Pin8
+		uint32_t brightness = Storage::getConfig("Brightness");
+		ESP_LOGI(TAG,"Brightness: %i",brightness);
+		FastLED.setBrightness(brightness);
 #endif
+	}
 }
 
 void Grid::writePixel(int16_t x, int16_t y, CRGBW color)
@@ -92,7 +89,7 @@ void Grid::clearDisplay()
 	FastLED.clear(true);
 }
 
-void Grid::setBrightness(uint8_t brightness)
+void Grid::setGlobalBrightness(uint8_t brightness)
 {
 	FastLED.setBrightness(brightness);
 	Storage::setConfig(SET_BRIGHTNESS,brightness);

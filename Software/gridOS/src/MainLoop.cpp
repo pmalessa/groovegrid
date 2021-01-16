@@ -95,7 +95,7 @@ void MainLoop::onCommand(CommandMsg *msg)
 	else if(cmd=="brightness")
 	{
 		uint8_t brightness = (*msg->doc)["value"].as<uint8_t>();
-		Grid::setBrightness(brightness);
+		Grid::setGlobalBrightness(brightness);
 	}
 	else
 	{
@@ -108,8 +108,7 @@ MainLoop::~MainLoop(){}
 MainLoop::MainLoop()
 {
 	Timer::start();
-	static MessageService& msgService = MessageService::getInstance();
-	msgService.attachCallback(this, CHANNEL_CONTROL);	//Attach CommInterface
+	MessageService::attachCallback(this, CommInterface::CHANNEL_CONTROL);	//Attach CommInterface
 
 	//Start initial App
 	currentApp = new AppEntry();
@@ -134,8 +133,6 @@ void MainLoop::stopApp()
 
 void MainLoop::startApp(std::string appName)
 {
-	static MessageService& msgService = MessageService::getInstance();
-
 	if(currentApp->isRunning == true)
 	{
 		stopApp();
@@ -147,10 +144,10 @@ void MainLoop::startApp(std::string appName)
 		currentApp->runningApp->start();
 		currentApp->isRunning = true;
 		currentApp->appName = appName;
-		msgService.attachCallback(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
-		msgService.attachCallback(currentApp->runningApp, CHANNEL_USER2);
-		msgService.attachCallback(currentApp->runningApp, CHANNEL_USER3);
-		msgService.attachCallback(currentApp->runningApp, CHANNEL_USER4);
+		MessageService::attachCallback(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
+		MessageService::attachCallback(currentApp->runningApp, CHANNEL_USER2);
+		MessageService::attachCallback(currentApp->runningApp, CHANNEL_USER3);
+		MessageService::attachCallback(currentApp->runningApp, CHANNEL_USER4);
 	}
 	else
 	{
