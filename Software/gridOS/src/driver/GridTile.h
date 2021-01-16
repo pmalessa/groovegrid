@@ -17,8 +17,8 @@
 class GridTile
 {
 public:
-	//Specify the size by giving it the start and end points in the grid
-	GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+	//Specify the size by giving it the start and end points and rotation in the grid
+	GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t rot);
 
 	void 		 writePixel(int16_t x, int16_t y, CRGBW color);
 	void 		 endWrite(void);
@@ -44,8 +44,8 @@ public:
 	void writeBitmapFromSPIFFS(const char *filename, uint8_t x, uint8_t y);
 	void writePNGFromSPIFFS(const char *filename, uint8_t x, uint8_t y);
 protected:
-	uint16_t x0,y0,x1,y1, cursor_x, cursor_y, rotation;
-	uint8_t textsize_x, textsize_y;
+	uint16_t TileX0,TileY0,TileX1,TileY1, cursor_x, cursor_y;
+	uint8_t textsize_x, textsize_y, rotation;
 	bool wrap, _cp437;
 	GridFont *gridFont;
 private:

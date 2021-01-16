@@ -112,7 +112,7 @@ MainLoop::MainLoop()
 
 	//Start initial App
 	currentApp = new AppEntry();
-	currentApp->tile = new GridTile(0, 0, GRID_WIDTH-1, GRID_HEIGHT-1);
+	currentApp->tile = new GridTile(2, 2, GRID_WIDTH-4, GRID_HEIGHT-4, 0);
 	currentApp->isRunning = false;
 	startApp("AnimationRunner");
 

@@ -23,14 +23,19 @@
 
 static const char* TAG = "GridTile";
 
-GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint8_t rot)
 {
-    Grid::init();
-	this->x0 = x0;
-	this->y0 = y0;
-	this->x1 = x1;
-	this->y1 = y1;
-    this->rotation = 0;
+    if(w == 0 || h == 0){
+        ESP_LOGE(TAG,"width or height set to 0!");
+        return;
+    }
+    Grid::init();	
+    this->TileX0 = x0;
+	this->TileY0 = y0;
+	this->TileX1 = x0+(w-1);
+	this->TileY1 = y0+(h-1);
+    ESP_LOGI(TAG,"Bounds x%i-%i y%i-%i",TileX0,TileX1,TileY0,TileY1);
+    setRotation(rot);
     cursor_y  = cursor_x    = 0;
     textsize_x = textsize_y  = 1;
     wrap      = true;
@@ -41,22 +46,25 @@ GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 
 uint8_t GridTile::getWidth()
 {
-	return (x1-x0)+1;
+	return (TileX1-TileX0)+1;
 }
 
 uint8_t GridTile::getHeight()
 {
-	return (y1-y0)+1;
+	return (TileY1-TileY0)+1;
 }
 
 void GridTile::writePixel(int16_t x, int16_t y, CRGBW color)
 {
-    int16_t rot_x, rot_y;
+    int16_t rot_x = -1, rot_y = -1;
 
-	if((x < x0 || y < y0 || x > x1 || y > y1))	//if draw not is inside tile dimensions
-	{
-		return;
-	}
+    x+=TileX0;  //shift input coords to grid coords
+    y+=TileY0;
+
+    if(x > TileX1 || y > TileY1){
+        return;
+    }
+
     switch (rotation)
     {
     case 0: //TOP LEFT
@@ -76,8 +84,12 @@ void GridTile::writePixel(int16_t x, int16_t y, CRGBW color)
         rot_y = GRID_HEIGHT-x-1;
         break;
     }
-    UNUSED(rot_x*rot_y);    //rotation not implemented yet
-	Grid::writePixel((uint16_t)x, (uint16_t)y, color);
+    if(rot_x < TileX0 || rot_y < TileY0 || rot_x > TileX1 || rot_y > TileY1)
+	{  //if draw not is inside tile dimensions, discard it
+        //ESP_LOGW(TAG,"OOB x=%i, y=%i",x,y);
+		return;
+	}
+	Grid::writePixel((uint16_t)rot_x, (uint16_t)rot_y, color);
 }
 
 void GridTile::fillScreen(CRGBW color)
@@ -87,9 +99,9 @@ void GridTile::fillScreen(CRGBW color)
 }
 
 void GridTile::fillScreenBuffer(CRGBW color) {
-	for(uint16_t x = x0; x <= x1; x++)
+	for(uint16_t x = 0; x < getWidth(); x++)
 		{
-			for(uint16_t y = y0; y <= y1; y++)
+			for(uint16_t y = 0; y < getHeight(); y++)
 			{
 				writePixel(x, y, color);
 			}
