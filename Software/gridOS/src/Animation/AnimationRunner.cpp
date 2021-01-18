@@ -7,18 +7,6 @@
 
 #include "AnimationRunner.h"
 
-std::map<std::string, std::function<GrooveAnimation*(GridTile*)>> AnimationMap::animationMap = {
-	{"Color Palette"		,[](GridTile *tile){return new ColorPaletteAnimation(tile);}},
-	{"Simply Red"			,[](GridTile *tile){return new SimplyRedAnimation(tile);}},
-	{"Dancefloor"			,[](GridTile *tile){return new RandomCircleAnimation(tile);}},
-	{"Matrix"				,[](GridTile *tile){return new MatrixAnimation(tile);}},
-	{"Need for Speed"		,[](GridTile *tile){return new NFSAnimation(tile);}},
-	{"Spectrum"				,[](GridTile *tile){return new SpectrumAnimation(tile);}},
-	{"Shot"					,[](GridTile *tile){return new ShotAnimation(tile);}},
-	{"Walking Dot"			,[](GridTile *tile){return new WalkingDotAnimation(tile);}},
-	{"Unicolor"				,[](GridTile *tile){return new UnicolorAnimation(tile);}}
-};
-
 AnimationRunner::AnimationRunner(GridTile* gridTile):GrooveApp(gridTile)
 {
 	currentAnimation = 0;
@@ -56,11 +44,11 @@ void AnimationRunner::clearQueue()
 
 void AnimationRunner::setAnimation(std::string animationName)
 {
-	if(AnimationMap::animationMap.find(animationName) != AnimationMap::animationMap.end())
+	if(animationMap.find(animationName) != animationMap.end())
 	{
 		clearQueue();
 		AnimationEntry *entry = new AnimationEntry();
-		entry->animationPtr = AnimationMap::animationMap.at(animationName).operator()(tile);
+		entry->animationPtr = animationMap.at(animationName).operator()(tile);
 		entry->animationLength = -1;	//ANIMATION_RUNTIME_MS
 		animationQueue.push(entry);
 	}
@@ -95,9 +83,4 @@ void AnimationRunner::run()
 			animationQueue.front()->animationPtr->run();
 		}
 	}
-}
-
-void AnimationRunner::onCommand(DynamicJsonDocument doc, uint8_t channelID)
-{
-	std::string move = doc["move"].as<std::string>();
 }

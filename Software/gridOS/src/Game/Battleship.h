@@ -10,7 +10,6 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveGame.h"
-#include <list>
 
 class Battleship : public GrooveGame
 {
@@ -20,9 +19,9 @@ public:
 	void start();
 	void stop();
 	void run();
-	void onCommand(CommandMsg *msg);
 
 private:
+	void onCommand(MessageService::CommandMsg &msg);
 	void draw();
 	void moveCrosshair(std::string cmd, uint8_t playerID);
 	void drawCrosshair(uint8_t x, uint8_t y, uint8_t playerID);
@@ -110,8 +109,8 @@ private:
 	CRGBW waterShotColor = CRGBW(255,255,255,0);
 	CRGBW crosshairColor = CRGBW(255,0,0,0);
 	DeltaTimer crosshairTimer, shootAnimationTimer;
-
 	uint8_t waterShots[2][GAMEFIELD_SIZE_BLOCKS_WIDTH][GAMEFIELD_SIZE_BLOCKS_HEIGHT]; //2 Player, x, y
+	MessageService::CallbackID callbackID;
 };
 
 

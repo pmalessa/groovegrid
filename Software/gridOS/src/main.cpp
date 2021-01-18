@@ -10,7 +10,7 @@ extern "C" void app_main()
 	const char* idleTaskTag = "IdleTask";
 	delay(1000);
 	uint32_t brightness = Storage::getConfig("Brightness");
-	MainLoop::getInstance();
+	MainLoop::start();
 	ESP_LOGI(idleTaskTag,"Hey! %i\n",brightness);
 
 	while(1)

@@ -2,42 +2,36 @@
 #define MESSAGESERVICE_H_
 
 #include "PLATFORM.h"
-#include <string.h>
-#include <vector>
 #include "ArduinoJson.h"
-#include "driver/CommInterface.h"
-#include "driver/DeltaTimer.h"
-
-
 
 class MessageService{
  public:
-	struct ConnectedUser{
-		std::string userName;
-		uint32_t userAddress;
-		uint16_t userID;
-	};
-
-	typedef struct{
+	typedef struct {
+		StaticJsonDocument<512> doc;
+		StaticJsonDocument<512> rspdoc;
 		uint8_t channelID;
-		CommInterface *commInterface;
-	}CommChannel;
+	}CommandMsg;
+
+	typedef std::function<void(CommandMsg&)> MessageCallback;
+	typedef uint8_t CallbackID;
 
 	static void init();
 	static std::string handleMessage(std::string cmd);
-	static void attachCallback(CommInterface *callbackPointer, CommInterface::ChannelID channelID);
+	static CallbackID attachCallback(MessageCallback callback);
+	static bool removeCallback(CallbackID id);
 
  private:
  	static void run();
 
-	static uint16_t connectUser(ConnectedUser user);
-	static void disconnectUser(uint32_t userAddress);
+	typedef struct {
+		MessageCallback function;
+		CallbackID id;
+	}callbackListEntry;
 
 	static DeltaTimer msgTaskTimer;
 	static xTaskHandle msgTask;
-	static std::vector<CommChannel*> channelList;
-	static std::vector<ConnectedUser> connectedUserList;
+	static std::vector<callbackListEntry> callbackList;
 	static bool isInitialized;
 };
 
-#endif /* WIFISERVICE_H_ */
+#endif /* MESSAGESERVICE_H_ */

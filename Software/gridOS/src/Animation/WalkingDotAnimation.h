@@ -26,7 +26,7 @@ private:
 	void SetupPurpleAndGreenPalette();
 	CRGBPalette16 currentPalette;
 	TBlendType    currentBlending;
-	const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
+	const TProgmemPalette16 myRedWhiteBluePalette_p =
 	{
 	    CRGB::Red,
 	    CRGB::Gray, // 'white' is too bright compared to red and blue

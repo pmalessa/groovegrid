@@ -4,11 +4,11 @@
 #define UTILS_GROOVEAPP_H_
 
 #include "../PLATFORM.h"
-#include "../driver/CommInterface.h"
 #include "../driver/GridTile.h"
 #include "../driver/DeltaTimer.h"
+#include "MessageService.h"
 
-class GrooveApp : public CommInterface
+class GrooveApp
 {
 public:
 	GrooveApp(GridTile* tile){this->tile = tile; frameTimer.setTimeStep(FRAMERATE_MS);};
@@ -16,9 +16,6 @@ public:
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual void run() = 0;					//has to be overridden by AppLoop
-    void onCommand(CommandMsg *msg){};	//can be overridden
-    void load(DynamicJsonDocument *doc){};								//can be overridden
-    void save(DynamicJsonDocument *doc){doc->createNestedObject("savegame");};	//create empty savegame object, can be overridden
 protected:
 	GridTile* tile;							//has to be initialized
 	DeltaTimer frameTimer;

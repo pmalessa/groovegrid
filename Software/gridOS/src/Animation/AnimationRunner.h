@@ -10,20 +10,8 @@
 
 #include "../PLATFORM.h"
 #include "../utils/GrooveApp.h"
-#include <queue>
-
-#include "RandomLineAnimation.h"
-#include "RandomPixelAnimation.h"
-#include "RandomRectAnimation.h"
-#include "RandomCircleAnimation.h"
-#include "ColorPaletteAnimation.h"
-#include "NFSAnimation.h"
-#include "SimplyRedAnimation.h"
-#include "MatrixAnimation.h"
-#include "SpectrumAnimation.h"
-#include "ShotAnimation.h"
-#include "WalkingDotAnimation.h"
-#include "UnicolorAnimation.h"
+#include "../MessageService.h"
+#include "AnimationMap.h"
 
 
 class AnimationRunner: public GrooveApp
@@ -36,7 +24,6 @@ public:
 	void stop();
 	void setAnimation(std::string animationName);
 	void clearQueue();
-	void onCommand(DynamicJsonDocument doc, uint8_t channelID);
 private:
 
     struct AnimationEntry{
@@ -52,16 +39,5 @@ private:
 	#define DEFAULT_ANIMATION "Unicolor"
 	#define ANIMATION_RUNTIME_MS 10000
 };
-
-class AnimationMap{
-public:
-	static std::map<std::string, std::function<GrooveAnimation*(GridTile*)>> animationMap;
-	static void add(std::string animationName, std::function<GrooveAnimation*(GridTile*)> returnObjectFunction)
-	{
-		animationMap.emplace(animationName,returnObjectFunction);
-	};
-};
-
-
 
 #endif /* ANIMATION_ANIMATIONRUNNER_H_ */

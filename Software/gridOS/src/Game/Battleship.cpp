@@ -28,67 +28,63 @@ Battleship::~Battleship(){
 
 void Battleship::start() {
 	ESP_LOGI("Battleship","start");
+	callbackID = MessageService::attachCallback([this](MessageService::CommandMsg &msg){
+		onCommand(msg);
+	});
 	tile->fillScreenBuffer(CRGBW(0));
 }
 
 void Battleship::stop() {
-
+	MessageService::removeCallback(callbackID);
 }
 
-void Battleship::onCommand(CommandMsg *msg)
+void Battleship::onCommand(MessageService::CommandMsg &msg)
 {
-	DynamicJsonDocument *doc = msg->doc;
-	DynamicJsonDocument *rspdoc = msg->rspdoc;
-	if(msg->channelID > CHANNEL_USER2)
+
+	if(msg.doc.containsKey("move"))
 	{
-		ESP_LOGI("Battleship","only 2 Player Game!");
-		(*rspdoc)["error"] = 2;
-		return;
+		std::string move = msg.doc["move"].as<std::string>();
+		moveCrosshair(move,msg.channelID-1);
 	}
-	if(doc->containsKey("move"))
+	else if(msg.doc.containsKey("cmd"))
 	{
-		std::string move = (*doc)["move"].as<std::string>();
-		moveCrosshair(move,msg->channelID-1);
-	}
-	else if(doc->containsKey("cmd"))
-	{
-		std::string cmd = (*doc)["cmd"].as<std::string>();
+		std::string cmd = msg.doc["cmd"].as<std::string>();
 		if(cmd == "sendShip")
 		{
-			JsonObject shipObject = (*doc)["data"];
+			JsonObject shipObject = msg.doc["data"];
 			if(shipObject.isNull())
 			{
-				(*rspdoc)["error"] = 1;
+				msg.rspdoc["error"] = 1;
 				return;
 			}
-			uint8_t shipID = (*doc)["id"].as<uint8_t>();
+			uint8_t shipID = msg.doc["id"].as<uint8_t>();
 			Ship newShip = {shipID,
 				shipObject["x"].as<uint8_t>(),
 				shipObject["y"].as<uint8_t>(),
 				shipObject["len"].as<uint8_t>(),
 				shipObject["rot"].as<uint8_t>(), 0, 0};
-				shipList[msg->channelID-1].push_back(newShip);
+				shipList[msg.channelID-1].push_back(newShip);
 			ESP_LOGI("Battleship","ship: x=%i,y=%i,len=%i,rot=%i",newShip.x,newShip.y,newShip.len,newShip.rot);
 		}
 		else if (cmd == "shoot")
 		{
 			if(shoot() == true){ //if hit
-				(*msg->rspdoc)["hit"] = 1;
+				msg.rspdoc["hit"] = 1;
 			}
 			else
 			{
-				(*msg->rspdoc)["hit"] = 0;
+				msg.rspdoc["hit"] = 0;
 			}
-			(*msg->rspdoc)["delay"] = HITANIMATION_DELAY;
+			msg.rspdoc["delay"] = HITANIMATION_DELAY;
 		}
 		else
 		{
-			(*rspdoc)["error"] = 3;
+			msg.rspdoc["error"] = 3;
 		}
 	}
 	else
 	{
-		(*rspdoc)["error"] = 4;
+		msg.rspdoc["error"] = 4;
 	}
 }
 

@@ -18,7 +18,7 @@ public:
 	void run();
 	void start();
 	void stop();
-	void onCommand(CommandMsg *msg);
+	void onCommand(MessageService::CommandMsg &msg);
 private:
     void spawnWall();
     void moveWorld();
@@ -51,6 +51,7 @@ private:
     	uint16_t xmax, ymax;
     };
     FlappyGrooveState *gameState;
+    MessageService::CallbackID callbackID;
 };
 
 

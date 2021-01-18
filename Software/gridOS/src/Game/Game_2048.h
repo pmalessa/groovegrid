@@ -72,12 +72,13 @@ public:
 	void start();
 	void stop();
 	void run();
-	void onCommand(CommandMsg *msg);
+	void onCommand(MessageService::CommandMsg &msg);
 private:
     GameState_2048 *gameState;
     uint8_t boardsize;
     uint16_t gameSpeed;
     direction_t movdir = NONE;
+	MessageService::CallbackID callbackID;
 
 	void move(direction_t dir);
 	void DrawBoard(uint16_t **arr);

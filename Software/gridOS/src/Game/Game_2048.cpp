@@ -22,16 +22,20 @@ Game_2048::~Game_2048()
 
 void Game_2048::start()
 {
+	callbackID = MessageService::attachCallback([this](MessageService::CommandMsg &msg){
+		onCommand(msg);
+	});
 	DrawBoard(gameState->board);
 }
 
 void Game_2048::stop()
 {
+	MessageService::removeCallback(callbackID);
 }
 
-void Game_2048::onCommand(CommandMsg *msg)
+void Game_2048::onCommand(MessageService::CommandMsg &msg)
 {
-	std::string moveCmd = (*msg->doc)["move"].as<std::string>();
+	std::string moveCmd = msg.doc["move"].as<std::string>();
 
 	if(moveCmd=="up")
 	{

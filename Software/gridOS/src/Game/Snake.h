@@ -29,10 +29,10 @@ public:
 	void start();
 	void stop();
 	void run();
-	void onCommand(CommandMsg *msg);
 
     uint32_t color = 0xFF0000;
 private:
+	void onCommand(MessageService::CommandMsg &msg);
     enum MovementDirection{
     	none,
     	left,
@@ -63,7 +63,7 @@ private:
 		Coordinate* head;
 
 	};
-
+	MessageService::CallbackID callbackID;
 	SnakeGameState *gameState;
 };
 

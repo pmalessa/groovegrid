@@ -8,6 +8,8 @@
 #include "fonts/glcdfont.cpp"
 #include "fonts/PicoPixel.h"
 
+static const char* TAG = "GridTile";
+
 #ifndef _swap_int16_t
 #define _swap_int16_t(a, b) { int16_t t = a; a = b; b = t; }
 #endif
@@ -20,8 +22,6 @@
 #ifndef pgm_read_dword
  #define pgm_read_dword(addr) (*(const unsigned long *)(addr))
 #endif
-
-static const char* TAG = "GridTile";
 
 GridTile::GridTile(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint8_t rot)
 {

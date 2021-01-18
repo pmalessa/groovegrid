@@ -1,5 +1,5 @@
-#ifndef PROVISIONSERVICE_H_
-#define PROVISIONSERVICE_H_
+#ifndef PROVISIONAPP_H_
+#define PROVISIONAPP_H_
 
 #include "PLATFORM.h"
 #include "GrooveTransition.h"
@@ -25,4 +25,4 @@ private:
 };
 
 
-#endif /* PROVISIONSERVICE_H_ */
+#endif /* PROVISIONAPP_H_ */

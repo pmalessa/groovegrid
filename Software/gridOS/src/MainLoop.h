@@ -15,49 +15,23 @@
 #include "driver/GrooveWeb.h"
 
 #include "Animation/BootTransition.h"
-#include "Animation/AnimationRunner.h"
-#include "Game/Game_2048.h"
-#include "Game/FlappyGroove.h"
-#include "Game/Snake.h"
-#include "Game/SwipeMaster.h"
-#include "Game/Battleship.h"
 #include "utils/ProvisionApp.h"
+#include "AppMap.h"
 
-class MainLoop : private CommInterface
+class MainLoop
 {
 public:
-	static MainLoop& getInstance();
-	~MainLoop(void);
+	static void start();
 private:
-	class AppEntry{
-	public:
-		std::string appName;
-		GridTile *tile;
-		GrooveApp *runningApp;
-		bool isRunning;
-	};
-	void startApp(std::string appName);
-	void stopApp();
-	void onCommand(CommandMsg *msg);
-	void appTask();
+	static bool startApp(std::string appName);
+	static bool stopApp();
+	static void onCommand(MessageService::CommandMsg &msg);
+	static void run();
 
-	MainLoop();
-	MainLoop(const MainLoop&);
-	MainLoop & operator = (const MainLoop &);
-	static void appTaskWrapper(void* _this){((MainLoop*)_this)->appTask();}
-
-	AppEntry *currentApp;
-	xTaskHandle appTaskHandle;
-
+	static GrooveApp *currentApp;
+	static GridTile *currentAppTile;
+	static bool currentAppRunning;
+	static std::string currentAppName;
+	static xTaskHandle appTaskHandle;
 };
-
-class AppMap{
-public:
-	static std::map<std::string, std::function<GrooveApp*(GridTile*)>> appMap;
-	static void add(std::string appName, std::function<GrooveApp*(GridTile*)> returnObjectFunction)
-	{
-		appMap.emplace(appName,returnObjectFunction);
-	};
-};
-
 #endif /* MAINLOOP_H_ */

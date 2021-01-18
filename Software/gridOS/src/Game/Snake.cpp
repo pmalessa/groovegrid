@@ -24,16 +24,19 @@ void SnakeGame::initialize() {
 }
 
 void SnakeGame::start() {
+	callbackID = MessageService::attachCallback([this](MessageService::CommandMsg &msg){
+		onCommand(msg);
+	});
 	tile->fillScreen(CRGB(0));
 }
 
 void SnakeGame::stop() {
-
+	MessageService::removeCallback(callbackID);
 }
 
-void SnakeGame::onCommand(CommandMsg *msg)
+void SnakeGame::onCommand(MessageService::CommandMsg &msg)
 {
-	std::string move = (*msg->doc)["move"].as<std::string>();
+	std::string move = msg.doc["move"].as<std::string>();
 
 	if(move=="up")
 	{

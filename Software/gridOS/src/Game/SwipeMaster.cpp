@@ -11,27 +11,30 @@ SwipeMaster::~SwipeMaster(){
 }
 
 void SwipeMaster::start() {
+	callbackID = MessageService::attachCallback([this](MessageService::CommandMsg &msg){
+		onCommand(msg);
+	});
 	tile->fillScreen(CRGB(0));
 }
 
 void SwipeMaster::stop() {
-
+	MessageService::removeCallback(callbackID);
 }
 
-void SwipeMaster::onCommand(CommandMsg *msg)
+void SwipeMaster::onCommand(MessageService::CommandMsg &msg)
 {
-	std::string move = (*msg->doc)["move"].as<std::string>();
+	std::string move = msg.doc["move"].as<std::string>();
 	
-	switch(msg->channelID)
+	switch(msg.channelID)
 	{
-		case CHANNEL_USER1: //++
+		case 0: //++
 			if(move=="up")
 			{
 				position++;
 				ESP_LOGI("SwipeMaster","pos: %i",position);
 			}
 			break;
-		case CHANNEL_USER2: //--
+		case 1: //--
 			if(move=="up")
 			{
 				position--;

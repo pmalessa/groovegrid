@@ -173,10 +173,13 @@ void FlappyGroove::updatePlayer()
 void FlappyGroove::start()
 {
 	tile->fillScreen(CRGB(0, 0, 0));
+	callbackID = MessageService::attachCallback([this](MessageService::CommandMsg &msg){
+		onCommand(msg);
+	});
 }
 void FlappyGroove::stop()
 {
-
+	MessageService::removeCallback(callbackID);
 }
 
 void FlappyGroove::restart()
@@ -223,9 +226,9 @@ void FlappyGroove::restart()
 	}
 }
 
-void FlappyGroove::onCommand(CommandMsg *msg)
+void FlappyGroove::onCommand(MessageService::CommandMsg &msg)
 {
-	std::string move = (*msg->doc)["move"].as<std::string>();
+	std::string move = msg.doc["move"].as<std::string>();
 
 	if(move=="up")
 	{

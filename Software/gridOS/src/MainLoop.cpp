@@ -7,177 +7,158 @@
 
 #include "MainLoop.h"
 
-std::map<std::string, std::function<GrooveApp*(GridTile*)>> AppMap::appMap = {
-		{"AnimationRunner"	,[](GridTile *tile){return new AnimationRunner(tile);}},
-		{"2048"				,[](GridTile *tile){return new Game_2048(tile);}},
-		{"Flappy Groove"	,[](GridTile *tile){return new FlappyGroove(tile);}},
-		{"Snake"			,[](GridTile *tile){return new SnakeGame(tile);}},
-		{"Battleship"		,[](GridTile *tile){return new Battleship(tile);}},
-		{"Swipe Master"		,[](GridTile *tile){return new SwipeMaster(tile);}}
-	};
+static const char* TAG = "MainLoop";
+GrooveApp *MainLoop::currentApp;
+bool MainLoop::currentAppRunning;
+std::string MainLoop::currentAppName;
+xTaskHandle MainLoop::appTaskHandle;
+GridTile *MainLoop::currentAppTile;
 
-MainLoop& MainLoop::getInstance()
+void MainLoop::onCommand(MessageService::CommandMsg &msg)
 {
-	static MainLoop _instance;
-	return _instance;
-}
+	msg.rspdoc["error"]= 0;
 
-void MainLoop::onCommand(CommandMsg *msg)
-{
-	uint8_t errorCode = 0;
-
-	std::string cmd = (*msg->doc)["cmd"].as<std::string>();
+	std::string cmd = msg.doc["cmd"].as<std::string>();
 	if(cmd=="start")
 	{
-		std::string appName = (*msg->doc)["app"].as<std::string>();
-		if(AppMap::appMap.find(appName) != AppMap::appMap.end())	//if name inside map
+		std::string appName = msg.doc["app"].as<std::string>();
+		if(startApp(appName) != true)
 		{
-			stopApp();
-			startApp(appName);
-			if(appName=="AnimationRunner")
-			{
-				std::string animation = (*msg->doc)["options"]["animation"].as<std::string>();
-				if(animation!="")	//pass first animation to AnimationRunner
-				{
-					AnimationRunner *app = (AnimationRunner*) currentApp->runningApp;
-					app->setAnimation(animation);
-				}
-			}
+			msg.rspdoc["error"]= 2;
 		}
-		else
+		//TODO:pass options to app
+		if(appName=="AnimationRunner")
 		{
-			errorCode = 2;
+			std::string animation = msg.doc["options"]["animation"].as<std::string>();
+			if(animation!="")	//pass first animation to AnimationRunner
+			{
+				AnimationRunner *app = (AnimationRunner*) currentApp;
+				app->setAnimation(animation);
+			}
 		}
 	}
 	else if(cmd=="reset")
 	{
-		startApp(currentApp->appName);
-	}
-	else if(cmd=="load")
-	{
-		currentApp->runningApp->load(msg->doc); //put Savegame
-	}
-	else if(cmd=="save")
-	{
-		(*msg->rspdoc)["name"] = currentApp->appName;
-		currentApp->runningApp->save(msg->rspdoc);	//get Savegame
+		startApp(currentAppName);
 	}
 	else if(cmd=="getGridData")
 	{
-		JsonObject gridData = (*msg->rspdoc).createNestedObject("data");
+		JsonObject gridData = msg.rspdoc.createNestedObject("data");
 		gridData["height"] = GRID_HEIGHT;
 		gridData["width"] = GRID_WIDTH;
 	}
 	else if(cmd =="getGames")
 	{
-		JsonArray gameList = (*msg->rspdoc).createNestedArray("list");
-		for ( const auto &p : AppMap::appMap )	//iterate through map
+		JsonArray gameList = msg.rspdoc.createNestedArray("list");
+		for ( const auto &p : appMap )	//iterate through map
 		{
 		   gameList.add(p.first);
 		}
 	}
 	else if(cmd =="getAnimations")
 	{
-		JsonArray animationList = (*msg->rspdoc).createNestedArray("list");
-		for ( const auto &p : AnimationMap::animationMap )	//iterate through map
+		JsonArray animationList = msg.rspdoc.createNestedArray("list");
+		for ( const auto &p : animationMap )	//iterate through map
 		{
 		   animationList.add(p.first);
 		}
 	}
-	else if(cmd=="connect")
-	{
-
-	}
-	else if(cmd=="disconnect")
-	{
-
-	}
 	else if(cmd=="brightness")
 	{
-		uint8_t brightness = (*msg->doc)["value"].as<uint8_t>();
+		uint8_t brightness = msg.doc["value"].as<uint8_t>();
 		Grid::setGlobalBrightness(brightness);
 	}
 	else
 	{
-		errorCode = 1;
+		msg.rspdoc["error"]= 1;
 	}
-	(*msg->rspdoc)["error"]= errorCode;					//add errorCode
 }
 
-MainLoop::~MainLoop(){}
-MainLoop::MainLoop()
+void MainLoop::start()
 {
 	Timer::start();
-	MessageService::attachCallback(this, CommInterface::CHANNEL_CONTROL);	//Attach CommInterface
-
+	MessageService::attachCallback(&MainLoop::onCommand);	//no need to save id, callback never removed
 	//Start initial App
-	currentApp = new AppEntry();
-	currentApp->tile = new GridTile(2, 2, GRID_WIDTH-4, GRID_HEIGHT-4, 0);
-	currentApp->isRunning = false;
+	currentAppTile = new GridTile(0, 0, GRID_WIDTH, GRID_HEIGHT, 0);
 	startApp("AnimationRunner");
 
 	static GrooveWeb& webService = GrooveWeb::getInstance();
 	UNUSED(webService);
-	xTaskCreatePinnedToCore(appTaskWrapper,"appTask",8192,this,tskIDLE_PRIORITY,&appTaskHandle,1);
+	xTaskCreatePinnedToCore((TaskFunction_t)run,"appTask",8192,nullptr,tskIDLE_PRIORITY,&appTaskHandle,1);
 }
 
-void MainLoop::stopApp()
+bool MainLoop::stopApp()
 {
-	if(currentApp->runningApp != nullptr)
+	if(currentApp != nullptr)
 	{
-		currentApp->runningApp->stop();
-		currentApp->isRunning = false;	//TODO: this is maybe not thread safe! currentApp could be running while deleting it
-		delete currentApp->runningApp;
-	}
-}
-
-void MainLoop::startApp(std::string appName)
-{
-	if(currentApp->isRunning == true)
-	{
-		stopApp();
-	}
-
-	if(AppMap::appMap.find(appName) != AppMap::appMap.end())
-	{
-		currentApp->runningApp = AppMap::appMap.at(appName).operator()(currentApp->tile);	//create new instance
-		currentApp->runningApp->start();
-		currentApp->isRunning = true;
-		currentApp->appName = appName;
-		MessageService::attachCallback(currentApp->runningApp, CHANNEL_USER1);	//Attach CommInterface
-		MessageService::attachCallback(currentApp->runningApp, CHANNEL_USER2);
-		MessageService::attachCallback(currentApp->runningApp, CHANNEL_USER3);
-		MessageService::attachCallback(currentApp->runningApp, CHANNEL_USER4);
+		currentApp->stop();
+		currentAppRunning = false;	//TODO: this is maybe not thread safe! currentApp could be running while deleting it
+		delete currentApp;
+		currentApp = nullptr;
 	}
 	else
 	{
-		return;
+		ESP_LOGE(TAG,"current App is nullptr!");
+		return false;
 	}
+	return true;
 }
 
-void MainLoop::appTask()
+bool MainLoop::startApp(std::string appName)
 {
-	ProvisionApp *provisionApp =new ProvisionApp(currentApp->tile);
+	GrooveApp *newApp;
+
+	if(appMap.find(appName) == appMap.end())
+	{
+		return false; //App not found
+	}
+
+	newApp = appMap.at(appName).operator()(currentAppTile);	//create new instance
+
+	if(newApp == nullptr)
+	{
+		ESP_LOGE(TAG, "App Creation failed!");
+		return false;
+	}
+	if(currentAppRunning == true)
+	{
+		if(stopApp() == false){
+			ESP_LOGE(TAG, "App Stop failed!");
+		}
+	}
+	delete currentApp;
+	currentApp = newApp;
+	currentApp->start();
+	currentAppRunning = true;
+	currentAppName = appName;
+	return true;
+}
+
+void MainLoop::run()
+{
+	ProvisionApp *provisionApp =new ProvisionApp(currentAppTile);
 	while(provisionApp->isRunning())
 	{
 		provisionApp->run();
 		vTaskDelay(1);
 	}
 	delete provisionApp;
-	BootTransition *bt = new BootTransition(currentApp->tile);
+	provisionApp = nullptr;
+	BootTransition *bt = new BootTransition(currentAppTile);
 	while(bt->isRunning())
 	{
 		bt->run();
 		vTaskDelay(1);
 	}
 	delete bt;
+	bt = nullptr;
 	while(1)
 	{
-		if(currentApp->isRunning)
+		if(currentAppRunning)
 		{
-			if(currentApp->runningApp != nullptr)
+			if(currentApp != nullptr)
 			{
-				currentApp->runningApp->run();
+				currentApp->run();
 			}
 		}
 		vTaskDelay(1);

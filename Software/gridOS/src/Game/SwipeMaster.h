@@ -21,12 +21,12 @@ public:
 	void run();
 	void draw();
 	void checkWin();
-	void onCommand(CommandMsg *msg);
-
+	void onCommand(MessageService::CommandMsg &msg);
     uint32_t color = 0xFF0000;
 private:
 	void reset();
 	int16_t position, middle;
+	MessageService::CallbackID callbackID;
 };
 
 
