@@ -1,0 +1,4 @@
+key,type,encoding,value     
+storage,namespace,,
+UserColor,data,u32,0xFF0000FF
+Brightness,data,u32,0xFF
