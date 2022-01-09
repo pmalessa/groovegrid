@@ -27,7 +27,7 @@
 	#define GRID_DATA_PIN 0
 	#define BT_NAME "GrooveGrid Door"
 #elif defined(ROVER)
-	#define GRID_WIDTH 42
+	#define GRID_WIDTH 20
 	#define GRID_HEIGHT 14
 	#define NUM_STRIPS 7
 	#define STRIP_WIDTH 2
@@ -54,6 +54,7 @@
 	#define GRID_DATA6_PIN 27
 	#define GRID_DATA7_PIN 26
 	#define GRID_DATA8_PIN 25
+	//#define STRIP_RGBW
 	#define BT_NAME "GrooveGrid Table"
 #endif
 

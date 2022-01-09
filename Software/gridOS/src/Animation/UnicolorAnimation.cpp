@@ -10,8 +10,11 @@
 UnicolorAnimation::UnicolorAnimation(GridTile *tile):GrooveAnimation(tile)
 {
 	//currentColor = CRGBW(0,0,0,0);
+#ifdef STRIP_RGBW
 	desiredColor = CRGBW(0,0,0,255);
-	fadeTimer.setTimeStep(5);
+#else
+	desiredColor = CRGBW(255,255,255,0);
+#endif
 }
 UnicolorAnimation::~UnicolorAnimation()
 {
