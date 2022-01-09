@@ -7,7 +7,7 @@
 #define COLOR_ORDER GRB
 CRGB leds[NUM_LEDS];
 
-#define UPDATES_PER_SECOND 100
+#define UPDATES_PER_SECOND 30
 
 // This example shows several ways to set up and use 'palettes' of colors
 // with FastLED.
@@ -34,38 +34,6 @@ TBlendType    currentBlending;
 extern CRGBPalette16 myRedWhiteBluePalette;
 extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 
-
-void setup() {
-    delay( 3000 ); // power-up safety delay
-    Serial.print("Hey!");
-    FastLED.addLeds<LED_TYPE, 4, COLOR_ORDER>(leds, LEDS_PER_STRIP*0, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
-    FastLED.addLeds<LED_TYPE, 5, COLOR_ORDER>(leds, LEDS_PER_STRIP*1, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
-    FastLED.addLeds<LED_TYPE, 18, COLOR_ORDER>(leds, LEDS_PER_STRIP*2, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
-    FastLED.addLeds<LED_TYPE, 19, COLOR_ORDER>(leds, LEDS_PER_STRIP*3, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
-    FastLED.addLeds<LED_TYPE, 21, COLOR_ORDER>(leds, LEDS_PER_STRIP*4, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
-    FastLED.addLeds<LED_TYPE, 27, COLOR_ORDER>(leds, LEDS_PER_STRIP*5, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
-    FastLED.addLeds<LED_TYPE, 26, COLOR_ORDER>(leds, LEDS_PER_STRIP*6, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
-    FastLED.addLeds<LED_TYPE, 25, COLOR_ORDER>(leds, LEDS_PER_STRIP*7, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
-    FastLED.setBrightness(  BRIGHTNESS );
-    
-    currentPalette = RainbowColors_p;
-    currentBlending = LINEARBLEND;
-}
-
-
-void loop()
-{
-    ChangePalettePeriodically();
-    
-    static uint8_t startIndex = 0;
-    startIndex = startIndex + 1; /* motion speed */
-    
-    FillLEDsFromPaletteColors( startIndex);
-    
-    FastLED.show();
-    FastLED.delay(1000 / UPDATES_PER_SECOND);
-}
-
 void FillLEDsFromPaletteColors( uint8_t colorIndex)
 {
     uint8_t brightness = 255;
@@ -77,34 +45,7 @@ void FillLEDsFromPaletteColors( uint8_t colorIndex)
 }
 
 
-// There are several different palettes of colors demonstrated here.
-//
-// FastLED provides several 'preset' palettes: RainbowColors_p, RainbowStripeColors_p,
-// OceanColors_p, CloudColors_p, LavaColors_p, ForestColors_p, and PartyColors_p.
-//
-// Additionally, you can manually define your own color palettes, or you can write
-// code that creates color palettes on the fly.  All are shown here.
 
-void ChangePalettePeriodically()
-{
-    uint8_t secondHand = (millis() / 1000) % 60;
-    static uint8_t lastSecond = 99;
-    
-    if( lastSecond != secondHand) {
-        lastSecond = secondHand;
-        if( secondHand ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
-        if( secondHand == 10)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
-        if( secondHand == 15)  { currentPalette = RainbowStripeColors_p;   currentBlending = LINEARBLEND; }
-        if( secondHand == 20)  { SetupPurpleAndGreenPalette();             currentBlending = LINEARBLEND; }
-        if( secondHand == 25)  { SetupTotallyRandomPalette();              currentBlending = LINEARBLEND; }
-        if( secondHand == 30)  { SetupBlackAndWhiteStripedPalette();       currentBlending = NOBLEND; }
-        if( secondHand == 35)  { SetupBlackAndWhiteStripedPalette();       currentBlending = LINEARBLEND; }
-        if( secondHand == 40)  { currentPalette = CloudColors_p;           currentBlending = LINEARBLEND; }
-        if( secondHand == 45)  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
-        if( secondHand == 50)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = NOBLEND;  }
-        if( secondHand == 55)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }
-    }
-}
 
 // This function fills the palette with totally random colors.
 void SetupTotallyRandomPalette()
@@ -194,3 +135,63 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
 // palette to Green (0,255,0) and Blue (0,0,255), and then retrieved 
 // the first sixteen entries from the virtual palette (of 256), you'd get
 // Green, followed by a smooth gradient from green-to-blue, and then Blue.
+
+// There are several different palettes of colors demonstrated here.
+//
+// FastLED provides several 'preset' palettes: RainbowColors_p, RainbowStripeColors_p,
+// OceanColors_p, CloudColors_p, LavaColors_p, ForestColors_p, and PartyColors_p.
+//
+// Additionally, you can manually define your own color palettes, or you can write
+// code that creates color palettes on the fly.  All are shown here.
+
+void ChangePalettePeriodically()
+{
+    uint8_t secondHand = (millis() / 1000) % 60;
+    static uint8_t lastSecond = 99;
+    
+    if( lastSecond != secondHand) {
+        lastSecond = secondHand;
+        if( secondHand ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
+        if( secondHand == 10)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
+        if( secondHand == 15)  { currentPalette = RainbowStripeColors_p;   currentBlending = LINEARBLEND; }
+        if( secondHand == 20)  { SetupPurpleAndGreenPalette();             currentBlending = LINEARBLEND; }
+        if( secondHand == 25)  { SetupTotallyRandomPalette();              currentBlending = LINEARBLEND; }
+        if( secondHand == 30)  { SetupBlackAndWhiteStripedPalette();       currentBlending = NOBLEND; }
+        if( secondHand == 35)  { SetupBlackAndWhiteStripedPalette();       currentBlending = LINEARBLEND; }
+        if( secondHand == 40)  { currentPalette = CloudColors_p;           currentBlending = LINEARBLEND; }
+        if( secondHand == 45)  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
+        if( secondHand == 50)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = NOBLEND;  }
+        if( secondHand == 55)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }
+    }
+}
+
+void setup() {
+    delay( 3000 ); // power-up safety delay
+    Serial.print("Hey!");
+    FastLED.addLeds<LED_TYPE, 4, COLOR_ORDER>(leds, LEDS_PER_STRIP*0, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, 5, COLOR_ORDER>(leds, LEDS_PER_STRIP*1, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, 18, COLOR_ORDER>(leds, LEDS_PER_STRIP*2, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, 19, COLOR_ORDER>(leds, LEDS_PER_STRIP*3, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, 21, COLOR_ORDER>(leds, LEDS_PER_STRIP*4, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, 27, COLOR_ORDER>(leds, LEDS_PER_STRIP*5, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, 26, COLOR_ORDER>(leds, LEDS_PER_STRIP*6, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, 25, COLOR_ORDER>(leds, LEDS_PER_STRIP*7, LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+    FastLED.setBrightness(  BRIGHTNESS );
+    
+    currentPalette = RainbowColors_p;
+    currentBlending = LINEARBLEND;
+}
+
+
+void loop()
+{
+    ChangePalettePeriodically();
+    
+    static uint8_t startIndex = 0;
+    startIndex = startIndex + 1; /* motion speed */
+    
+    FillLEDsFromPaletteColors( startIndex);
+    
+    FastLED.show();
+    FastLED.delay(1000 / UPDATES_PER_SECOND);
+}
